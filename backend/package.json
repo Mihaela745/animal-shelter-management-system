@@ -1,0 +1,27 @@
+{
+  "name": "animal-shelter-management-system",
+  "version": "1.0.0",
+  "description": "Web application for managing an animal shelter. Built with Node.js, Express, MySQL (Sequelize ORM), and React. Developed as part of my bachelor's thesis.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mihaela745/animal-shelter-management-system.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Mihaela745/animal-shelter-management-system/issues"
+  },
+  "homepage": "https://github.com/Mihaela745/animal-shelter-management-system#readme",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mysql2": "^3.15.2",
+    "sequelize": "^6.37.7"
+  }
+}
