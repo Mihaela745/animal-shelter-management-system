@@ -1,0 +1,52 @@
+ const {Sequelize,DataTypes}=require('sequelize');
+ const sequelize=require('../config/db');
+
+    const Medication=sequelize.define('Medication',{
+        id:{
+            type:DataTypes.INTEGER,
+            primaryKey:true,
+            autoIncrement:true
+        },
+        name:{
+            type:DataTypes.STRING,
+            allowNull:false
+        },
+        description:{
+            type:DataTypes.TEXT,
+            allowNull:true
+        },
+        dosage:{
+            type:DataTypes.STRING,
+            allowNull:false
+        },
+        frequency:{
+            type:DataTypes.STRING,
+            allowNull:false
+        },
+        start_date:{
+            type:DataTypes.DATE,
+            allowNull:false
+        },
+        end_date:{
+            type:DataTypes.DATE,
+            allowNull:true
+        },
+        prescribing_vet:{
+            type:DataTypes.INTEGER,
+            references:{
+                model:'Staff',
+                key:'id'
+            },
+            allowNull:false
+        },
+        medical_file_id:{
+            type:DataTypes.INTEGER,
+            references:{
+                model:'MedicalFiles',
+                key:'id'
+            },
+            allowNull:false
+        }
+    });
+
+    module.exports=Medication;
