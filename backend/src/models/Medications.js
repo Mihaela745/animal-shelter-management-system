@@ -1,7 +1,7 @@
  const {Sequelize,DataTypes}=require('sequelize');
  const sequelize=require('../config/db');
 
-    const Medication=sequelize.define('Medication',{
+    const Medications=sequelize.define('Medications',{
         id:{
             type:DataTypes.INTEGER,
             primaryKey:true,
@@ -42,11 +42,11 @@
         medical_file_id:{
             type:DataTypes.INTEGER,
             references:{
-                model:'MedicalFiles',
+                model:'Medical_Files',
                 key:'id'
             },
             allowNull:false
         }
     });
 
-    module.exports=Medication;
+    module.exports=Medications;

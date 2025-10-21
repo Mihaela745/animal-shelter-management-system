@@ -1,7 +1,7 @@
 const { Sequelize,DataTypes } = require("sequelize")
-const sequlize=requeire("../config/db")
+const sequelize=require("../config/db")
 
-const species=sequlize.define('Species',{
+const species=sequelize.define('Speciess',{
     id:{
         type:DataTypes.INTEGER,
         primaryKey:true},

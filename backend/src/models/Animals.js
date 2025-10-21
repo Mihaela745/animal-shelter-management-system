@@ -2,7 +2,7 @@ const { Sequelize,DataTypes } = require("sequelize")
 
 const sequelize = require("../config/db")
 
-const Animal=sequelize.define('Animal',{
+const Animals=sequelize.define('Animals',{
     id:{
         type:DataTypes.INTEGER,
         primaryKey:true,
@@ -35,7 +35,7 @@ const Animal=sequelize.define('Animal',{
         type:DataTypes.INTEGER,
         allowNull:true,
         references:{
-            model:'Box',
+            model:'Boxes',
             key:'id'
         }
     },
@@ -43,7 +43,7 @@ const Animal=sequelize.define('Animal',{
         type:DataTypes.INTEGER,
         allowNull:true,
         references:{
-            model:'Medical_file',
+            model:'Medical_files',
             key:'id'
         }
     },
@@ -54,4 +54,4 @@ const Animal=sequelize.define('Animal',{
 })
 
 
-module.exports=Animal;
+module.exports=Animals;

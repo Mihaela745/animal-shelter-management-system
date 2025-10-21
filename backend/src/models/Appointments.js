@@ -1,7 +1,7 @@
 const {Seqeulize, DataTypes} = require('sequelize');
 const sequelize = require('../config/db');
 
-const Appointment = sequelize.define('Appointment', {
+const Appointments = sequelize.define('Appointments', {
     id:{
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -32,3 +32,5 @@ const Appointment = sequelize.define('Appointment', {
         allowNull: false
     }
 });
+
+module.exports = Appointments;

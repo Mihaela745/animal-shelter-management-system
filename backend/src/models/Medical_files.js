@@ -1,7 +1,7 @@
-const{Seqeulize,DataTypes, DataTypes}=require('sequelize');
+const{Seqeulize,DataTypes}=require('sequelize');
 const sequelize=require('../config/db');
 
-const Medicale_file=sequelize.define('Medical_file',{
+const Medical_files=sequelize.define('Medical_files',{
     id:{
         type:DataTypes.INTEGER,
         primaryKey:true,
@@ -19,7 +19,5 @@ const Medicale_file=sequelize.define('Medical_file',{
         }
 })
 
-Medicale_file.hasMany(require('./Medications'),{foreignKey:'medical_file_id'});
 
-
-module.exports=Medical_file;
+module.exports=Medical_files;

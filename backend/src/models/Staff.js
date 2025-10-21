@@ -27,6 +27,6 @@ const Staff=sequelize.define('Staff',{
         type:DataTypes.STRING,
         allowNull:true
     }
-})
+},{tableName:'Staff'});
 
 module.exports=Staff;

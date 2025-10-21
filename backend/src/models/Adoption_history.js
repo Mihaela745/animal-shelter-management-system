@@ -1,7 +1,7 @@
-const{Sequrlize,DataTypes}=requeire('sequelize');
+const{Sequelize,DataTypes}=require('sequelize');
 const sequelize=require('../config/db');
 
-const Adoption=sequelize.define('Adoption_history',{
+const Adoption_history=sequelize.define('Adoption_history',{
     id:{
         type:DataTypes.INTEGER,
         primaryKey:true,
@@ -29,4 +29,4 @@ const Adoption=sequelize.define('Adoption_history',{
     },
 })
 
-module.exports=Adoption;
+module.exports=Adoption_history;
