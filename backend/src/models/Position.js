@@ -1,6 +1,6 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = require('../config/db');
-const Position=sequelize.define('Position',{
+import {DataTypes} from 'sequelize';
+import {sequelize} from '../config/db.js';
+export const Position=sequelize.define('Position',{
     id:{
         type:DataTypes.INTEGER,
         primaryKey:true,
@@ -14,6 +14,6 @@ const Position=sequelize.define('Position',{
         type:DataTypes.TEXT,
         allowNull:true
     }
+},{
+    tableName:'Positions'
 })
-
-module.exports=Position;

@@ -1,16 +1,16 @@
-const Animals=require('./Animals');
-const Species=require('./Species');
-const Boxes=require('./Boxes');
-const Medical_files = require('./Medical_files');
-const Medications = require('./Medications');
-const Staff = require('./Staff');
-const Position = require('./Position');
-const Responsible_box = require('./Responsible_box');
-const Meeting_rooms = require('./Meeting_rooms');
-const Rooms = require('./Rooms');
-const Users = require('./Users');
-const Appointments = require('./Appointments');
-const Adoption_history = require('./Adoption_history');
+import {Animals} from './Animals.js'
+import { Species } from './Species.js';
+import {Boxes} from './Boxes.js'
+import { Medical_files } from './Medical_files.js';
+import { Medications } from './Medications.js';
+import { Staff } from './Staff.js';
+import { Position } from './Position.js';
+import { Responsible_box } from './Responsible_box.js';
+import { Meeting_rooms } from './Meeting_rooms.js';
+import { Rooms } from './Rooms.js';
+import { Users } from './Users.js';
+import { Appointments } from './Appointments.js';
+import { Adoption_history } from './Adoption_history.js';
 
 Animals.belongsTo(Species,{foreignKey:'species_id'});
 Species.hasMany(Animals,{foreignKey:'species_id'});

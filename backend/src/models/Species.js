@@ -1,13 +1,13 @@
-const { Sequelize,DataTypes } = require("sequelize")
-const sequelize=require("../config/db")
+import {DataTypes} from 'sequelize';
+import {sequelize} from '../config/db.js';
 
-const species=sequelize.define('Speciess',{
+export const Species=sequelize.define('Speciess',{
     id:{
         type:DataTypes.INTEGER,
         primaryKey:true},
     name:{
         type:DataTypes.STRING,
         allowNull:false}
+    },{
+        tableName:'Species'
     })
-
-module.exports=species;

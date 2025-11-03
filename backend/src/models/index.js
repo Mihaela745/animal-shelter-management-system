@@ -1,18 +1,18 @@
-const sequelize = require('../config/db');
-const Animals = require('./Animals');
-const Species = require('./Species');
-const Boxes = require('./Boxes');
-const Medical_files = require('./Medical_files');
-const Medications = require('./Medicationss');
-const Staff = require('./Staff');
-const Position = require('./Position');
-const Responsible_box = require('./Responsible_box');
-const Meeting_rooms = require('./Meeting_roomss');
-const Users = require('./Users');
-const Appointments = require('./Appointments');
-const Rooms = require('./Rooms');
-const Adoption_history = require('./Adoption_history');
-const association=require('./association');
+import {sequelize} from '../config/db.js'
+import {Animals} from './Animals.js'
+import { Species } from './Species.js';
+import {Boxes} from './Boxes.js'
+import { Medical_files } from './Medical_files.js';
+import { Medications } from './Medications.js';
+import { Staff } from './Staff.js';
+import { Position } from './Position.js';
+import { Responsible_box } from './Responsible_box.js';
+import { Meeting_rooms } from './Meeting_rooms.js';
+import { Rooms } from './Rooms.js';
+import { Users } from './Users.js';
+import { Appointments } from './Appointments.js';
+import { Adoption_history } from './Adoption_history.js';
+import {association} from './association.js'
 
 module.exports = {
     sequelize,

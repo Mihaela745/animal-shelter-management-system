@@ -1,7 +1,7 @@
-const {Sequelize, DataTypes} = require('sequelize');
-const sequelize = require('../config/db');
+import {DataTypes} from 'sequelize';
+import {sequelize} from '../config/db.js';
 
-const Meeting_rooms = sequelize.define('Meeting_roomss', {
+export const Meeting_rooms = sequelize.define('Meeting_roomss', {
     appointment_id:{
         type: DataTypes.INTEGER,
         references:{
@@ -24,6 +24,7 @@ const Meeting_rooms = sequelize.define('Meeting_roomss', {
         type:DataTypes.DATE,
         allowNull:false,    
     }
+},{
+    tableName:'Meeting_rooms'
 });
 
-module.exports = Meeting_rooms;

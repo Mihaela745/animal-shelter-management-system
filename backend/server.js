@@ -1,10 +1,11 @@
-const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const sequelize = require('./src/config/db');
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import { sequelize } from './src/config/db.js';
 
-require ('./src/models/association');
+import './src/models/association.js'; 
+
+const app = express();
 
 app.use(cors());
 app.use(express.json());
@@ -26,10 +27,11 @@ sequelize.authenticate()
   })
   .then(tables => console.log('Tables in DB:', tables))
   .catch(err => console.log('Error: ' + err));
+
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
-

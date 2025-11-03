@@ -1,7 +1,7 @@
-const {Sequelize, DataTypes}=require('sequelize');
-const sequelize=require('../config/db');
+import {DataTypes} from 'sequelize';
+import {sequelize} from '../config/db.js';
 
-const Rooms=sequelize.define('Rooms',{
+export const Rooms=sequelize.define('Rooms',{
     id:{
         type:DataTypes.INTEGER,
         primaryKey:true,
@@ -12,6 +12,6 @@ const Rooms=sequelize.define('Rooms',{
         allowNull:false,
         unique:true
     }
+},{
+    tableName:'Rooms'
 });
-
-module.exports=Rooms;

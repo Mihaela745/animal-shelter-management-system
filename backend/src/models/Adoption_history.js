@@ -1,7 +1,7 @@
-const{Sequelize,DataTypes}=require('sequelize');
-const sequelize=require('../config/db');
+import {DataTypes} from 'sequelize';
+import {sequelize} from '../config/db.js';
 
-const Adoption_history=sequelize.define('Adoption_history',{
+export  const Adoption_history=sequelize.define('Adoption_history',{
     id:{
         type:DataTypes.INTEGER,
         primaryKey:true,
@@ -26,7 +26,8 @@ const Adoption_history=sequelize.define('Adoption_history',{
     adoption_date:{
         type:DataTypes.DATE,
         allowNull:false
-    },
-})
-
-module.exports=Adoption_history;
+    }},
+    {
+        tableName:"Adoption_history"
+    }
+)

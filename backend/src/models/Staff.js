@@ -1,7 +1,7 @@
-const {Sequelize,DataTypes}=require('sequelize');
-const sequelize=require('../config/db');
+import {DataTypes} from 'sequelize';
+import {sequelize} from '../config/db.js';
 
-const Staff=sequelize.define('Staff',{
+export const Staff=sequelize.define('Staff',{
     id:{
         type:DataTypes.INTEGER,
         primaryKey:true,
@@ -28,5 +28,3 @@ const Staff=sequelize.define('Staff',{
         allowNull:true
     }
 },{tableName:'Staff'});
-
-module.exports=Staff;

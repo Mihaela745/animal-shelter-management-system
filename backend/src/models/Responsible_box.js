@@ -1,7 +1,7 @@
-const {Sequelize,DataTypes}=require('sequelize');
-const sequelize=require('../config/db');
+import {DataTypes} from 'sequelize';
+import {sequelize} from '../config/db.js';
 
-const Responsible_box=sequelize.define('Resposible_box',{
+export const Responsible_box=sequelize.define('Resposible_box',{
     box_id:
     {
         type:DataTypes.INTEGER,
@@ -19,6 +19,6 @@ const Responsible_box=sequelize.define('Resposible_box',{
             model:'Staff',
             key:'id'
         }}
+},{
+    tableName:'Responisible_boxes'
 });
-
-module.exports=Responsible_box;

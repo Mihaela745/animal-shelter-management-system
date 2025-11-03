@@ -1,8 +1,8 @@
-const { Sequelize,DataTypes } = require("sequelize")
+import {DataTypes} from 'sequelize';
+import {sequelize} from '../config/db.js';
 
-const sequelize = require("../config/db")
 
-const Animals=sequelize.define('Animals',{
+export const Animals=sequelize.define('Animals',{
     id:{
         type:DataTypes.INTEGER,
         primaryKey:true,
@@ -51,7 +51,6 @@ const Animals=sequelize.define('Animals',{
         type:DataTypes.ENUM('Available','Adopted','Fostered','Pending'),
         defaultValue:'Available'
     }
+},{
+    tableName:'Animals'
 })
-
-
-module.exports=Animals;

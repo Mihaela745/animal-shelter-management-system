@@ -1,7 +1,7 @@
-const{Seqeulize,DataTypes}=require('sequelize');
-const sequelize=require('../config/db');
+import {DataTypes} from 'sequelize';
+import {sequelize} from '../config/db.js';
 
-const Medical_files=sequelize.define('Medical_files',{
+export const Medical_files=sequelize.define('Medical_files',{
     id:{
         type:DataTypes.INTEGER,
         primaryKey:true,
@@ -17,7 +17,6 @@ const Medical_files=sequelize.define('Medical_files',{
             type:DataTypes.TEXT,
             allowNull:true
         }
+},{
+    tableName:'Medical_files'
 })
-
-
-module.exports=Medical_files;
