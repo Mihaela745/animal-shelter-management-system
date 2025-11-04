@@ -34,7 +34,7 @@ export const getAllStaf = async (req, res) => {
           attributes: ["title", "description"],
         },
       ],
-      atributes: ["id", "name", "email", "phonenumber"],
+      attributes: ["id", "name", "email", "phonenumber"],
     });
     return res.status(200).json(staffMembers);
   } catch (error) {
@@ -47,14 +47,14 @@ export const getAllStaf = async (req, res) => {
 
 export const getStaffById = async (req, res) => {
   try {
-    const staff = Staff.findByPk(req.params.id, {
+    const staff = await Staff.findByPk(req.params.id, {
       include: [
         {
           model: Position,
           attributes: ["title", "description"],
         },
       ],
-      atributes: ["id", "name", "email", "phonenumber"],
+      attributes: ["id", "name", "email", "phonenumber"],
     });
     if (!staff) {
       return res.status(404).json({
@@ -78,11 +78,9 @@ export const updateStaff = async (req, res) => {
     if (updateData.position_id) {
       const positionExists = await Position.findByPk(updateData.position_id);
       if (!positionExists) {
-        return res
-          .status(404)
-          .json({
-            error: `Position with ID ${updateData.position_id} not found.`,
-          });
+        return res.status(404).json({
+          error: `Position with ID ${updateData.position_id} not found.`,
+        });
       }
     }
     const [updatedRows] = await Staff.update(updateData, {
@@ -118,14 +116,12 @@ export const deleteStaff = async (req, res) => {
       return res.status(404).json({ error: "Staff member not found." });
     return res
       .status(200)
-      .json({ message: "Staff memeber deleted successfully" });
+      .json({ message: "Staff member deleted successfully" });
   } catch (error) {
     console.error("Error deleting staff member:", error);
-    return res
-      .status(500)
-      .json({
-        error: "Failed to delete staff member.",
-        details: error.message,
-      });
+    return res.status(500).json({
+      error: "Failed to delete staff member.",
+      details: error.message,
+    });
   }
 };
