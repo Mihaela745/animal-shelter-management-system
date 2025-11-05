@@ -58,7 +58,7 @@ export const getStaffById = async (req, res) => {
     });
     if (!staff) {
       return res.status(404).json({
-        error: "Staff member does nott exist",
+        error: "Staff member does not exist",
         details: error.message,
       });
     } else return res.status(200).json(staff);
