@@ -2,7 +2,11 @@ import {DataTypes} from 'sequelize';
 import {sequelize} from '../config/db.js';
 
 export const Responsible_box=sequelize.define('Resposible_box',{
-    box_id:
+    id:{
+        type:DataTypes.INTEGER,
+        primaryKey:true,
+        autoIncrement:true
+    },box_id:
     {
         type:DataTypes.INTEGER,
         allowNull:false,

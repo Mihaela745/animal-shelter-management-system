@@ -1,4 +1,4 @@
-import {axios} from 'axios';
+import axios from 'axios';
 
 const CAT_API_URL=process.env.CAT_BREED_API_URL;
 const CAT_API_KEY=process.env.CAT_API_KEY;
@@ -6,7 +6,7 @@ const CAT_API_KEY=process.env.CAT_API_KEY;
 const DOG_API_URL = process.env.DOG_BREED_API_URL;
 const DOG_API_KEY = process.env.DOG_API_KEY;
 
-export const getBreedsBySpecies=async(req,res)=>{
+export const controller={ getBreedsBySpecies:async(req,res)=>{
     const species=req.query.species;
     if(!species)
     {
@@ -46,4 +46,5 @@ export const getBreedsBySpecies=async(req,res)=>{
         });
     }
 
-};
+}
+}
