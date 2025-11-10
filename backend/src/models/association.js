@@ -6,7 +6,6 @@ import { Medications } from './Medications.js';
 import { Staff } from './Staff.js';
 import { Position } from './Position.js';
 import { Responsible_box } from './Responsible_box.js';
-import { Meeting_rooms } from './Meeting_rooms.js';
 import { Rooms } from './Rooms.js';
 import { Users } from './Users.js';
 import { Appointments } from './Appointments.js';
@@ -44,6 +43,6 @@ Users.hasMany(Appointments, { foreignKey: 'user_id' });
 Staff.hasMany(Appointments, { foreignKey: 'staff_id' });
 Animals.hasMany(Appointments, { foreignKey: 'animal_id' });
 
-Rooms.belongsToMany(Appointments,{through:Meeting_rooms,foreignKey:'room_id'});
-Appointments.belongsToMany(Rooms,{through:Meeting_rooms,foreignKey:'appointment_id'});
+Rooms.hasMany(Appointments,{foreignKey:'room_id'});
+Appointments.belongsTo(Rooms, { foreignKey: "room_id" });
 

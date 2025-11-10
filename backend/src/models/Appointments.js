@@ -31,7 +31,23 @@ export const Appointments = sequelize.define('Appointments', {
             key: 'id'
         },
         allowNull: false
-    }
+    },
+    room_id:{
+        type:DataTypes.INTEGER,
+        references:{
+            model:'Rooms',
+            key:'id'
+        },
+        allowNull:false
+    },
+    date:{
+        type:DataTypes.DATE,
+        allowNull:false
+    },
+    hour:{
+        type:DataTypes.TIME,
+        allowNull:false
+    }    
 },{
     tableName:'Appointments'
 });

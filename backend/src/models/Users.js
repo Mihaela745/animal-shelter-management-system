@@ -28,10 +28,6 @@ export const Users = sequelize.define('Users', {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  registeredAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
   role: { 
     type: DataTypes.ENUM('user', 'admin'),
     defaultValue: 'user',

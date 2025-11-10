@@ -1,9 +1,9 @@
-import { Box, Boxes } from "../models/Boxes.js";
+import {Boxes } from "../models/Boxes.js";
 import { Staff } from "../models/Staff.js";
 import { Responsible_box } from "../models/Responsible_box.js";
 
 export const controller = {
-  createResponsableBox: async (req, res) => {
+  createResponsibleBox: async (req, res) => {
     try {
       const { box_id, resposible_id } = req.body;
       if (!box_id || !resposible_id) {
@@ -19,7 +19,7 @@ export const controller = {
       return res.status(500).send(`Error while creating:${err}`);
     }
   },
-  getAllResponsables: async (req, res) => {
+  getAllResponsibles: async (req, res) => {
     try {
       const response = await Responsible_box.findAll();
       if (response.length === 0)
@@ -30,7 +30,7 @@ export const controller = {
       return res.status(500).send(`Error while fetching:${err}`);
     }
   },
-  getResponsablesByBoxId: async (req, res) => {
+  getResponsiblesByBoxId: async (req, res) => {
     try {
       const box_id = req.params.id;
       const box = await Boxes.findByPk({
@@ -74,9 +74,9 @@ export const controller = {
       return res.status(500).send(`Error while fetching:${err}`);
     }
   },
-  deleteBoxResponsable:async(req,res)=>{
+  deleteBoxResponsible:async(req,res)=>{
     try{
-        const deletedRows=await Rooms.destroy({
+        const deletedRows=await Responsible_box.destroy({
             where:{
                 id:req.params.id
             }

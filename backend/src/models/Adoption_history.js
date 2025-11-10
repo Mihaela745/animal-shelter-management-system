@@ -22,10 +22,6 @@ export  const Adoption_history=sequelize.define('Adoption_history',{
             key:'id'
         },
         allowNull:false
-    },
-    adoption_date:{
-        type:DataTypes.DATE,
-        allowNull:false
     }},
     {
         tableName:"Adoption_history"
