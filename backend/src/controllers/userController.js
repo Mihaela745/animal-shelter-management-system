@@ -1,32 +1,6 @@
 import { Users } from "../models/Users.js";
 
 export const controller = {
-  createUser: async (req, res) => {
-    try {
-      const {username, email, password, phonenumber, address, role} = req.body;
-      if (
-        !username ||
-        !email ||
-        !password ||
-        !phonenumber ||
-        !address ||
-        !role
-      ) {
-        return res.status(400).send(`Must complete all fields!`);
-      }
-      const user = await Users.create({
-        username,
-        email,
-        password,
-        phonenumber,
-        address,
-        role,
-      });
-      return res.status(201).send(user);
-    } catch (err) {
-      return res.status(500).send(`Error while creating user: ${err}`);
-    }
-  },
   getAllUsers: async (req, res) => {
     try {
       const users = await Users.findAll();

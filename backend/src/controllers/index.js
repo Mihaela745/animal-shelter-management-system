@@ -12,6 +12,7 @@ import { controller as adoptionController } from "./adoptionHistoryController.js
 import { controller as responsableController } from "./responsibleBoxController.js";
 import { controller as userController } from "./userController.js";
 import { controller as appointmentController } from "./appointmentsController.js";
+import {controller as authController} from "./authController.js";
 
 export const controllers = {
   other,
@@ -28,4 +29,5 @@ export const controllers = {
   responsableController,
   userController,
   appointmentController,
+  authController
 };

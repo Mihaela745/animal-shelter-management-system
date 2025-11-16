@@ -29,7 +29,7 @@ export const controller = {
     try {
       const animals = await Animals.findAll();
       if (animals.length === 0)
-        return res.status(400).send("No data found for animals!");
+        return res.status(404).send("No data found for animals!");
       else return res.status(200).send(animals);
     } catch (err) {
       return res.status(500).send(`Couldn't fetch animals: ${err}`);
