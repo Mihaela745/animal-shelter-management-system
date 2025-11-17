@@ -1,4 +1,6 @@
 import { Users } from "../models/Users.js";
+import { Appointments } from "../models/Appointments.js";
+import { Adoption_history } from "../models/Adoption_history.js";
 
 export const controller = {
   getAllUsers: async (req, res) => {
@@ -24,6 +26,8 @@ export const controller = {
   deleteUser: async (req, res) => {
     try {
       const user = req.params.id;
+      await Appointments.destroy({ where: { user_id: user } });
+      await Adoption_history.destroy({ where: { adopter_id: user } });
       const deletedUsers = await Users.destroy({ where: { id: user } });
       if (deletedUsers === 0)
         return res.status(404).send(`User not found to be deleted!`);

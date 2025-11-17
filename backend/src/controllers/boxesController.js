@@ -12,8 +12,8 @@ export const seedBoxes=async()=>{
     { box_number: "C-B01", capacity: 6, current_occupancy: 0, species_id: 2 },
     { box_number: "C-B02", capacity: 5, current_occupancy: 0, species_id: 2 },
     { box_number: "C-B03", capacity: 7, current_occupancy: 0, species_id: 2 },
-    { box_number: "C-B02", capacity: 3, current_occupancy: 0, species_id: 2 },
-    { box_number: "C-B03", capacity: 5, current_occupancy: 0, species_id: 2 },
+    { box_number: "C-B05", capacity: 3, current_occupancy: 0, species_id: 2 },
+    { box_number: "C-B06", capacity: 5, current_occupancy: 0, species_id: 2 },
 
     { box_number: "I-B01", capacity: 1, current_occupancy: 0, species_id: 1 },
     { box_number: "I-B02", capacity: 1, current_occupancy: 0, species_id: 2 },
