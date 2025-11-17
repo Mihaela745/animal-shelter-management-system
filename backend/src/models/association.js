@@ -81,3 +81,6 @@ Animals.hasMany(Appointments, { foreignKey: "animal_id", onDelete: "CASCADE" });
 
 Rooms.hasMany(Appointments, { foreignKey: "room_id", onDelete: "CASCADE" });
 Appointments.belongsTo(Rooms, { foreignKey: "room_id", onDelete: "CASCADE" });
+
+Boxes.belongsTo(Species, { foreignKey: "species_id", onDelete: "CASCADE" });
+Species.hasMany(Boxes, { foreignKey: "species_id", onDelete: "CASCADE" });

@@ -9,7 +9,7 @@ import { controller as staffController } from "./staffController.js";
 import { controller as other } from "./other.js";
 import { controller as animalController } from "./animalsController.js";
 import { controller as adoptionController } from "./adoptionHistoryController.js";
-import { controller as responsableController } from "./responsibleBoxController.js";
+import { controller as responsibleController } from "./responsibleBoxController.js";
 import { controller as userController } from "./userController.js";
 import { controller as appointmentController } from "./appointmentsController.js";
 import {controller as authController} from "./authController.js";
@@ -26,7 +26,7 @@ export const controllers = {
   staffController,
   animalController,
   adoptionController,
-  responsableController,
+  responsibleController,
   userController,
   appointmentController,
   authController

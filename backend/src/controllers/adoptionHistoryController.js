@@ -2,13 +2,18 @@ import { Adoption_history } from "../models/Adoption_history.js";
 
 export const controller = {
   createAdoption: async (req, res) => {
-    const { animal_id, adopter_id } = req.body;
-    if (!animal_id || !adopter_id)
-      return res.status(400).send(`Must complete al parameters`);
-    const adoption = await Adoption_history.create({
-      animal_id,
-      adopter_id,
-    });
+    try {
+      const { animal_id, adopter_id } = req.body;
+      if (!animal_id || !adopter_id)
+        return res.status(400).send(`Must complete al parameters`);
+      const adoption = await Adoption_history.create({
+        animal_id,
+        adopter_id,
+      });
+      return res.status(201).send(adoption);
+    } catch (err) {
+      return res.status(500).send(`Couldn't create adoption: ${err}`);
+    }
   },
   getAdoptionHistoryByUserId: async (req, res) => {
     try {
@@ -20,7 +25,7 @@ export const controller = {
       }
       return res.status(200).send(adoptions);
     } catch (err) {
-      return res.status(500).send();
+      return res.status(500).send(`Couldn't fetch adoptions: ${err}`);
     }
   },
   getAdoptionById: async (req, res) => {
@@ -40,7 +45,7 @@ export const controller = {
         where: { id: adoptionId },
       });
       if (deletedAdoption === 0)
-        return res.status(404).json({ message: "Adoption record not found." })
+        return res.status(404).send(`Error while deleting`);
       return res.status(200).send(`Adoption has been deleted!`);
     } catch (err) {
       return res.status(500).send(`Error at deletion: ${err}`);

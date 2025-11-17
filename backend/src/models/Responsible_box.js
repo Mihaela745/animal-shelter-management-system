@@ -24,5 +24,5 @@ export const Responsible_box=sequelize.define('Resposible_box',{
             key:'id'
         }}
 },{
-    tableName:'Responisible_boxes'
+    tableName:'Responsible_boxes'
 });

@@ -6,17 +6,17 @@ export const controller = {
     try {
       const { weight } = req.body;
       if (!weight) {
-        return res.status(400).json({ error: "All fields must be completed!" });
+        return res.status(400).send("All fields must be completed!");
       }
       const currentDate = new Date();
       const newFile = await Medical_files.create({
         weight,
         last_checkup_date: currentDate,
       });
-      return res.status(201).json(newFile);
+      return res.status(201).send(newFile);
     } catch (error) {
       console.log("error creating medical files");
-      return res.status(500).json({ error: "Failed to create medical file" });
+      return res.status(500).send(`"Failed to create medical file : ${error}`);
     }
   },
   getAllMedicalFiles: async (req, res) => {
@@ -24,12 +24,9 @@ export const controller = {
       const files = await Medical_files.findAll({
         attributes: ["id", "weight", "last_checkup_date"],
       });
-      return res.status(200).json(files);
+      return res.status(200).send(files);
     } catch (error) {
-      return res.status(500).json({
-        error: "Failed to feetch all medical_files.",
-        details: error.message,
-      });
+      return res.status(500).send(`"Failed to fetch medical files : ${error}`);
     }
   },
   getMedicalFilesbyId: async (req, res) => {
@@ -38,18 +35,12 @@ export const controller = {
         attributes: ["id", "weight", "last_checkup_date"],
       });
       if (!file) {
-        return res.status(404).json({
-          error: "Medical_file does not exist",
-          details: error.message,
-        });
+        return res.status(404).send(`Medical file doesn't exist`);
       }
-      return res.status(200).json(file);
+      return res.status(200).send(file);
     } catch (error) {
       console.log("Can not find the medical_file");
-      return res.status(500).json({
-        error: "Failed to fetch the medical_file",
-        details: error.message,
-      });
+      return res.status(500).send(`"Failed to fetch medical files : ${error}`);
     }
   },
   updateMedicalFile: async (req, res) => {
@@ -60,17 +51,14 @@ export const controller = {
         where: { id: req.params.id },
       });
       if (updatedRows === 0) {
-        return res.status(404).json({ error: "there were no changes applied" });
+        return res.status(404).send(`Medical file doesn't exist`);
       }
       const updatedFile = await Medical_files.findByPk(fileId, {});
-      return res.status(200).json({
-        message: "Medical_file updated succesfully",
-        Medical_file: updatedFile,
-      });
+      return res.status(200).send(updatedFile)
     } catch (error) {
       console.log("Failed to modify medical_file!");
 
-      return res.status(500).json({ error: "Failed to modify medical_file!" });
+      return res.status(500).send(`"Failed to update medical files : ${error}`);
     }
   },
   deleteMedicalFile: async (req, res) => {
@@ -81,19 +69,14 @@ export const controller = {
         },
       });
       if (deletedRows === 0) {
-        return res
-          .status(404)
-          .json({ message: "Medical_file has not been found" });
+        return res.status(404).send(`Medical file doesn't exist`);
       }
       return res
         .status(200)
-        .json({ message: "Medical_file has been deleted!" });
+        .send(`Medical file has been deleted!`);
     } catch (error) {
       console.error("Error deleting file", error);
-      return res.status(500).json({
-        error: "Failed to delete file",
-        details: error.message,
-      });
+      return res.status(500).send(`"Failed to delete medical files : ${error}`);
     }
   },
 };

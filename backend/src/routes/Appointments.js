@@ -5,6 +5,6 @@ const appointmentController = controllers.appointmentController;
 
 router.post("/createAppointment",appointmentController.createAppointment);
 router.get("/getAllAppointments",appointmentController.getAllAppointments);
-router.get("/getAppointmentsByStaffId/:id",appointmentController.getAllAppointments);
+router.get("/getAppointmentsByStaffId/:id",appointmentController.getAppointmentByStaffId);
 router.put("/updateAppointment/:id",appointmentController.updateAppointment);
-router.param("/deleteAppointmnet",appointmentController.deleteAppointment);
+router.delete("/deleteAppointment/:id",appointmentController.deleteAppointment);

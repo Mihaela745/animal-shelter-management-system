@@ -5,15 +5,15 @@ import { Responsible_box } from "../models/Responsible_box.js";
 export const controller = {
   createResponsibleBox: async (req, res) => {
     try {
-      const { box_id, resposible_id } = req.body;
-      if (!box_id || !resposible_id) {
+      const { box_id, responsible_id } = req.body;
+      if (!box_id || !responsible_id) {
         return res.status(400).send("Must complete all parameters!");
       }
       const resp_box = await Responsible_box.create({
         box_id,
-        resposible_id,
+        responsible_id,
       });
-      return res.status(201).send(`Created box_resp: ${resp_box}`);
+      return res.status(201).send(resp_box);
     } catch (err) {
       console.log("Error while creating!");
       return res.status(500).send(`Error while creating:${err}`);
@@ -33,11 +33,7 @@ export const controller = {
   getResponsiblesByBoxId: async (req, res) => {
     try {
       const box_id = req.params.id;
-      const box = await Boxes.findByPk({
-        where: {
-          id: box_id,
-        },
-      });
+      const box = await Boxes.findByPk(box_id);
       if (!box) return res.status(404).send("Box doesn't exist!");
       const response = await Responsible_box.findAll({
         where: {
@@ -48,22 +44,18 @@ export const controller = {
         return res.status(404).send("No data found, for responsible staff");
       return res.status(200).send(response);
     } catch (err) {
-      onsole.log("Error while fetching!");
+      console.log("Error while fetching!");
       return res.status(500).send(`Error while fetching:${err}`);
     }
   },
   getBoxesByStaffId: async (req, res) => {
     try {
       const res_id = req.params.id;
-      const responsable = await Staff.findByPk({
-        where: {
-          id: res_id,
-        },
-      });
+      const responsable = await Staff.findByPk(res_id);
       if (!responsable) return res.status(404).send("Box doesn't exist!");
       const response = await Responsible_box.findAll({
         where: {
-          responsable_id: box_id,
+          responsible_id: res_id,
         },
       });
       if (response.length === 0)

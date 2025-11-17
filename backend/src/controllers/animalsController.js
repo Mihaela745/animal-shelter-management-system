@@ -55,7 +55,7 @@ export const controller = {
         },
       });
       if (updatedRows === 0) return res.status(400).send(`No rows updated!`);
-      const updatedAnimal = await Animals.findByPk({ where: { id: animalId } });
+      const updatedAnimal = await Animals.findByPk(animalId);
       return res.status(200).send(updatedAnimal);
     } catch (err) {
       return res.status(500).send(`Could'n change no data: ${err}`);

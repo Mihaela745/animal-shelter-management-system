@@ -2,17 +2,32 @@ import express from "express";
 import { router as otherRouter } from "./other.js";
 import { router as adoptionHistoryRouter } from "./Adoption_history.js";
 import { router as animalsRouter } from "./Animals.js";
-import {router as breedRouter} from "./Breed.js"
-import {router as speciesRouter} from "./Species.js"
-import {router as authRouter} from "./auth.js"
-import {router as appointmentRouter} from "./Appointments.js"
+import { router as breedRouter } from "./Breed.js";
+import { router as speciesRouter } from "./Species.js";
+import { router as authRouter } from "./auth.js";
+import { router as appointmentRouter } from "./Appointments.js";
+import { router as medicalFileRouter } from "./Medical_Files.js";
+import { router as medicationsRouter } from "./Medications.js";
+import { router as positionsRouter } from "./Positions.js";
+import { router as responsibleRouter } from "./Responsible_boxes.js";
+import { router as roomRouter } from "./Rooms.js";
+import { router as staffRouter } from "./Staff.js";
+import { router as usersRouter } from "./Users.js";
+import {router as boxesRouter} from "./Boxes.js"
 export const router = express.Router();
 
 router.use("/", otherRouter);
 router.use("/", adoptionHistoryRouter);
 router.use("/", animalsRouter);
-router.use("/",speciesRouter);
-router.use("/",breedRouter);
-router.use("/",authRouter);
-router.use("/",appointmentRouter);
-
+router.use("/", speciesRouter);
+router.use("/", breedRouter);
+router.use("/", authRouter);
+router.use("/", appointmentRouter);
+router.use("/", medicalFileRouter);
+router.use("/", medicationsRouter);
+router.use("/", responsibleRouter);
+router.use("/", positionsRouter);
+router.use("/", roomRouter);
+router.use("/", staffRouter);
+router.use("/", usersRouter);
+router.use("/",boxesRouter);

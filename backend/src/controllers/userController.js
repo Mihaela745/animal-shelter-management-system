@@ -21,22 +21,6 @@ export const controller = {
       return res.status(500).send(`Couldn't fetch user: ${err}`);
     }
   },
-  updateUser: async (req, res) => {
-    try {
-      const userId = req.params.id;
-      const updateData = req.body;
-      const [updatedRows] = await Users.update(updateData, {
-        where: {
-          id: userId,
-        },
-      });
-      if (updatedRows === 0) return res.status(400).send(`No rows updated!`);
-      const updatedUser = await Users.findByPk({ where: { id: userId } });
-      return res.status(200).send(updatedUser);
-    } catch (err) {
-      return res.status(500).send(`Could'n change no data: ${err}`);
-    }
-  },
   deleteUser: async (req, res) => {
     try {
       const user = req.params.id;

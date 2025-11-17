@@ -20,6 +20,10 @@ export const Boxes=sequelize.define('Boxes',{
         type:DataTypes.INTEGER,
         allowNull:false,
         defaultValue:0
+    },
+    species_id:{
+        type:DataTypes.INTEGER,
+        allowNull:false,
     }
 },{
     tableName:'Boxes'

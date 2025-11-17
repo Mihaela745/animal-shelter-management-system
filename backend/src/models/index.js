@@ -7,14 +7,13 @@ import { Medications } from './Medications.js';
 import { Staff } from './Staff.js';
 import { Position } from './Position.js';
 import { Responsible_box } from './Responsible_box.js';
-import { Meeting_rooms } from './Meeting_rooms.js';
 import { Rooms } from './Rooms.js';
 import { Users } from './Users.js';
 import { Appointments } from './Appointments.js';
 import { Adoption_history } from './Adoption_history.js';
 import {association} from './association.js'
 
-module.exports = {
+export {
     sequelize,
     Animals,
     Species,
@@ -24,7 +23,6 @@ module.exports = {
     Staff,
     Position,
     Responsible_box,
-    Meeting_rooms,
     Users,
     Appointments,
     Rooms,
