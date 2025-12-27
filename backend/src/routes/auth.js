@@ -1,8 +1,15 @@
 import express from "express";
 import {controllers} from "../controllers/index.js"
-export const router=express.Router();
+import { verifyToken } from "../middleware/authMiddleware.js";
 const authController=controllers.authController;
 
-router.post("/auth/register",authController.addUser);
-router.put("/auth/updatePassword",authController.updatePassword);
-router.post("/auth/login",authController.loginUser);
+export const router = express.Router();
+router.post("/register", authController.addUser);
+
+router.post("/login", authController.loginUser);
+
+router.put("/update-password", verifyToken, authController.updatePassword);
+
+
+router.post("/forgot-password", authController.forgotPassword);
+router.post("/reset-password", authController.resetPassword);

@@ -1,29 +1,37 @@
 import {DataTypes} from 'sequelize';
 import {sequelize} from '../config/db.js';
 
-export  const Adoption_history=sequelize.define('Adoption_history',{
-    id:{
-        type:DataTypes.INTEGER,
-        primaryKey:true,
-        autoIncrement:true
+export  const Adoption_history = sequelize.define(
+  "Adoption_history",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    animal_id:{
-        type:DataTypes.INTEGER,
-        references:{
-            model:'Animals',
-            key:'id'
-        },
-        allowNull:false
+    animal_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Animals",
+        key: "id",
+      },
+      allowNull: false,
     },
-    adopter_id:{
-        type:DataTypes.INTEGER,
-        references:{
-            model:'Users',
-            key:'id'
-        },
-        allowNull:false
-    }},
-    {
-        tableName:"Adoption_history"
-    }
-)
+    adopter_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+      allowNull: false,
+    },
+    adoption_date: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
+    timestamps: false,
+    tableName: "Adoption_history",
+  }
+);

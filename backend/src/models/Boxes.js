@@ -26,5 +26,6 @@ export const Boxes=sequelize.define('Boxes',{
         allowNull:false,
     }
 },{
+    timestamps:false,
     tableName:'Boxes'
 })

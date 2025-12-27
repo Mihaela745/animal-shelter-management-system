@@ -1,6 +1,22 @@
 import { Users } from "../models/Users.js";
 import { Appointments } from "../models/Appointments.js";
 import { Adoption_history } from "../models/Adoption_history.js";
+import bcrypt from "bcrypt"
+
+export const seedManager=async()=>{
+  const existingManager=await Users.findOne({where:{role:"Manager"}});
+ if (!existingManager) {
+   const hashedPassword = await bcrypt.hash("Admin123!", 10); 
+   await Users.create({
+     username: "Manager_Shelter",
+     email: "mihaelaneacsu745@gmail.com",
+     password: hashedPassword,
+     phonenumber: "0700000000",
+     role: "Manager",
+   });
+   console.log("Manager seeded successfully!");
+ }
+}
 
 export const controller = {
   getAllUsers: async (req, res) => {

@@ -1,19 +1,24 @@
 import {DataTypes} from 'sequelize';
 import {sequelize} from '../config/db.js';
-export const Position=sequelize.define('Position',{
-    id:{
-        type:DataTypes.INTEGER,
-        primaryKey:true,
-        autoIncrement:true
+export const Position = sequelize.define(
+  "Position",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    title:{
-        type:DataTypes.STRING,
-        allowNull:false
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    description:{
-        type:DataTypes.TEXT,
-        allowNull:true
-    }
-},{
-    tableName:'Positions'
-})
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+  },
+  {
+    timestamps: false,
+    tableName: "Positions",
+  }
+);

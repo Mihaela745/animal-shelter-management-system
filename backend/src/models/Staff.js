@@ -1,30 +1,42 @@
-import {DataTypes} from 'sequelize';
-import {sequelize} from '../config/db.js';
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/db.js";
 
-export const Staff=sequelize.define('Staff',{
-    id:{
-        type:DataTypes.INTEGER,
-        primaryKey:true,
-        autoIncrement:true
+export const Staff = sequelize.define(
+  "Staff",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    name:{
-        type:DataTypes.STRING,
-        allowNull:false
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    email:{
-        type:DataTypes.STRING,
-        allowNull:false,
-        unique:true
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
     },
-    position_id:{
-        type:DataTypes.INTEGER,
-        references:{
-            model:'Positions',
-            key:'id'
-        }
+    position_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Positions",
+        key: "id",
+      },
     },
-    phonenumber:{
-        type:DataTypes.STRING,
-        allowNull:true
-    }
-},{tableName:'Staff'});
+    phonenumber: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+    },
+  },
+  { timestamps: false, tableName: "Staff" }
+);

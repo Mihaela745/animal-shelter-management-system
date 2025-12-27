@@ -1,52 +1,57 @@
 import {DataTypes} from 'sequelize';
 import {sequelize} from '../config/db.js';
 
-export const Medications=sequelize.define('Medications',{
-        id:{
-            type:DataTypes.INTEGER,
-            primaryKey:true,
-            autoIncrement:true
-        },
-        name:{
-            type:DataTypes.STRING,
-            allowNull:false
-        },
-        description:{
-            type:DataTypes.TEXT,
-            allowNull:true
-        },
-        dosage:{
-            type:DataTypes.STRING,
-            allowNull:false
-        },
-        frequency:{
-            type:DataTypes.STRING,
-            allowNull:false
-        },
-        start_date:{
-            type:DataTypes.DATE,
-            allowNull:false
-        },
-        end_date:{
-            type:DataTypes.DATE,
-            allowNull:true
-        },
-        prescribing_vet:{
-            type:DataTypes.INTEGER,
-            references:{
-                model:'Staff',
-                key:'id'
-            },
-            allowNull:false
-        },
-        medical_file_id:{
-            type:DataTypes.INTEGER,
-            references:{
-                model:'Medical_Files',
-                key:'id'
-            },
-            allowNull:false
-        }
-    },{
-        tableName:'Medications'
-    });
+export const Medications = sequelize.define(
+  "Medications",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    dosage: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    frequency: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    start_date: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    end_date: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    prescribing_vet: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Staff",
+        key: "id",
+      },
+      allowNull: false,
+    },
+    medical_file_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: "Medical_Files",
+        key: "id",
+      },
+      allowNull: false,
+    },
+  },
+  {
+    timestamps: false,
+    tableName: "Medications",
+  }
+);

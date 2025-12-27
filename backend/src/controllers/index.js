@@ -13,6 +13,8 @@ import { controller as responsibleController } from "./responsibleBoxController.
 import { controller as userController } from "./userController.js";
 import { controller as appointmentController } from "./appointmentsController.js";
 import {controller as authController} from "./authController.js";
+import { controller as requestsController } from "./AdoptionRequest.js";
+
 
 export const controllers = {
   other,
@@ -29,5 +31,6 @@ export const controllers = {
   responsibleController,
   userController,
   appointmentController,
-  authController
+  authController,
+  requestsController
 };
