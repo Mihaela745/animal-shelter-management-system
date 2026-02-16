@@ -7,7 +7,7 @@ const staffController = controllers.staffController;
 
 router.post("/createStaff", staffController.createStaff);
 
-router.get("/getAllStaff", staffController.getAllStaf);
+router.get("/getAllStaff", staffController.getAllStaff);
 
 router.get("/getStaffById/:id", staffController.getStaffById);
 

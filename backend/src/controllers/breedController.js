@@ -10,7 +10,7 @@ export const controller={ getBreedsBySpecies:async(req,res)=>{
     const species=req.params.id;
     if(!species)
     {
-        return res.status(400).send('Species parameter is required (e.g., ?species=Dog or ?species=Cat).');
+        return res.status(400).send(`Species parameter is required (e.g., ?species=Dog or ?species=Cat).`);
     }
 
     let apiURL;
@@ -25,13 +25,13 @@ export const controller={ getBreedsBySpecies:async(req,res)=>{
         apiURL=DOG_API_URL;
         apiKey=DOG_API_KEY;
     }else{
-        return res.status(404).send('Breed list is not available for species:${species}');
+        return res.status(404).send(`Breed list is not available for species:${species}`);
     }
 
     try{
         if(!apiURL ||!apiKey)
         {
-            return res.status(500).send('API URL or Key for ${species} is not configured correctly.');
+            return res.status(500).send(`API URL or Key for ${species} is not configured correctly.`);
         }
 
         const headers={'x-api-key':apiKey};

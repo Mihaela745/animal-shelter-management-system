@@ -1,4 +1,4 @@
-import {Boxes } from "../models/Boxes.js";
+import { Boxes } from "../models/Boxes.js";
 import { Staff } from "../models/Staff.js";
 import { Responsible_box } from "../models/Responsible_box.js";
 
@@ -9,6 +9,26 @@ export const controller = {
       if (!box_id || !responsible_id) {
         return res.status(400).send("Must complete all parameters!");
       }
+      const box = await Boxes.findByPk(box_id);
+      if (!box) {
+        return res.status(404).send("Box doesn't exist!");
+      }
+
+      const staff = await Staff.findByPk(responsible_id);
+      if (!staff) {
+        return res.status(404).send("Staff doesn't exist!");
+      }
+
+      const existingRelation = await Responsible_box.findOne({
+        where: { box_id, responsible_id },
+      });
+
+      if (existingRelation) {
+        return res
+          .status(409)
+          .send("This staff member is already responsible for this box.");
+      }
+
       const resp_box = await Responsible_box.create({
         box_id,
         responsible_id,
@@ -66,22 +86,19 @@ export const controller = {
       return res.status(500).send(`Error while fetching:${err}`);
     }
   },
-  deleteBoxResponsible:async(req,res)=>{
-    try{
-        const deletedRows=await Responsible_box.destroy({
-            where:{
-                id:req.params.id
-            }
-        })
-        if(deletedRows===0)
-            return res.status(404).send("Doesn't exist!")
-        return res.status(200).send("Box_resp has been deleted!")
+  deleteBoxResponsible: async (req, res) => {
+    try {
+      const deletedRows = await Responsible_box.destroy({
+        where: {
+          id: req.params.id,
+        },
+      });
+      if (deletedRows === 0) return res.status(404).send("Doesn't exist!");
+      return res.status(200).send("Box_resp has been deleted!");
+    } catch (err) {
+      console.log("Error while deleting");
+      return res.status(500).send(`Error while deleting: ${err}`);
     }
-    catch(err)
-    {
-        console.log('Error while deleting');
-        return res.status(500).send(`Error while deleting: ${err}`)
-    }
-},
-//nu are rost de update 
+  },
+  //nu are rost de update
 };

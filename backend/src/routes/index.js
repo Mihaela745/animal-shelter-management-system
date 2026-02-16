@@ -18,12 +18,13 @@ import {router as requestRouter} from "./Adoption_request.js"
 export const router = express.Router();
 
 router.use("/", otherRouter);
-router.use("/", adoptionHistoryRouter);
-router.use("/", animalsRouter);
+router.use("/adoptions", adoptionHistoryRouter);
+router.use("/animals", animalsRouter);
+router.use("/adoption-requests",requestRouter);
+router.use("/appointments", appointmentRouter);
 router.use("/", speciesRouter);
 router.use("/", breedRouter);
-router.use("/", authRouter);
-router.use("/", appointmentRouter);
+router.use("/auth", authRouter);
 router.use("/", medicalFileRouter);
 router.use("/", medicationsRouter);
 router.use("/", responsibleRouter);
@@ -32,4 +33,3 @@ router.use("/", roomRouter);
 router.use("/", staffRouter);
 router.use("/", usersRouter);
 router.use("/",boxesRouter);
-router.use("/",requestRouter);

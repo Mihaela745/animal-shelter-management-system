@@ -1,6 +1,6 @@
 import { Staff } from "../models/Staff.js";
-import bcrypt from "bcrypt"
-import crypto from "crypto"
+import bcrypt from "bcrypt";
+import crypto from "crypto";
 import { transporter } from "../config/mail.js";
 import { Position } from "../models/Position.js";
 import { sequelize } from "../config/db.js";
@@ -13,7 +13,6 @@ export const controller = {
       const { name, email, position_id, phonenumber } = req.body;
 
       if (!name || !email || !position_id || !phonenumber) {
-        // Dacă returnăm aici, tranzacția trebuie închisă
         await t.rollback();
         return res.status(400).send(`All fields must be completed`);
       }
@@ -43,7 +42,7 @@ export const controller = {
           phonenumber: phonenumber,
           role: positionExists.title,
         },
-        { transaction: t }
+        { transaction: t },
       );
 
       const newStaff = await Staff.create(
@@ -54,14 +53,11 @@ export const controller = {
           phonenumber: phonenumber,
           user_id: newUser.id,
         },
-        { transaction: t }
+        { transaction: t },
       );
 
-      // Aici salvăm definitiv în baza de date
       await t.commit();
 
-      // Trimitem email-ul DUPĂ commit.
-      // Dacă email-ul eșuează, datele rămân în baza de date, dar primim eroare.
       try {
         await transporter.sendMail({
           to: email,
@@ -76,13 +72,12 @@ export const controller = {
       } catch (mailError) {
         console.error(
           "Email failed to send, but staff was created:",
-          mailError
+          mailError,
         );
-        // Putem returna 201 oricum, specificând că mail-ul a eșuat
         return res.status(201).json({
           message: "Staff created, but welcome email could not be sent.",
           staff: newStaff,
-          temporaryPassword: tempPassword, // O returnăm aici ca backup
+          temporaryPassword: tempPassword,
         });
       }
 
@@ -91,7 +86,6 @@ export const controller = {
         staff: newStaff,
       });
     } catch (error) {
-      // VERIFICARE CRITICĂ: Facem rollback doar dacă tranzacția nu a apucat să dea commit
       if (t && !t.finished) {
         await t.rollback();
       }
@@ -101,7 +95,7 @@ export const controller = {
         .send(`Failed while creating staff: ${error.message}`);
     }
   },
-  getAllStaf: async (req, res) => {
+  getAllStaff: async (req, res) => {
     try {
       const staffMembers = await Staff.findAll();
       return res.status(200).send(staffMembers);
@@ -120,47 +114,69 @@ export const controller = {
     }
   },
   updateStaff: async (req, res) => {
+    const t = await sequelize.transaction();
     try {
       const staffId = req.params.id;
       const updateData = req.body;
 
+      const staff = await Staff.findByPk(staffId);
+      if (!staff) {
+        await t.rollback();
+        return res.status(404).send("Staff not found!");
+      }
       if (updateData.position_id) {
-        const positionExists = await Position.findByPk(updateData.position_id);
-        if (!positionExists) {
-          return res
-            .status(404)
-            .send("Position not found or no changes applied.");
+        const position = await Position.findByPk(updateData.position_id);
+        if (!position) {
+          await t.rollback();
+          return res.status(404).send("Position not found!");
         }
+        await Users.update(
+          { role: position.title },
+          { where: { id: staff.user_id }, transaction: t },
+        );
       }
-      const [updatedRows] = await Staff.update(updateData, {
-        where: { id: req.params.id },
-      });
-      if (updatedRows === 0) {
-        return res
-          .status(404)
-          .send("Position not found or no changes applied.");
-      }
-      const updatedStaff = await Staff.findByPk(staffId);
 
+      await Staff.update(updateData, {
+        where: { id: staffId },
+        transaction: t,
+      });
+
+      await t.commit();
+
+      const updatedStaff = await Staff.findByPk(staffId);
       return res.status(200).send(updatedStaff);
     } catch (error) {
-      console.log("Failed to modify staff member!");
-      return res.status(500).send(`Couldn't update staff:${error}`);
+      if (t) await t.rollback();
+      return res.status(500).send(`Couldn't update staff: ${error.message}`);
     }
   },
+
   deleteStaff: async (req, res) => {
+    const t = await sequelize.transaction();
     try {
-      const deletedRows = await Staff.destroy({
-        where: {
-          id: req.params.id,
-        },
-      });
-      if (deletedRows === 0)
+      const staffId = req.params.id;
+
+      const staff = await Staff.findByPk(staffId);
+      if (!staff) {
+        await t.rollback();
         return res.status(404).send("Staff member not found.");
-      return res.status(200).send(`Deletion succesfull!`);
+      }
+
+      await Staff.destroy({
+        where: { id: staffId },
+        transaction: t,
+      });
+
+      await Users.destroy({
+        where: { id: staff.user_id },
+        transaction: t,
+      });
+
+      await t.commit();
+      return res.status(200).send("Staff and user deleted successfully!");
     } catch (error) {
-      console.error("Error deleting staff member:", error);
-      return res.status(500).send(`Couldn't delete staffMember:${error}`);
+      if (t) await t.rollback();
+      return res.status(500).send(`Couldn't delete staff: ${error.message}`);
     }
   },
 };

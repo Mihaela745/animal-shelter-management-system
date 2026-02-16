@@ -11,7 +11,7 @@ export const Medical_files = sequelize.define(
     },
     weight: {
       type: DataTypes.FLOAT,
-      allowNull: false,
+      allowNull: true,
     },
     last_checkup_date: {
       type: DataTypes.DATE,

@@ -1,23 +1,20 @@
 import express from "express";
-import bodyParser from "body-parser";
 import cors from "cors";
 import { router } from "./src/routes/index.js";
 
 const app = express();
+const port = 3000;
 
 app.use(cors());
 app.use(express.json());
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-const port = 3000;
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+app.get("/", (req, res) => {
+  res.send("Api is running...");
 });
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
+app.listen(port, () => {
+  console.log(`Server is running at http://localhost:${port}`);
 });

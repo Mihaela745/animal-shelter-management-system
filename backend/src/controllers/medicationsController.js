@@ -18,11 +18,9 @@ export const controller = {
       } = req.body;
       if (
         !name ||
-        !description ||
         !dosage ||
         !frequency ||
         !start_date ||
-        !end_date ||
         !prescribing_vet ||
         !medical_file_id
       ) {
@@ -61,10 +59,6 @@ export const controller = {
   getAllMedications: async (req, res) => {
     try {
       const medications = await Medications.findAll();
-      if (!medications)
-        return res
-          .status(400)
-          .send(`Couldn't fetch  medications`);
       return res.status(200).send(medications);
     } catch (error) {
       return res.status(500).send(`Failed to fetch medicationd : ${error}`);
@@ -74,11 +68,11 @@ export const controller = {
     try {
       const medication = await Medications.findByPk(req.params.id);
       if (!medication) {
-        return res.status(404).send("Medication doesnt exist" );
+        return res.status(404).send("Medication doesnt exist");
       }
       return res.status(200).send(medication);
     } catch (error) {
-      return res.status(500).send(`Failed to fetch medicationd : ${error}`);
+      return res.status(500).send(`Failed to fetch medications : ${error}`);
     }
   },
   deleteMedications: async (req, res) => {
@@ -96,8 +90,8 @@ export const controller = {
   },
   updateMedication: async (req, res) => {
     try {
-      const medicationId=req.params.id;
-      const updateData=req.body;
+      const medicationId = req.params.id;
+      const updateData = req.body;
       const [updatedRows] = await Medications.update(updateData, {
         where: { id: medicationId },
       });

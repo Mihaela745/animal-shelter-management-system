@@ -1,7 +1,7 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import crypto from "crypto"
+import crypto from "crypto";
 import { Users } from "../models/Users.js";
 import { transporter } from "../config/mail.js";
 import { ResetTokens } from "../models/ResetTokens.js";
@@ -10,8 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 export const controller = {
   addUser: async (req, res) => {
     try {
-      const { username, email, password, phonenumber, address} =
-        req.body;
+      const { username, email, password, phonenumber, address } = req.body;
 
       if (!username || !email || !password)
         return res.status(400).send("Campuri obligatorii lipsa");
@@ -54,7 +53,7 @@ export const controller = {
         return res.status(400).send("Email si parola obligatorii");
 
       const user = await Users.findOne({ where: { email } });
-      if (!user) return res.status(404).send("Utilizator inexistent");
+      if (!user) return res.status(401).send("Email sau parola incorecte");
 
       const valid = await bcrypt.compare(password, user.password);
       if (!valid) return res.status(401).send("Parola gresita");
@@ -62,7 +61,7 @@ export const controller = {
       const token = jwt.sign(
         { id: user.id, email: user.email, role: user.role },
         JWT_SECRET,
-        { expiresIn: "2h" }
+        { expiresIn: "2h" },
       );
 
       return res.status(200).json({ user, token });
@@ -109,7 +108,7 @@ export const controller = {
 
       await ResetTokens.update(
         { used: true },
-        { where: { userId: user.id, used: false } }
+        { where: { userId: user.id, used: false } },
       );
 
       await ResetTokens.create({

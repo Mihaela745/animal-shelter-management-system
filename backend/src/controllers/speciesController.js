@@ -6,7 +6,7 @@ export const seedSpecies=async()=>{
      speciesData.map((data) =>
        Species.findOrCreate({
          where: { name: data.name },
-         default: data,
+         defaults: data,
        })
      )
    );

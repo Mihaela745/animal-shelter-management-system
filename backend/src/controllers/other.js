@@ -2,7 +2,7 @@ import { sequelize } from "../config/db.js";
 import { seedSpecies } from "./speciesController.js";
 import { seedPositions } from "./positionsController.js";
 import { seedBoxes } from "./boxesController.js";
-import { roomSeed as seedRoom} from "./roomsController.js";
+import { roomSeed as seedRoom } from "./roomsController.js";
 import { seedManager } from "./userController.js";
 export const controller = {
   resetDb: async (req, res) => {
@@ -10,7 +10,7 @@ export const controller = {
       await sequelize.query("SET FOREIGN_KEY_CHECKS=0", { raw: true });
       await sequelize.sync({ force: true });
       await seedPositions();
-      await seedSpecies(); 
+      await seedSpecies();
       await seedBoxes();
       await seedRoom();
       await seedManager();

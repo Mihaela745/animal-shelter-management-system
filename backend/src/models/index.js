@@ -113,6 +113,15 @@ Users.hasMany(Adoption_requests, {
   foreignKey: "user_id",
   onDelete: "CASCADE",
 });
+Adoption_history.belongsTo(Animals, {
+  foreignKey: "animal_id",
+  onDelete: "CASCADE",
+});
+
+Adoption_history.belongsTo(Users, {
+  foreignKey: "adopter_id",
+  onDelete: "CASCADE",
+});
 Staff.belongsTo(Users, { foreignKey: "user_id" });
 Users.hasOne(Staff, { foreignKey: "user_id" });
 export {
