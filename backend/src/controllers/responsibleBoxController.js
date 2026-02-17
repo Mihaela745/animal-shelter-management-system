@@ -1,6 +1,4 @@
-import { Boxes } from "../models/Boxes.js";
-import { Staff } from "../models/Staff.js";
-import { Responsible_box } from "../models/Responsible_box.js";
+import { Boxes,Staff,Responsible_box,Position} from "../models/index.js";
 
 export const controller = {
   createResponsibleBox: async (req, res) => {
@@ -14,11 +12,17 @@ export const controller = {
         return res.status(404).send("Box doesn't exist!");
       }
 
-      const staff = await Staff.findByPk(responsible_id);
+      const staff = await Staff.findByPk(responsible_id, {
+        include: [{ model: Position }],
+      });
       if (!staff) {
         return res.status(404).send("Staff doesn't exist!");
       }
-
+      if (staff.Position.title !== "Caretaker") {
+        return res
+          .status(400)
+          .send("Only Caretakers can be responsible for boxes!");
+      }
       const existingRelation = await Responsible_box.findOne({
         where: { box_id, responsible_id },
       });
@@ -41,9 +45,18 @@ export const controller = {
   },
   getAllResponsibles: async (req, res) => {
     try {
-      const response = await Responsible_box.findAll();
-      if (response.length === 0)
-        return res.status(404).send("No data found, for responsible staff");
+      const response = await Responsible_box.findAll({
+        include: [
+          {
+            model: Boxes,
+            attributes: ["id", "box_number"],
+          },
+          {
+            model: Staff,
+            attributes: ["id", "name"],
+          },
+        ],
+      });
       return res.status(200).send(response);
     } catch (err) {
       console.log("Error while fetching!");
@@ -53,33 +66,42 @@ export const controller = {
   getResponsiblesByBoxId: async (req, res) => {
     try {
       const box_id = req.params.id;
+
       const box = await Boxes.findByPk(box_id);
-      if (!box) return res.status(404).send("Box doesn't exist!");
+      if (!box) {
+        return res.status(404).send("Box doesn't exist!");
+      }
+
       const response = await Responsible_box.findAll({
-        where: {
-          box_id: box_id,
-        },
+        where: { box_id },
+        include: [
+          {
+            model: Staff,
+            attributes: ["id", "name"],
+          },
+        ],
       });
-      if (response.length === 0)
-        return res.status(404).send("No data found, for responsible staff");
-      return res.status(200).send(response);
+
+      return res.status(200).json(response);
     } catch (err) {
-      console.log("Error while fetching!");
-      return res.status(500).send(`Error while fetching:${err}`);
+      return res.status(500).send(err.message);
     }
   },
+
   getBoxesByStaffId: async (req, res) => {
     try {
       const res_id = req.params.id;
       const responsable = await Staff.findByPk(res_id);
-      if (!responsable) return res.status(404).send("Box doesn't exist!");
+      if (!responsable) return res.status(404).send("Staff doesn't exist!");
       const response = await Responsible_box.findAll({
-        where: {
-          responsible_id: res_id,
-        },
+        where: { responsible_id: res_id },
+        include: [
+          {
+            model: Boxes,
+            attributes: ["id", "box_number"],
+          },
+        ],
       });
-      if (response.length === 0)
-        return res.status(404).send("No data found, for responsible staff");
       return res.status(200).send(response);
     } catch (err) {
       console.log("Error while fetching!");
@@ -100,5 +122,4 @@ export const controller = {
       return res.status(500).send(`Error while deleting: ${err}`);
     }
   },
-  //nu are rost de update
 };

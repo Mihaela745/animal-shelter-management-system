@@ -1,43 +1,29 @@
-import { Medications } from "../models/Medications.js";
-import { Medical_files } from "../models/Medical_files.js";
-import { Staff } from "../models/Staff.js";
-import { Position } from "../models/Position.js";
-
+import { Medications, Medical_files, Staff } from "../models/index.js";
+import { Op } from "sequelize";
 export const controller = {
   createMedications: async (req, res) => {
     try {
-      const {
-        name,
-        description,
-        dosage,
-        frequency,
-        start_date,
-        end_date,
-        prescribing_vet,
-        medical_file_id,
-      } = req.body;
-      if (
-        !name ||
-        !dosage ||
-        !frequency ||
-        !start_date ||
-        !prescribing_vet ||
-        !medical_file_id
-      ) {
+      const medical_file_id = req.params.id;
+      const { name, description, dosage, frequency, start_date, end_date } =
+        req.body;
+      if (!name || !dosage || !frequency || !start_date) {
         return res.status(400).send(`All fields must be completed`);
+      }
+      if (end_date && new Date(end_date) < new Date(start_date)) {
+        return res.status(400).send("End date cannot be before start date!");
       }
       const medicalFileExists = await Medical_files.findByPk(medical_file_id);
       if (!medicalFileExists) {
         return res.status(400).send(` Medical file doesn't exist!`);
       }
-      const vet = await Staff.findByPk(prescribing_vet);
-      if (!vet) {
-        return res.status(400).send(`Staff doesn't exist!`);
-      }
-      const position_id = vet.position_id;
-      const position_details = await Position.findByPk(position_id);
-      if (position_details.title !== "Vet") {
-        return res.status(404).send(`Staff isn't a vet`);
+      const staffMember = await Staff.findOne({
+        where: { user_id: req.user.id },
+      });
+
+      if (!staffMember) {
+        return res
+          .status(403)
+          .send("Only staff members can prescribe medication!");
       }
 
       const newMedication = await Medications.create({
@@ -47,7 +33,7 @@ export const controller = {
         frequency,
         start_date,
         end_date,
-        prescribing_vet,
+        prescribing_vet:staffMember.id,
         medical_file_id,
       });
       return res.status(201).send(newMedication);
@@ -56,17 +42,52 @@ export const controller = {
       return res.status(500).send(`Failed while creating medication :${error}`);
     }
   },
-  getAllMedications: async (req, res) => {
+  getAllMedicationsByMedicalFile: async (req, res) => {
     try {
-      const medications = await Medications.findAll();
-      return res.status(200).send(medications);
+      const medicalFileId = req.params.id;
+      const medicalFile = await Medical_files.findByPk(medicalFileId);
+      if (!medicalFile)
+        return res.status(404).send("Medical file does not exist!");
+      const today = new Date();
+
+      const medications = await Medications.findAll({
+        where: {
+          medical_file_id: medicalFileId,
+          start_date: {
+            [Op.lte]: today,
+          },
+          [Op.or]: [
+            {
+              end_date: null,
+            },
+            {
+              end_date: { [Op.gte]: today },
+            },
+          ],
+        },
+        include: [
+          {
+            model: Staff,
+            attributes: ["id", "name"],
+          },
+        ],
+      });
+      return res.status(200).json(medications);
     } catch (error) {
-      return res.status(500).send(`Failed to fetch medicationd : ${error}`);
+      return res
+        .status(500)
+        .send(`Failed to fetch medicationd : ${error.message}`);
     }
   },
   getMedicationById: async (req, res) => {
     try {
-      const medication = await Medications.findByPk(req.params.id);
+      const { fileId, id } = req.params;
+      const medication = await Medications.findOne({
+        where: {
+          id: id,
+          medical_file_id: fileId,
+        },
+      });
       if (!medication) {
         return res.status(404).send("Medication doesnt exist");
       }
@@ -77,32 +98,42 @@ export const controller = {
   },
   deleteMedications: async (req, res) => {
     try {
-      const deletedRows = await Medications.destroy({
+      const { fileId,id } = req.params;
+
+      const deleted = await Medications.destroy({
         where: {
-          id: req.params.id,
+          id: id,
+          medical_file_id: fileId,
         },
       });
-      if (deletedRows === 0) return res.status(404).send("Doesn't exist!");
-      return res.status(200).send("Medication has been deleted!");
+
+      if (!deleted) {
+        return res.status(404).send("Medication does not exist!");
+      }
+
+      return res.status(200).send("Medication deleted successfully!");
     } catch (err) {
       return res.status(500).send(`Couldn't delete medication:${err}`);
     }
   },
   updateMedication: async (req, res) => {
     try {
-      const medicationId = req.params.id;
-      const updateData = req.body;
-      const [updatedRows] = await Medications.update(updateData, {
-        where: { id: medicationId },
+      const { fileId, id } = req.params;
+
+      const medication = await Medications.findOne({
+        where: {
+          id: id,
+          medical_file_id: fileId,
+        },
       });
 
-      if (updatedRows === 0) {
-        return res
-          .status(404)
-          .send("Medication not found or no changes applied.");
+      if (!medication) {
+        return res.status(404).send("Medication does not exist!");
       }
-      const updatedMedication = await Medications.findByPk(medicationId);
-      return res.status(200).send(updatedMedication);
+
+      await medication.update(req.body);
+
+      return res.status(200).json(medication);
     } catch (err) {
       return res.status(500).send(`Couldn't update medication:${err}`);
     }

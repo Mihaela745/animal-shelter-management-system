@@ -1,4 +1,4 @@
-import { Boxes } from "../models/Boxes.js";
+import { Boxes, Animals } from "../models/index.js";
 
 export const seedBoxes = async () => {
   const boxesData = [
@@ -34,12 +34,13 @@ export const controller = {
     try {
       const { box_number, capacity, species_id } = req.body;
       if (!box_number || !capacity || !species_id) {
-        return res.status(404).send(`All fields must be completed`);
+        return res.status(400).send(`All fields must be completed`);
       }
       const newBox = await Boxes.create({
         box_number,
         capacity,
         species_id,
+        current_occupancy: 0,
       });
       return res.status(201).send(newBox);
     } catch (error) {
@@ -87,6 +88,14 @@ export const controller = {
     try {
       const boxId = req.params.id;
       const updateData = req.body;
+      if (updateData.capacity) {
+        const box = await Boxes.findByPk(boxId);
+        if (updateData.capacity < box.current_occupancy) {
+          return res
+            .status(400)
+            .send("Capacity cannot be lower than current occupancy!");
+        }
+      }
       const [updatedRows] = await Boxes.update(updateData, {
         where: {
           id: boxId,

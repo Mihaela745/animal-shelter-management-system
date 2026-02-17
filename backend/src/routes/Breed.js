@@ -3,4 +3,4 @@ import {controllers} from "../controllers/index.js";
 
 export const router=express.Router();
 
-router.get("/getBreedBySpecies/:id",controllers.breedController.getBreedsBySpecies);
+router.get("/:species",controllers.breedController.getBreedsBySpecies);

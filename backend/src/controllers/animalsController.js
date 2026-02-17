@@ -5,7 +5,7 @@ export const controller = {
   createAnimal: async (req, res) => {
     const t = await sequelize.transaction();
     try {
-      const { name, species_id, breed, age, gender, box_id,weight } = req.body;
+      const { name, species_id, breed, age, gender, box_id, weight } = req.body;
       if (!name || !species_id || !gender || !box_id) {
         return res.status(400).send("Must complete all parameters!");
       }
@@ -27,7 +27,7 @@ export const controller = {
           box_id,
           medical_file_id: medicalFile.id,
           image_url: image_url,
-          weight:weight
+          weight: weight,
         },
         { transaction: t },
       );
@@ -45,19 +45,40 @@ export const controller = {
   },
   getAllAnimals: async (req, res) => {
     try {
+      const { species, status, gender, minAge, maxAge } = req.query;
+      const whereClause = {};
+      if (status) {
+        whereClause.status = status;
+      }
+      if (gender) {
+        whereClause.gender = gender;
+      }
+      if (minAge || maxAge) {
+        whereClause.age = {};
+        if (minAge) whereClause.age[Op.gte] = Number(minAge);
+        if (maxAge) whereClause.age[Op.lte] = Number(maxAge);
+      }
+
       const animals = await Animals.findAll({
+        where: whereClause,
         include: [
-          { model: Species, attributes: ["name"] },
+          {
+            model: Species,
+            attributes: ["name"],
+            required: !!species,
+            ...(species && {
+              where: {
+                name: species,
+              },
+            }),
+          },
           { model: Boxes, attributes: ["box_number"] },
           { model: Medical_files },
         ],
       });
-
-      if (animals.length === 0)
-        return res.status(404).send("No animals found!");
       return res.status(200).send(animals);
     } catch (err) {
-      return res.status(500).send(`Couldn't fetch animals: ${err}`);
+      return res.status(500).send(`Couldn't fetch animals: ${err.message}`);
     }
   },
   getAnimalById: async (req, res) => {

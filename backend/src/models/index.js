@@ -122,6 +122,15 @@ Adoption_history.belongsTo(Users, {
   foreignKey: "adopter_id",
   onDelete: "CASCADE",
 });
+Responsible_box.belongsTo(Boxes, {
+  foreignKey: "box_id",
+  onDelete: "CASCADE",
+});
+
+Responsible_box.belongsTo(Staff, {
+  foreignKey: "responsible_id",
+  onDelete: "CASCADE",
+});
 Staff.belongsTo(Users, { foreignKey: "user_id" });
 Users.hasOne(Staff, { foreignKey: "user_id" });
 export {

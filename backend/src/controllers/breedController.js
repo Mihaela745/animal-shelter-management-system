@@ -7,20 +7,22 @@ const DOG_API_URL = process.env.DOG_BREED_API_URL;
 const DOG_API_KEY = process.env.DOG_API_KEY;
 
 export const controller={ getBreedsBySpecies:async(req,res)=>{
-    const species=req.params.id;
+    const species=req.params.species;
     if(!species)
     {
-        return res.status(400).send(`Species parameter is required (e.g., ?species=Dog or ?species=Cat).`);
+        return res
+          .status(400)
+          .send("Species parameter is required in URL (Dog or Cat).");
     }
-
+const normalizedSpecies = species.trim().toLowerCase();
     let apiURL;
     let apiKey;
 
-    if(species.toLowerCase()==='cat')
+    if(normalizedSpecies==='cat')
     {
         apiURL=CAT_API_URL;
         apiKey=CAT_API_KEY;
-    }else if(species.toLowerCase()==='dog')
+    }else if(normalizedSpecies==='dog')
     {
         apiURL=DOG_API_URL;
         apiKey=DOG_API_KEY;
