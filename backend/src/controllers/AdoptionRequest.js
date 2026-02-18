@@ -3,6 +3,7 @@ import { Adoption_requests } from "../models/index.js";
 import { Adoption_history } from "../models/index.js";
 import { sequelize } from "../config/db.js";
 import { Op } from "sequelize";
+import { sendEmail } from "../utils/sendEmail.js";
 export const controller = {
   createRequest: async (req, res) => {
     try {
@@ -118,6 +119,70 @@ export const controller = {
       await request.save({ transaction: t });
 
       await t.commit();
+      const animalData = await Animals.findByPk(request.animal_id);
+      const approvedUser = await Users.findByPk(request.user_id);
+      if (status == "Approved") {
+        await sendEmail(
+          approvedUser.email,
+          "Adoption Approved!",
+          ` <h2>Congratulations</h2>
+         <p>Your adoption request for <b>${animalData.name}</b> has been approved.</p>
+          <p>Please contact the shelter for pickup details.</p>`,
+        );
+
+        const rejectedRequests = await Adoption_requests.findAll({
+          where: {
+            animal_id: request.animal_id,
+            status: "Rejected",
+          },
+          include: [{ model: Users }],
+        });
+        await Promise.all(
+          rejectedRequests.map((r) =>
+            sendEmail(
+              r.User.email,
+              "Adoption Request Update",
+              `
+              <h3>Update for ${animalData.name}</h3>
+              <p>We are sorry, but your adoption request was not approved.</p>
+            `,
+            ),
+          ),
+        );
+        const cancelledAppointments = await Appointments.findAll({
+          where: {
+            animal_id: request.animal_id,
+            status: "Cancelled",
+          },
+          include: [{ model: Users }],
+        });
+
+        await Promise.all(
+          cancelledAppointments.map((app) =>
+            sendEmail(
+              app.User.email,
+              "Appointment Cancelled",
+              `
+              <h3>Appointment Cancelled</h3>
+              <p>Your appointment for <b>${animalData.name}</b> was cancelled because the animal has been adopted.</p>
+            `,
+            ),
+          ),
+        );
+      } else if (status === "Rejected") {
+        const rejectedUser = await Users.findByPk(request.user_id);
+
+        await sendEmail(
+          rejectedUser.email,
+          "Adoption Request Rejected",
+          `
+      <h3>Adoption Request Update</h3>
+      <p>We are sorry, but your adoption request for 
+      <b>${animalData.name}</b> has been rejected.</p>
+      <p>You can explore other animals available for adoption.</p>
+    `,
+        );
+      }
       return res.status(200).json(request);
     } catch (err) {
       if (t) await t.rollback();

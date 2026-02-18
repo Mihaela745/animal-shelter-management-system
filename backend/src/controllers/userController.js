@@ -1,22 +1,30 @@
-import { Users } from "../models/Users.js";
+import { Users, Staff } from "../models/index.js";
 import { Appointments } from "../models/Appointments.js";
 import { Adoption_history } from "../models/Adoption_history.js";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 
-export const seedManager=async()=>{
-  const existingManager=await Users.findOne({where:{role:"Manager"}});
- if (!existingManager) {
-   const hashedPassword = await bcrypt.hash("Admin123!", 10); 
-   await Users.create({
-     username: "Manager_Shelter",
-     email: "mihaelaneacsu745@gmail.com",
-     password: hashedPassword,
-     phonenumber: "0700000000",
-     role: "Manager",
-   });
-   console.log("Manager seeded successfully!");
- }
-}
+export const seedManager = async () => {
+  const existingManager = await Users.findOne({ where: { role: "Manager" } });
+  if (!existingManager) {
+    const hashedPassword = await bcrypt.hash("Admin123!", 10);
+    const newUser=await Users.create({
+      username: "Manager_Shelter",
+      email: "mihaelaneacsu745@gmail.com",
+      password: hashedPassword,
+      phonenumber: "0700000000",
+      role: "Manager",
+    });
+    await Staff.create({
+      name: "Manager_Shelter",
+      email: newUser.email,
+      phonenumber: newUser.phonenumber,
+      position_id: managerPosition.id,
+      user_id: newUser.id,
+    });
+
+    console.log("Manager seeded successfully!");
+  }
+};
 
 export const controller = {
   getAllUsers: async (req, res) => {
@@ -31,10 +39,21 @@ export const controller = {
   },
   getUserById: async (req, res) => {
     try {
-      const userId = req.params.id;
-      const user = await Users.findByPk(userId);
-      if (!user) return res.status(404).send(`Couldn't find the user`);
-      return res.status(200).send(user);
+     const requestedId = parseInt(req.params.id);
+     const loggedUserId = req.user.id;
+     const role = req.user.role;
+
+     if (role !== "Manager" && requestedId !== loggedUserId) {
+       return res.status(403).send("Access denied");
+     }
+
+     const user = await Users.findByPk(requestedId);
+
+     if (!user) {
+       return res.status(404).send("User not found");
+     }
+
+     return res.status(200).json(user);
     } catch (err) {
       return res.status(500).send(`Couldn't fetch user: ${err}`);
     }

@@ -2,9 +2,8 @@ import { Staff } from "../models/Staff.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import { transporter } from "../config/mail.js";
-import { Position } from "../models/Position.js";
+import { Position, Users } from "../models/index.js";
 import { sequelize } from "../config/db.js";
-import { Users } from "../models/Users.js";
 
 export const controller = {
   createStaff: async (req, res) => {
@@ -22,7 +21,8 @@ export const controller = {
         await t.rollback();
         return res.status(404).send(`Position doesn't exist!`);
       }
-
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+        return res.status(400).send("Invalid email");
       const existingUser = await Users.findOne({ where: { email } });
       if (existingUser) {
         await t.rollback();
@@ -97,7 +97,14 @@ export const controller = {
   },
   getAllStaff: async (req, res) => {
     try {
-      const staffMembers = await Staff.findAll();
+      const staffMembers = await Staff.findAll({
+        include: [
+          {
+            model: Position,
+            attributes: ["id", "title"],
+          },
+        ],
+      });
       return res.status(200).send(staffMembers);
     } catch (error) {
       return res.status(500).send(`Failed to fetch staff : ${error}`);
@@ -124,27 +131,48 @@ export const controller = {
         await t.rollback();
         return res.status(404).send("Staff not found!");
       }
+      const user = await Users.findByPk(staff.user_id);
+      if (!user) {
+        await t.rollback();
+        return res.status(404).send("Associated user not found!");
+      }
+      if (updateData.email) {
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(updateData.email)) {
+          await t.rollback();
+          return res.status(400).send("Invalid email format!");
+        }
+
+        const existingUser = await Users.findOne({
+          where: { email: updateData.email },
+        });
+
+        if (existingUser && existingUser.id !== user.id) {
+          await t.rollback();
+          return res.status(409).send("Email already used by another account!");
+        }
+
+        await user.update({ email: updateData.email }, { transaction: t });
+      }
+
       if (updateData.position_id) {
         const position = await Position.findByPk(updateData.position_id);
         if (!position) {
           await t.rollback();
           return res.status(404).send("Position not found!");
         }
-        await Users.update(
-          { role: position.title },
-          { where: { id: staff.user_id }, transaction: t },
-        );
+
+        await user.update({ role: position.title }, { transaction: t });
       }
 
-      await Staff.update(updateData, {
-        where: { id: staffId },
-        transaction: t,
-      });
+      await staff.update(updateData, { transaction: t });
 
       await t.commit();
 
-      const updatedStaff = await Staff.findByPk(staffId);
-      return res.status(200).send(updatedStaff);
+      const updatedStaff = await Staff.findByPk(staffId, {
+        include: [{ model: Position, attributes: ["id", "title"] }],
+      });
+
+      return res.status(200).json(updatedStaff);
     } catch (error) {
       if (t) await t.rollback();
       return res.status(500).send(`Couldn't update staff: ${error.message}`);
@@ -177,6 +205,57 @@ export const controller = {
     } catch (error) {
       if (t) await t.rollback();
       return res.status(500).send(`Couldn't delete staff: ${error.message}`);
+    }
+  },
+  updateMyProfile: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { name, phonenumber } = req.body;
+      const staff = await Staff.findOne({
+        where: { user_id: userId },
+      });
+      if (!staff) {
+        return res.status(404).send("Staff profile not found!");
+      }
+
+      await staff.update({
+        name: name ?? staff.name,
+        phonenumber: phonenumber ?? staff.phonenumber,
+      });
+
+      await Users.update(
+        {
+          username: name ?? staff.name,
+          phonenumber: phonenumber ?? staff.phonenumber,
+        },
+        { where: { id: userId } },
+      );
+      return res.status(200).json(staff);
+    } catch (err) {
+      return res.status(500).send(`Error while updating:${err.message}`);
+    }
+  },
+  getMyProfile: async (req, res) => {
+    try {
+      const userId = req.user.id;
+
+      const staff = await Staff.findOne({
+        where: { user_id: userId },
+        include: [
+          {
+            model: Position,
+            attributes: ["title"],
+          },
+        ],
+      });
+
+      if (!staff) {
+        return res.status(404).send("Staff profile not found!");
+      }
+
+      return res.status(200).json(staff);
+    } catch (error) {
+      return res.status(500).send(`Error fetching profile: ${error.message}`);
     }
   },
 };
