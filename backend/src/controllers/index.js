@@ -14,7 +14,7 @@ import { controller as userController } from "./userController.js";
 import { controller as appointmentController } from "./appointmentsController.js";
 import {controller as authController} from "./authController.js";
 import { controller as requestsController } from "./AdoptionRequest.js";
-
+import {controller as AIController} from "./AIController.js"
 
 export const controllers = {
   other,
@@ -32,5 +32,6 @@ export const controllers = {
   userController,
   appointmentController,
   authController,
-  requestsController
+  requestsController,
+  AIController
 };

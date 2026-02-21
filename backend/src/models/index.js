@@ -13,7 +13,7 @@ import { Appointments } from "./Appointments.js";
 import { Adoption_history } from "./Adoption_history.js";
 import { ResetTokens } from "./ResetTokens.js";
 import { Adoption_requests } from "./Adoption_requests.js";
-
+import { Breed_Metadata } from "./Breed_metadata.js";
 Animals.belongsTo(Species, { foreignKey: "species_id", onDelete: "CASCADE" });
 Species.hasMany(Animals, { foreignKey: "species_id", onDelete: "CASCADE" });
 Animals.belongsTo(Boxes, { foreignKey: "box_id", onDelete: "CASCADE" });
@@ -149,4 +149,5 @@ export {
   Adoption_history,
   ResetTokens,
   Adoption_requests,
+  Breed_Metadata
 };

@@ -14,6 +14,7 @@ import { router as staffRouter } from "./Staff.js";
 import { router as usersRouter } from "./Users.js";
 import { router as boxesRouter } from "./Boxes.js";
 import { router as requestRouter } from "./Adoption_request.js";
+import { router as aiRouter} from "./AIRouter.js"
 export const router = express.Router();
 
 router.use("/", otherRouter);
@@ -31,3 +32,4 @@ router.use("/rooms", roomRouter);
 router.use("/staff", staffRouter);
 router.use("/users", usersRouter);
 router.use("/boxes", boxesRouter);
+router.use("/ai", aiRouter);

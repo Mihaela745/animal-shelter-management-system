@@ -4,6 +4,7 @@ import { seedPositions } from "./positionsController.js";
 import { seedBoxes } from "./boxesController.js";
 import { roomSeed as seedRoom } from "./roomsController.js";
 import { seedManager } from "./userController.js";
+import { seedBreddMetadata } from "./breedMetadataController.js";
 export const controller = {
   resetDb: async (req, res) => {
     try {
@@ -14,6 +15,7 @@ export const controller = {
       await seedBoxes();
       await seedRoom();
       await seedManager();
+      await seedBreddMetadata();
       await sequelize.query("SET FOREIGN_KEY_CHECKS=1", { raw: true });
       res.status(200).send({ message: "Data base has been reseted!" });
     } catch (err) {
