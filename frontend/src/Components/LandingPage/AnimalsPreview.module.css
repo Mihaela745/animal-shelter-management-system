@@ -1,0 +1,39 @@
+.beggining{
+width:100%;
+display: flex !important;
+flex-direction: column !important;
+justify-content: center !important;
+align-items: center !important;
+}
+
+.details{
+    color: white !important;
+    background-color:#a91111 !important ;
+    border: none !important;
+}
+
+.details:hover{
+    box-shadow:0px 1px 5px #a91111;
+}
+
+.animalsBody{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+}
+
+.animalsCard{
+    width: 33%;
+}
+
+@media (max-width:900px)
+{
+    .animalsBody{
+    display: flex;
+    flex-direction: column;
+}
+   .animalsCard{
+    width: 80%;
+} 
+}

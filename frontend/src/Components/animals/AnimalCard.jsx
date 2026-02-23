@@ -8,11 +8,12 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
+import styles from "./AnimalCard.module.css";
 
 export default function AnimalCard({ animal }) {
   const { name, species, age, gender, image_url, status } = animal;
   return (
-    <Card>
+    <Card className={styles.card}>
       <CardMedia
         component="img"
         height="180"
@@ -28,9 +29,13 @@ export default function AnimalCard({ animal }) {
             alignItems: "center",
             mb: 1,
           }}
+          className={styles.cardInfo}
         >
           <Typography variant="h6" sx={{ fontWeight: 800 }}>
             {name}
+          </Typography>
+          <Typography variant="body2" sx={{ color: "#555" }}>
+            {species} | {age} ani | {gender}
           </Typography>
           <Chip
             size="small"
@@ -44,13 +49,11 @@ export default function AnimalCard({ animal }) {
               variant="contained"
               fullWidth
               sx={{ borderRadius: 999, textTransform: "none", fontWeight: 700 }}
+              className={styles.button}
             >
               Vezi detalii
             </Button>
           </CardActions>
-          <Typography variant="body2" sx={{ color: "#555" }}>
-            {species} | {age} ani | {gender}
-          </Typography>
         </Box>
       </CardContent>
     </Card>

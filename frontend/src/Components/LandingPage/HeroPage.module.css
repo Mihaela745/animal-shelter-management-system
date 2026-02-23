@@ -20,6 +20,7 @@
   width: 40%;
   text-align: left;
   padding-left: 2rem;
+  justify-content: space-between !important;
 }
 .right {
   display: flex;
@@ -32,8 +33,7 @@
   color: #a91111 !important;
   background-color: #fdc3d3 !important;
   width: 20%;
-
-  margin-top: 1rem !important;
+  margin-top: 5rem !important;
 }
 .adoptionButton:hover {
   background-color: #910707 !important;
@@ -47,17 +47,23 @@
 
 @media (max-width: 900px) {
   .heroPage {
-    flex-direction: column;
+    flex-direction: column-reverse;
     gap: 2rem;
   }
   .left {
-    width: 100%;
-    align-items: center;
+    justify-content: center !important;
+    align-items: center !important;
+    width: auto;
+    padding-left: 0rem !important;
   }
   .right {
     width: 100%;
     align-items: center;
   }
-  .right img {
+  .adoptionButton {
+    margin-left: 40% !important;
+  }
+  .typo {
+    padding-left: 2rem;
   }
 }

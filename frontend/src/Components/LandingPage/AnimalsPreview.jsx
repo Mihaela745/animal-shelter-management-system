@@ -3,7 +3,7 @@ import AnimalCard from "../animals/AnimalCard";
 import { fetchAnimals } from "../../features/animals/animalsSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-
+import styles from "./AnimalsPreview.module.css"
 export default function AnimalsPreview() {
   const dispatch = useDispatch();
   const { animals, loading } = useSelector((state) => state.animals);
@@ -11,7 +11,7 @@ export default function AnimalsPreview() {
     dispatch(fetchAnimals());
   }, [dispatch]);
   return (
-    <Box sx={{ py: 10, backgroundColor: "#fff" }}>
+    <Box id="animals" sx={{ py: 10, backgroundColor: "#fff" }}>
       <Container maxWidth="lg">
         <Box
           sx={{
@@ -22,6 +22,7 @@ export default function AnimalsPreview() {
             mb: 4,
             flexWrap: "wrap",
           }}
+        className={styles.beggining}
         >
           <Box>
             <Typography variant="h4" sx={{ fontWeight: 900 }}>
@@ -35,16 +36,17 @@ export default function AnimalsPreview() {
           <Button
             variant="outlined"
             sx={{ borderRadius: 999, textTransform: "none", fontWeight: 700 }}
-          >
+            className={styles.details}
+         >
             Vezi toate
           </Button>
         </Box>
         {loading && <p>Loading...</p>}
 
-        <Grid container spacing={3}>
+        <Grid container spacing={3}  className={styles.animalsBody}>
           {animals.slice(0, 3).map((animal) => (
             <Grid key={animal.id} item xs={12} sm={6} md={3}>
-              <AnimalCard animal={animal} />
+              <AnimalCard animal={animal} className={styles.animalsCards} />
             </Grid>
           ))}
         </Grid>

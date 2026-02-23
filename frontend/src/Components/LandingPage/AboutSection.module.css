@@ -1,0 +1,28 @@
+.about {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  gap: 40px;
+}
+
+.description {
+  width: 100%;
+  max-width: 780px;
+  text-align: center;
+}
+
+.informations {
+  width: 100%;
+  text-align: center;
+}
+
+.button {
+  margin-top: 3rem !important;
+  color: #a91111 !important;
+  background-color: #ffffff !important ;
+  border: none !important;
+}
+.button:hover {
+  box-shadow: 0px 1px 5px #ffffff !important;
+}

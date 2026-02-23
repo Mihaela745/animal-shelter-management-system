@@ -17,7 +17,11 @@ import App from "../../App";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useState } from "react";
 import styles from "./NavbarLanding.module.css";
-const navItems = ["Home", "About", "Contact"];
+const navItems = [
+  { label: "Acasă", id: "home" },
+  { label: "Animale", id: "animals" },
+  { label: "Despre", id: "about" },
+];
 export default function NavbarLanding() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const handleDrawerToggle = () => {
@@ -30,9 +34,14 @@ export default function NavbarLanding() {
       </Typography>
       <List>
         {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemButton sx={{ textAlign: "center" }}>
-              <ListItemText primary={item} className={styles.listItem} />
+          <ListItem key={item.id} disablePadding>
+            <ListItemButton
+              sx={{ textAlign: "center" }}
+              onClick={()=>document
+                .getElementById(item.id)
+                ?.scrollIntoView({ behavior: "smooth" })}
+            >
+              <ListItemText primary={item.label} className={styles.listItem} />
             </ListItemButton>
           </ListItem>
         ))}
@@ -72,8 +81,16 @@ export default function NavbarLanding() {
             className={styles.menuList}
           >
             {navItems.map((item) => (
-              <Button key={item} className={styles.listItem}>
-                {item}
+              <Button
+                key={item.id}
+                className={styles.listItem}
+                onClick={() =>
+                  document
+                    .getElementById(item.id)
+                    ?.scrollIntoView({ behavior: "smooth" })
+                }
+              >
+                {item.label}
               </Button>
             ))}
             <Button className={styles.login}>Login</Button>
