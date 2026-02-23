@@ -3,8 +3,14 @@ import cors from "cors";
 import { router } from "./src/routes/index.js";
 const app = express();
 const port = 3000;
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
-app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
