@@ -17,6 +17,7 @@ import App from "../../App";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useState } from "react";
 import styles from "./NavbarLanding.module.css";
+import { Link } from "react-router-dom";
 const navItems = [
   { label: "Acasă", id: "home" },
   { label: "Animale", id: "animals" },
@@ -37,21 +38,31 @@ export default function NavbarLanding() {
           <ListItem key={item.id} disablePadding>
             <ListItemButton
               sx={{ textAlign: "center" }}
-              onClick={()=>document
-                .getElementById(item.id)
-                ?.scrollIntoView({ behavior: "smooth" })}
+              onClick={() =>
+                document
+                  .getElementById(item.id)
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
             >
               <ListItemText primary={item.label} className={styles.listItem} />
             </ListItemButton>
           </ListItem>
         ))}
         <ListItem disablePadding>
-          <ListItemButton sx={{ textAlign: "center" }}>
+          <ListItemButton
+            component={Link}
+            to="/login"
+            sx={{ textAlign: "center" }}
+          >
             <ListItemText className={styles.login} primary="Login" />
           </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-          <ListItemButton sx={{ textAlign: "center" }}>
+          <ListItemButton
+            component={Link}
+            to="/register"
+            sx={{ textAlign: "center" }}
+          >
             <ListItemText primary="Register" className={styles.register} />
           </ListItemButton>
         </ListItem>
@@ -93,17 +104,24 @@ export default function NavbarLanding() {
                 {item.label}
               </Button>
             ))}
-            <Button className={styles.login}>Login</Button>
-            <Button variant="contained" className={styles.register}>
+            <Button component={Link} to="/login" className={styles.login}>
+              Login
+            </Button>
+            <Button
+              component={Link}
+              to="/register"
+              variant="contained"
+              className={styles.register}
+            >
               Register
             </Button>
-          </Box>{" "}
+          </Box>
           <IconButton
             onClick={handleDrawerToggle}
             sx={{ display: { sm: "none" } }}
           >
             <MenuIcon />
-          </IconButton>{" "}
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Drawer
