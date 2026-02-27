@@ -5,7 +5,7 @@ export const fetchAnimals = createAsyncThunk(
   "animals/fecthAnimals",
   async (_, thunkAPI) => {
     try {
-      const response =await axiosInstance.get("/animals");
+      const response = await axiosInstance.get("/animals");
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || "Error");
