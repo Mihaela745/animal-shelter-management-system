@@ -65,7 +65,9 @@ export default function LoginPage() {
     setLoginError(null);
     const result = await dispatch(loginUser(form));
     if (result.meta.requestStatus === "fulfilled") {
-      navigate("/");
+      if (result.payload.user.role === "user") {
+        navigate("/user/home");
+      } else navigate("/");
     } else {
       setLoginError(result.payload || "Eroare login");
     }
@@ -151,7 +153,9 @@ export default function LoginPage() {
           </DialogContent>
           <DialogActions>
             {" "}
-            <Button onClick={() => setOpen(false) }  className={styles.link}>Cancel</Button>
+            <Button onClick={() => setOpen(false)} className={styles.link}>
+              Cancel
+            </Button>
             <Button
               variant="contained"
               onClick={handleForgotPassword}

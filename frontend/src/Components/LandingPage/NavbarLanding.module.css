@@ -33,7 +33,7 @@
 }
 
 .listItem {
-  color: #a91111 !important;
+  color: #410505 !important;
 }
 .listItem:hover {
   text-shadow: 0px 2px 2px pink !important;
@@ -45,12 +45,16 @@
   color: rgb(255, 255, 255) !important;
   background-color: #a91111 !important;
   margin: 5px !important ;
+      box-shadow: 1px 0px 3px 1px rgb(138, 134, 134);
+
 }
 .login:hover{
-    box-shadow: 1px 0px 5px 1px rgb(170, 167, 167);
+    box-shadow: 1px 0px 5px 1px rgb(128, 124, 124);
 }
 
 .register{
+        box-shadow: 1px 0px 5px 1px rgb(138, 134, 134) !important;
+
     border-radius: 5px;
     color: #a91111 !important;
   background-color: #fdc3d3 !important;
