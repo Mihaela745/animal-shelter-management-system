@@ -6,6 +6,7 @@ export const verifyToken=(req,res,next)=>{
     if(!token)
         return res.status(401).send(`Acces denied!`)
     try{
+        console.log("AUTH HEADER:", req.headers.authorization);
         const decoded=jwt.verify(token,JWT_SECRET);
         req.user=decoded
         next();

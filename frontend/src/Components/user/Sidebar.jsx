@@ -133,8 +133,6 @@ export default function Sidebar({ mobile = false, open, onClose }) {
           ))}
         </List>
       </Box>
-
-      {/* BOTTOM SECTION */}
       <Box>
         <ListItemButton
           onClick={() => {

@@ -13,7 +13,7 @@ import DashboardPage from "../pages/private/user/DashboardPage";
 import AnimalsPage from "../pages/private/user/AnimalsPage";
 import MatchPage from "../pages/private/user/MatchPage";
 import ProfilePage from "../pages/private/user/ProfilePage";
-
+import AnimalDetailsPage from "../pages/private/user/AnimalDetailsPage";
 export default function AppRouter() {
   return (
     <Routes>
@@ -45,6 +45,7 @@ export default function AppRouter() {
         <Route path="animals" element={<AnimalsPage />} />
         <Route path="match" element={<MatchPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="animals/:id" element={<AnimalDetailsPage />} />
       </Route>
     </Routes>
   );

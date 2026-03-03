@@ -30,3 +30,9 @@ router.delete(
   authorizeRoles("Manager"),
   appointmentController.deleteAppointment,
 );
+router.get(
+  "/calendar-availability",
+  verifyToken,
+  appointmentController.getCalendarAvailability,
+);
+router.get("/availability", verifyToken, appointmentController.getAvailableSlots);

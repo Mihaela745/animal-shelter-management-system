@@ -283,4 +283,138 @@ export const controller = {
         .send(`Couldn't fetch appointments by animal id: ${err.message}`);
     }
   },
+  getCalendarAvailability: async (req, res) => {
+    try {
+      const { animal_id } = req.query;
+      if (!animal_id) {
+        return res.status(400).send("Animal id requiered");
+      }
+      const today = new Date();
+      const endDate = new Date();
+      endDate.setMonth(today.getMonth() + 2);
+      const allHours = [
+        "08:00",
+        "09:00",
+        "10:00",
+        "11:00",
+        "12:00",
+        "13:00",
+        "14:00",
+        "15:00",
+        "16:00",
+        "17:00",
+      ];
+
+      const availableDates = [];
+
+      for (let d = new Date(today); d <= endDate; d.setDate(d.getDate() + 1)) {
+        const currentDate = new Date(d);
+        const day = currentDate.getDay();
+
+        if (day === 0 || day === 6) continue;
+
+        const dateStr = currentDate.toISOString().split("T")[0];
+
+        const appointments = await Appointments.findAll({
+          where: {
+            date: {
+              [Op.between]: [
+                new Date(`${dateStr}T00:00:00`),
+                new Date(`${dateStr}T23:59:59`),
+              ],
+            },
+            status: "Scheduled",
+          },
+        });
+
+        const bookedHours = new Set(appointments.map((a) => a.hour));
+
+        if (bookedHours.size < allHours.length) {
+          availableDates.push(dateStr);
+        }
+      }
+
+      return res.json({ availableDates });
+    } catch (err) {
+      return res.status(500).send(err.message);
+    }
+  },
+  getAvailableSlots: async (req, res) => {
+    try {
+      const { animal_id, date } = req.query;
+
+      if (!animal_id || !date) {
+        return res.status(400).send("Animal id and date required");
+      }
+
+      const appointmentDate = new Date(date);
+      const today = new Date();
+
+      if (appointmentDate < today) {
+        return res.status(400).send("Date cannot be in the past");
+      }
+
+      const day = appointmentDate.getDay();
+      if (day === 0 || day === 6) {
+        return res.json({ availableHours: [] });
+      }
+
+      const allHours = [
+        "08:00",
+        "09:00",
+        "10:00",
+        "11:00",
+        "12:00",
+        "13:00",
+        "14:00",
+        "15:00",
+        "16:00",
+        "17:00",
+      ];
+
+      const scheduledAppointments = await Appointments.findAll({
+        where: {
+          date: {
+            [Op.between]: [
+              new Date(`${date}T00:00:00`),
+              new Date(`${date}T23:59:59`),
+            ],
+          },
+          status: "Scheduled",
+        },
+      });
+
+      const unavailableHours = new Set(
+        scheduledAppointments.map((a) => a.hour),
+      );
+
+      const availableHours = [];
+
+      for (const hour of allHours) {
+        if (unavailableHours.has(hour)) continue;
+
+        // verificăm staff și room
+        const roomConflict = await Appointments.findOne({
+          where: {
+            date: {
+              [Op.between]: [
+                new Date(`${date}T00:00:00`),
+                new Date(`${date}T23:59:59`),
+              ],
+            },
+            hour,
+            status: "Scheduled",
+          },
+        });
+
+        if (!roomConflict) {
+          availableHours.push(hour);
+        }
+      }
+
+      return res.json({ availableHours });
+    } catch (err) {
+      return res.status(500).send(err.message);
+    }
+  },
 };

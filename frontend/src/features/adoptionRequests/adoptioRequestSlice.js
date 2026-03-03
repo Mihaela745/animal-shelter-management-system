@@ -12,6 +12,21 @@ export const fetchUserAdoptionRequests = createAsyncThunk(
     }
   },
 );
+export const createAdoptionRequest = createAsyncThunk(
+  "adoptionRequests/create",
+  async ({ animal_id }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.post("/adoption-requests", {
+        animal_id,
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Eroare cerere adopție",
+      );
+    }
+  },
+);
 
 const adoptionRequestsSlice = createSlice({
   name: "adoptionRequests",
@@ -32,6 +47,18 @@ const adoptionRequestsSlice = createSlice({
         state.requests = action.payload;
       })
       .addCase(fetchUserAdoptionRequests.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(createAdoptionRequest.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createAdoptionRequest.fulfilled, (state, action) => {
+        state.loading = false;
+        state.requests.push(action.payload);
+      })
+      .addCase(createAdoptionRequest.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

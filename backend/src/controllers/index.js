@@ -15,7 +15,7 @@ import { controller as appointmentController } from "./appointmentsController.js
 import {controller as authController} from "./authController.js";
 import { controller as requestsController } from "./AdoptionRequest.js";
 import {controller as AIController} from "./AIController.js"
-
+import {controller as Breed_MetadataController} from "./breedMetadataController.js"
 export const controllers = {
   other,
   boxController,
@@ -33,5 +33,6 @@ export const controllers = {
   appointmentController,
   authController,
   requestsController,
-  AIController
+  AIController,
+  Breed_MetadataController
 };

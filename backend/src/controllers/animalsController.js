@@ -1,6 +1,6 @@
 import { Animals, Species, Boxes, Medical_files } from "../models/index.js";
 import { sequelize } from "../config/db.js";
-
+import { Op } from "sequelize";
 export const controller = {
   createAnimal: async (req, res) => {
     const t = await sequelize.transaction();
@@ -46,20 +46,22 @@ export const controller = {
   getAllAnimals: async (req, res) => {
     try {
       const { species, status, gender, minAge, maxAge } = req.query;
+      const { page = 1, limit = 9 } = req.query;
+
+      const offset = (Number(page) - 1) * Number(limit);
+
       const whereClause = {};
-      if (status) {
-        whereClause.status = status;
-      }
-      if (gender) {
-        whereClause.gender = gender;
-      }
+
+      if (status) whereClause.status = status;
+      if (gender) whereClause.gender = gender;
+
       if (minAge || maxAge) {
         whereClause.age = {};
         if (minAge) whereClause.age[Op.gte] = Number(minAge);
         if (maxAge) whereClause.age[Op.lte] = Number(maxAge);
       }
 
-      const animals = await Animals.findAll({
+      const { count, rows } = await Animals.findAndCountAll({
         where: whereClause,
         include: [
           {
@@ -67,16 +69,22 @@ export const controller = {
             attributes: ["name"],
             required: !!species,
             ...(species && {
-              where: {
-                name: species,
-              },
+              where: { name: species },
             }),
           },
           { model: Boxes, attributes: ["box_number"] },
           { model: Medical_files },
         ],
+        limit: Number(limit),
+        offset,
       });
-      return res.status(200).send(animals);
+
+      return res.status(200).json({
+        animals: rows,
+        total: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: Number(page),
+      });
     } catch (err) {
       return res.status(500).send(`Couldn't fetch animals: ${err.message}`);
     }
