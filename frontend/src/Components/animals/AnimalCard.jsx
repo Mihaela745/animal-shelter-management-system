@@ -49,60 +49,71 @@ export default function AnimalCard({ animal }) {
         <Box
           sx={{
             display: "flex",
-            flexDirection: "row",
+            justifyContent: "space-between",
             alignItems: "center",
-            flexWrap: "wrap",
+            flexWrap: "nowrap",
             gap: 1,
           }}
         >
-          <Typography
-            variant="subtitle1"
-            sx={{ fontWeight: 800, lineHeight: 1 }}
-          >
-            {name}
-          </Typography>
+          <Box sx={{ overflow: "hidden", minWidth: 0 }}>
+            <Typography
+              variant="subtitle1"
+              noWrap
+              sx={{ fontWeight: 800, lineHeight: 1.2, mb: 0.5 }}
+            >
+              {name}
+            </Typography>
 
-          <Typography
-            variant="body2"
-            sx={{ color: "#555", fontSize: "0.85rem" }}
-          >
-            | {age} ani |{" "}
-            {gender === "Male"
-              ? "Mascul"
-              : gender === "Female"
-                ? "Femela"
-                : gender}
-          </Typography>
+            <Typography
+              variant="body2"
+              noWrap
+              sx={{ color: "#555", fontSize: "0.85rem" }}
+            >
+              {age} ani |{" "}
+              {gender === "Male"
+                ? "Mascul"
+                : gender === "Female"
+                  ? "Femelă"
+                  : gender}
+            </Typography>
+          </Box>
 
-          <Box sx={{ flexGrow: 1 }} />
-
-          <Chip
-            size="small"
-            label={status}
+          <Box
             sx={{
-              fontWeight: 600,
-              backgroundColor: "#f0f0f0",
-              height: "24px",
-              fontSize: "0.75rem",
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
             }}
-          />
-
-          <Button
-            variant="contained"
-            size="small"
-            sx={{
-              borderRadius: 999,
-              textTransform: "none",
-              fontWeight: 700,
-              backgroundColor: "#a91111",
-              py: 0.5,
-              px: 1.5,
-              "&:hover": { backgroundColor: "#8a0d0d" },
-            }}
-            onClick={() => navigate(`/user/animals/${animal.id}`)}
           >
-            Vezi detalii
-          </Button>
+            <Chip
+              size="small"
+              label={status}
+              sx={{
+                fontWeight: 600,
+                backgroundColor: "#f0f0f0",
+                height: "24px",
+                fontSize: "0.75rem",
+              }}
+            />
+
+            <Button
+              variant="contained"
+              size="small"
+              sx={{
+                borderRadius: 999,
+                textTransform: "none",
+                fontWeight: 700,
+                backgroundColor: "#a91111",
+                py: 0.5,
+                px: 1.5,
+                "&:hover": { backgroundColor: "#8a0d0d" },
+              }}
+              onClick={() => navigate(`/user/animals/${animal.id}`)}
+            >
+              Vezi detalii
+            </Button>
+          </Box>
         </Box>
       </CardContent>
     </Card>

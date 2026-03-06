@@ -5,11 +5,20 @@ export const controller = {
   createAnimal: async (req, res) => {
     const t = await sequelize.transaction();
     try {
-      const { name, species_id, breed, age, gender, box_id, weight } = req.body;
+      const {
+        name,
+        species_id,
+        breed,
+        age,
+        gender,
+        box_id,
+        weight,
+        image_url,
+      } = req.body;
       if (!name || !species_id || !gender || !box_id) {
         return res.status(400).send("Must complete all parameters!");
       }
-      const image_url = req.file ? req.file.path : null;
+      const imageUrl = req.file ? req.file.path : image_url;
       const medicalFile = await Medical_files.create(
         {
           weight: weight,
@@ -26,7 +35,7 @@ export const controller = {
           gender,
           box_id,
           medical_file_id: medicalFile.id,
-          image_url: image_url,
+          image_url: imageUrl,
           weight: weight,
         },
         { transaction: t },
