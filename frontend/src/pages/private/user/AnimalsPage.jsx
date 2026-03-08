@@ -8,10 +8,11 @@ import {
   InputAdornment,
 } from "@mui/material";
 import PetsIcon from "@mui/icons-material/Pets";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAnimals } from "../../../features/animals/animalsSlice";
 import AnimalCard from "../../../Components/animals/AnimalCard";
+import { useSearchParams } from "react-router-dom";
 
 const filterFieldSx = {
   "& .MuiOutlinedInput-root": {
@@ -31,21 +32,37 @@ export default function AnimalsPage() {
     (state) => state.animals,
   );
 
-  const [filters, setFilters] = useState({
-    species: "",
-    gender: "",
-    minAge: "",
-    maxAge: "",
-  });
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const filters = {
+    species: searchParams.get("species") || "",
+    gender: searchParams.get("gender") || "",
+    minAge: searchParams.get("minAge") || "",
+    maxAge: searchParams.get("maxAge") || "",
+  };
+
+  const page = Number(searchParams.get("page")) || 1;
 
   useEffect(() => {
     dispatch(fetchAnimals({ ...filters, page }));
-  }, [dispatch, filters, page]);
+  }, [dispatch, searchParams]);
 
   const handleFilterChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
-    setPage(1);
+    const { name, value } = e.target;
+    const params = Object.fromEntries(searchParams);
+    if (value) {
+      params[name] = value;
+    } else {
+      delete params[name];
+    }
+    params.page = "1"; 
+    setSearchParams(params);
+  };
+
+  const handlePageChange = (e, value) => {
+    const params = Object.fromEntries(searchParams); 
+    params.page = String(value);
+    setSearchParams(params);
   };
 
   return (
@@ -75,16 +92,10 @@ export default function AnimalsPage() {
           Găsește companionul perfect pentru tine 🐾
         </Typography>
       </Box>
-
-      {/* Box Filtre */}
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: {
-            xs: "1fr",
-            sm: "repeat(2, 1fr)",
-            md: "repeat(4, 1fr)",
-          },
+          gridTemplateColumns: { xs: "1fr 1fr", md: "repeat(4, 1fr)" },
           gap: 2,
           mb: 5,
           p: { xs: 2, md: 3 },
@@ -103,7 +114,7 @@ export default function AnimalsPage() {
           name="species"
           value={filters.species}
           onChange={handleFilterChange}
-          sx={{ ...filterFieldSx }}
+          sx={filterFieldSx}
         >
           <MenuItem value="">Toate</MenuItem>
           <MenuItem value="Dog">Câine</MenuItem>
@@ -117,7 +128,7 @@ export default function AnimalsPage() {
           name="gender"
           value={filters.gender}
           onChange={handleFilterChange}
-          sx={{ ...filterFieldSx }}
+          sx={filterFieldSx}
         >
           <MenuItem value="">Toate</MenuItem>
           <MenuItem value="Male">Mascul</MenuItem>
@@ -135,7 +146,7 @@ export default function AnimalsPage() {
             endAdornment: <InputAdornment position="end">ani</InputAdornment>,
             inputProps: { min: 0 },
           }}
-          sx={{ ...filterFieldSx }}
+          sx={filterFieldSx}
         />
 
         <TextField
@@ -149,7 +160,7 @@ export default function AnimalsPage() {
             endAdornment: <InputAdornment position="end">ani</InputAdornment>,
             inputProps: { min: 0 },
           }}
-          sx={{ ...filterFieldSx }}
+          sx={filterFieldSx}
         />
       </Box>
 
@@ -183,18 +194,17 @@ export default function AnimalsPage() {
         </Box>
       )}
 
-      {/* Lista de animale: SCĂPĂM DE MUI GRID! Folosim CSS Grid curat pentru aliniere perfectă */}
       {!loading && animals.length > 0 && (
         <Box
           sx={{
             display: "grid",
             gridTemplateColumns: {
-              xs: "1fr", // 1 pe rând pe telefon
-              sm: "repeat(2, 1fr)", // 2 pe rând pe tabletă
-              md: "repeat(3, 1fr)", // STRICT 3 pe rând pe desktop
+              xs: "1fr",
+              sm: "repeat(2, 1fr)",
+              md: "repeat(3, 1fr)",
             },
-            gap: 3, // Spațiu egal pe toate direcțiile, fără offset-uri stupide
-            width: "100%", // Ocupă fix lățimea containerului
+            gap: 3,
+            width: "100%",
             boxSizing: "border-box",
           }}
         >
@@ -204,13 +214,12 @@ export default function AnimalsPage() {
         </Box>
       )}
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <Box display="flex" justifyContent="center" mt={6} mb={2}>
           <Pagination
             count={totalPages}
             page={page}
-            onChange={(e, value) => setPage(value)}
+            onChange={handlePageChange}
             shape="rounded"
             sx={{
               "& .MuiPaginationItem-root": {

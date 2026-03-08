@@ -393,7 +393,6 @@ export const controller = {
       for (const hour of allHours) {
         if (unavailableHours.has(hour)) continue;
 
-        // verificăm staff și room
         const roomConflict = await Appointments.findOne({
           where: {
             date: {

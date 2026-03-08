@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import RoleRouter from "./RoleRouter";
-
 //pages
 import LandingPage from "../pages/public/Landing/LandingPage";
 import LoginPage from "../pages/public/auth/Login";
@@ -11,9 +10,10 @@ import HomePage from "../pages/private/user/HomePage";
 import UserLayout from "../layouts/UserLayout";
 import DashboardPage from "../pages/private/user/DashboardPage";
 import AnimalsPage from "../pages/private/user/AnimalsPage";
-import MatchPage from "../pages/private/user/MatchPage";
 import ProfilePage from "../pages/private/user/ProfilePage";
 import AnimalDetailsPage from "../pages/private/user/AnimalDetailsPage";
+import AiMatchPage from "../pages/private/user/AIMatchPage";
+
 export default function AppRouter() {
   return (
     <Routes>
@@ -43,8 +43,8 @@ export default function AppRouter() {
       >
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="animals" element={<AnimalsPage />} />
-        <Route path="match" element={<MatchPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="match" element={<AiMatchPage />} />
         <Route path="animals/:id" element={<AnimalDetailsPage />} />
       </Route>
     </Routes>

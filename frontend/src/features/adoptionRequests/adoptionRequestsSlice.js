@@ -27,7 +27,21 @@ export const createAdoptionRequest = createAsyncThunk(
     }
   },
 );
-
+export const updateAppointmentStatus = createAsyncThunk(
+  "appointments/updateStatus",
+  async ({ id, status }, thunkAPI) => {
+    try {
+      const response = await axiosInstance.put(`/appointments/${id}`, {
+        status,
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Eroare update appointment",
+      );
+    }
+  },
+);
 const adoptionRequestsSlice = createSlice({
   name: "adoptionRequests",
   initialState: {
@@ -61,6 +75,15 @@ const adoptionRequestsSlice = createSlice({
       .addCase(createAdoptionRequest.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(updateAppointmentStatus.fulfilled, (state, action) => {
+        const index = state.appointments.findIndex(
+          (a) => a.id === action.payload.id,
+        );
+
+        if (index !== -1) {
+          state.appointments[index] = action.payload;
+        }
       });
   },
 });

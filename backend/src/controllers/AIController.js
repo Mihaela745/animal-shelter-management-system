@@ -57,7 +57,7 @@ export const controller = {
           animal.breed && animal.breed.toLowerCase() !== "maidanez"
             ? breedMap[animal.breed]
             : null;
-        if (breedData!=null) {
+        if (breedData != null) {
           const breeds = await Breed_Metadata.findAll();
           const breedMap = {};
           breeds.forEach((b) => (breedMap[b.breed_name] = b));
@@ -114,9 +114,34 @@ export const controller = {
       });
 
       const aiRanking = await rankAnimalsWithAI(criteria, aiInput);
+      const animalMap = {};
+      animals.forEach((a) => {
+        animalMap[String(a.id)] = a;
+      });
+
+      const fullResults = aiRanking.ranked_results
+        .map((r) => {
+          const rankedId = String(r.animal?.id ?? r.id);
+          const fullAnimal = animalMap[rankedId];
+          if (!fullAnimal) return null;
+          return {
+            id: fullAnimal.id,
+            name: fullAnimal.name,
+            age: fullAnimal.age,
+            gender: fullAnimal.gender,
+            breed: fullAnimal.breed,
+            image_url: fullAnimal.image_url,
+            status: fullAnimal.status,
+            species: fullAnimal.Species?.name,
+            rank: r.rank,
+            explanation: r.explanation,
+          };
+        })
+        .filter(Boolean);
+
       return res.status(200).json({
         criteria,
-        results: aiRanking.ranked_results,
+        results: fullResults,
       });
     } catch (err) {
       return res.status(500).send(`${err.message}`);

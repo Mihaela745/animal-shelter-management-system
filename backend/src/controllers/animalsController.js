@@ -59,7 +59,9 @@ export const controller = {
 
       const offset = (Number(page) - 1) * Number(limit);
 
+      const isAdmin = req.user?.role === "admin";
       const whereClause = {};
+
 
       if (status) whereClause.status = status;
       if (gender) whereClause.gender = gender;

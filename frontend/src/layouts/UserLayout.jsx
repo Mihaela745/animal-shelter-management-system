@@ -15,8 +15,8 @@ export default function UserLayout() {
       <Box
         sx={{
           display: "flex",
-          height: "100vh", // 1. Tăiem pagina la fix înălțimea ecranului
-          overflow: "hidden", // 2. Oprim scroll-ul pe toată fereastra (body)
+          height: "100vh",
+          overflow: "hidden",
         }}
       >
         {!isMobile && <Sidebar />}
@@ -25,17 +25,16 @@ export default function UserLayout() {
           <Sidebar mobile open={open} onClose={() => setOpen(false)} />
         )}
 
-        {/* Containerul din DREAPTA (Conținutul) */}
         <Box
           sx={{
             flexGrow: 1,
             p: 3,
             mt: isMobile ? "64px" : 0,
             width: "100%",
-            height: "100%", // Îi spunem să ia restul de înălțime disponibil
-            overflowY: "auto", // 3. AICI e magia! Mutăm scroll-ul DOAR în partea dreaptă.
+            height: "100%", 
+            overflowY: "auto",
             minWidth: 0,
-            "&::-webkit-scrollbar": { width: "8px" }, // Bonus: un scrollbar subțire și elegant
+            "&::-webkit-scrollbar": { width: "8px" },
             "&::-webkit-scrollbar-thumb": {
               backgroundColor: "#c1c1c1",
               borderRadius: "4px",

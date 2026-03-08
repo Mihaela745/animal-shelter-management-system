@@ -6,14 +6,12 @@ const adoptionController = controllers.adoptionController;
 
 //get by user
 router.get("/me",verifyToken, adoptionController.getAdoptionHistoryByUserId);
-
+//get pe toate 
+router.get("/",verifyToken,authorizeRoles("Manager"),adoptionController.getAllAdoptions)
 //get by id
 router.get("/:id",verifyToken, adoptionController.getAdoptionById);
 
 //delete
 router.delete("/:id",verifyToken,authorizeRoles("Manager"), adoptionController.deleteAdoption);
-
-//get pe toate 
-router.get("/",verifyToken,authorizeRoles("Manager"),adoptionController.getAllAdoptions)
 
 export default router;

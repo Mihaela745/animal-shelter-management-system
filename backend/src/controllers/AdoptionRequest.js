@@ -1,4 +1,4 @@
-import { Animals, Appointments, Users } from "../models/index.js";
+import { Animals, Appointments, Users,Species } from "../models/index.js";
 import { Adoption_requests } from "../models/index.js";
 import { Adoption_history } from "../models/index.js";
 import { sequelize } from "../config/db.js";
@@ -194,7 +194,7 @@ export const controller = {
     try {
       const requests = await Adoption_requests.findAll({
         where: { user_id: req.user.id },
-        include: [{ model: Animals, attributes: ["name", "status"] }],
+        include: [{ model: Animals, attributes: ["name", "status"], include: [{ model: Species, attributes: ["name"] }]},],
       });
       return res.status(200).json(requests);
     } catch (err) {

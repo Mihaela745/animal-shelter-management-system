@@ -1,13 +1,29 @@
 import { Adoption_history } from "../models/Adoption_history.js";
 import { Animals } from "../models/Animals.js";
 import { Boxes } from "../models/Boxes.js";
+import {Species} from "../models/index.js"
 export const controller = {
   getAdoptionHistoryByUserId: async (req, res) => {
     try {
       const adoptions = await Adoption_history.findAll({
         where: { adopter_id: req.user.id },
+        include: [
+          {
+            model: Animals,
+            attributes: [
+              "id",
+              "name",
+              "breed",
+              "age",
+              "gender",
+              "image_url",
+              "status",
+            ],
+            include: [{ model: Species, attributes: ["name"] }],
+          },
+        ],
       });
-      return res.status(200).send(adoptions);
+      return res.status(200).json(adoptions);
     } catch (err) {
       return res.status(500).send(`Couldn't fetch adoptions: ${err}`);
     }

@@ -13,7 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 
-import { createAdoptionRequest } from "../../features/adoptionRequests/adoptioRequestSlice";
+import { createAdoptionRequest } from "../../features/adoptionRequests/adoptionRequestsSlice";
 import {
   createAppointment,
   fetchAvailableSlots,

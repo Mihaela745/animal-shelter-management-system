@@ -43,20 +43,18 @@ export default function Sidebar({ mobile = false, open, onClose }) {
     <Box
       sx={{
         width: sidebarWidth,
-        // MAGIC FIX AICI:
-        height: "100vh", // Ocupă fix înălțimea vizibilă a browserului
-        position: "sticky", // Se lipește de ecran și nu pleacă
-        top: 0, // Se lipește de marginea de sus
-        overflowY: "auto", // Dacă pe viitor pui 100 de linkuri, vei putea da scroll DOAR în sidebar
-        // -------------
+        height: "100vh",
+        position: "sticky", 
+        top: 0,
+        overflowY: "auto", 
         backgroundColor: "#a91111",
         color: "white",
         display: "flex",
         flexDirection: "column",
         transition: mobile ? "none" : "width 0.3s ease",
         py: 2,
-        boxSizing: "border-box", // Păstrează padding-ul în interiorul celor 100vh
-        "&::-webkit-scrollbar": { display: "none" }, // Ascunde scrollbar-ul urât din interiorul sidebar-ului pe browserele webkit
+        boxSizing: "border-box",
+        "&::-webkit-scrollbar": { display: "none" }, 
         msOverflowStyle: "none",
         scrollbarWidth: "none",
       }}
@@ -156,7 +154,7 @@ export default function Sidebar({ mobile = false, open, onClose }) {
                 ? "center"
                 : "flex-start",
             "&:hover": { backgroundColor: "#a91111" },
-            pb: 2, // Adăugat puțin padding jos ca să nu stea lipit de marginea de jos a monitorului
+            pb: 2, 
           }}
         >
           <ListItemIcon
