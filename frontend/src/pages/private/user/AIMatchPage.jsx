@@ -7,7 +7,7 @@ import {
   addAiLoading,
   searchAnimalAI,
 } from "../../../features/AIMatch/AiMatchSlice";
-import ChatWindow from "../../../Components/aiComponents/ChatWindow";
+import ChatWindow from "../../../components/aiComponents/ChatWindow";
 
 const AiMatchPage = () => {
   const dispatch = useDispatch();
@@ -44,9 +44,9 @@ const AiMatchPage = () => {
         mx: "auto",
         px: { xs: 1, sm: 2 },
         marginTop: { xs: "1rem", md: "1rem" },
-        padding:"0",
+        padding: "0",
         overflow: "auto",
-        paddingBottom:"10px"
+        paddingBottom: "10px",
       }}
     >
       <Box

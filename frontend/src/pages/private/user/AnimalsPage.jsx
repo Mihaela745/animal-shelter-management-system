@@ -11,7 +11,7 @@ import PetsIcon from "@mui/icons-material/Pets";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAnimals } from "../../../features/animals/animalsSlice";
-import AnimalCard from "../../../Components/animals/AnimalCard";
+import AnimalCard from "../../../components/animals/AnimalCard";
 import { useSearchParams } from "react-router-dom";
 
 const filterFieldSx = {
@@ -55,12 +55,12 @@ export default function AnimalsPage() {
     } else {
       delete params[name];
     }
-    params.page = "1"; 
+    params.page = "1";
     setSearchParams(params);
   };
 
   const handlePageChange = (e, value) => {
-    const params = Object.fromEntries(searchParams); 
+    const params = Object.fromEntries(searchParams);
     params.page = String(value);
     setSearchParams(params);
   };

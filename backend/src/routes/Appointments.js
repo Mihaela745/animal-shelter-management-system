@@ -29,7 +29,6 @@ router.get("/availability", verifyToken, appointmentController.getAvailableSlots
 router.put(
   "/:id",
   verifyToken,
-  authorizeRoles("Manager", "Vet", "Caretaker"),
   appointmentController.updateAppointmentStatus,
 );
 router.delete(

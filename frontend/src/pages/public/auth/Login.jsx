@@ -67,7 +67,13 @@ export default function LoginPage() {
     if (result.meta.requestStatus === "fulfilled") {
       if (result.payload.user.role === "user") {
         navigate("/user/home");
-      } else navigate("/");
+      } else if (result.payload.user.role === "Manager") {
+        navigate("/manager/dashboard");
+      } else if (result.payload.user.role === "Vet") {
+        navigate("/vet/dashboard");
+      } else if (result.payload.user.role === "Caretaker") {
+        navigate("/staff/dashboard");
+      }
     } else {
       setLoginError(result.payload || "Eroare login");
     }

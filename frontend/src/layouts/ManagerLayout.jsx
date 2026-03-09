@@ -1,28 +1,22 @@
 import { Box, useMediaQuery } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../components/userMenu/Sidebar";
-import MobileTopBar from "../components/userMenu/MobileTopBar";
+import ManagerSidebar from "../components/managerMenu/Sidebar";
+import ManagerMobileTopBar from "../components/managerMenu/MobileTopBar";
 import { useState } from "react";
 
-export default function UserLayout() {
+export default function ManagerLayout() {
   const isMobile = useMediaQuery("(max-width:900px)");
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      {isMobile && <MobileTopBar onMenuClick={() => setOpen(true)} />}
+      {isMobile && <ManagerMobileTopBar onMenuClick={() => setOpen(true)} />}
 
-      <Box
-        sx={{
-          display: "flex",
-          height: "100vh",
-          overflow: "hidden",
-        }}
-      >
-        {!isMobile && <Sidebar />}
+      <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
+        {!isMobile && <ManagerSidebar />}
 
         {isMobile && (
-          <Sidebar mobile open={open} onClose={() => setOpen(false)} />
+          <ManagerSidebar mobile open={open} onClose={() => setOpen(false)} />
         )}
 
         <Box

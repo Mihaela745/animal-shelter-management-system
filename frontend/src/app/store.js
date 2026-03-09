@@ -6,6 +6,8 @@ import appointmentsReducer from "../features/appointments/appointmentsSlice";
 import breedMetadataReducer from "../features/breedMetadata/breedMetadata";
 import aiMatchReducer from "../features/AIMatch/AiMatchSlice";
 import adoptionHistory from "../features/adoptionsHistory/adoptionsHistorySlicer";
+import boxesReducer from "../features/boxes/boxesSlice";
+import staffReducer from "../features/staff/staffSlice";
 const store = configureStore({
   reducer: {
     animals: animalsReducer,
@@ -15,6 +17,8 @@ const store = configureStore({
     breedMetadata: breedMetadataReducer,
     aiMatch: aiMatchReducer,
     adoptionHistory: adoptionHistory,
+    boxes: boxesReducer,
+    staff: staffReducer,
   },
 });
 export default store;

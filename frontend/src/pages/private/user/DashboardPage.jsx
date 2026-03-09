@@ -6,9 +6,9 @@ import { fetchUserAppointments } from "../../../features/appointments/appointmen
 import { fetchUserAdoptionRequests } from "../../../features/adoptionRequests/adoptionRequestsSlice";
 import { fetchUserAdoptions } from "../../../features/adoptionsHistory/adoptionsHistorySlicer";
 
-import AppointmentsCard from "../../../Components/userDashboard/AppoinmentsCard";
-import RequestsCard from "../../../Components/userDashboard/RequestCard";
-import AdoptionHistoryCard from "../../../Components/userDashboard/AdoptionHistoryCard";
+import AppointmentsCard from "../../../components/userDashboard/AppoinmentsCard";
+import RequestsCard from "../../../components/userDashboard/RequestCard";
+import AdoptionHistoryCard from "../../../components/userDashboard/AdoptionHistoryCard";
 
 export default function DashboardPage() {
   const dispatch = useDispatch();
@@ -30,8 +30,8 @@ export default function DashboardPage() {
     <Box
       sx={{
         px: { xs: 2, sm: 3, md: 4 },
-        pt: { xs: 3, md: 5 }, 
-        pb: { xs: 12, md: 8 }, 
+        pt: { xs: 3, md: 5 },
+        pb: { xs: 12, md: 8 },
         maxWidth: 1200,
         mx: "auto",
       }}

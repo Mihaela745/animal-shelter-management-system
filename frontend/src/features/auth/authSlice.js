@@ -56,7 +56,19 @@ export const forgotPassword = createAsyncThunk(
     }
   },
 );
-
+export const updatePassword = createAsyncThunk(
+  "auth/updatePassword",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axiosInstance.put("/auth/update-password", data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Eroare actualizare parola",
+      );
+    }
+  },
+);
 const authSlice = createSlice({
   name: "auth",
   initialState: {
@@ -121,6 +133,19 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updatePassword.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+
+      .addCase(updatePassword.fulfilled, (state) => {
+        state.loading = false;
+      })
+
+      .addCase(updatePassword.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

@@ -44,9 +44,9 @@ export default function Sidebar({ mobile = false, open, onClose }) {
       sx={{
         width: sidebarWidth,
         height: "100vh",
-        position: "sticky", 
+        position: "sticky",
         top: 0,
-        overflowY: "auto", 
+        overflowY: "auto",
         backgroundColor: "#a91111",
         color: "white",
         display: "flex",
@@ -54,7 +54,7 @@ export default function Sidebar({ mobile = false, open, onClose }) {
         transition: mobile ? "none" : "width 0.3s ease",
         py: 2,
         boxSizing: "border-box",
-        "&::-webkit-scrollbar": { display: "none" }, 
+        "&::-webkit-scrollbar": { display: "none" },
         msOverflowStyle: "none",
         scrollbarWidth: "none",
       }}
@@ -154,7 +154,7 @@ export default function Sidebar({ mobile = false, open, onClose }) {
                 ? "center"
                 : "flex-start",
             "&:hover": { backgroundColor: "#a91111" },
-            pb: 2, 
+            pb: 2,
           }}
         >
           <ListItemIcon

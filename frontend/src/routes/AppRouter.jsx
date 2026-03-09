@@ -13,7 +13,8 @@ import AnimalsPage from "../pages/private/user/AnimalsPage";
 import ProfilePage from "../pages/private/user/ProfilePage";
 import AnimalDetailsPage from "../pages/private/user/AnimalDetailsPage";
 import AiMatchPage from "../pages/private/user/AIMatchPage";
-
+import ManagerLayout from "../layouts/ManagerLayout";
+import DashboardPageManager from "../pages/private/manager/DashboardPage";
 export default function AppRouter() {
   return (
     <Routes>
@@ -46,6 +47,18 @@ export default function AppRouter() {
         <Route path="profile" element={<ProfilePage />} />
         <Route path="match" element={<AiMatchPage />} />
         <Route path="animals/:id" element={<AnimalDetailsPage />} />
+      </Route>
+      <Route
+        path="/manager"
+        element={
+          <ProtectedRoute>
+            <RoleRouter allowedRoles={["Manager"]}>
+              <ManagerLayout />
+            </RoleRouter>
+          </ProtectedRoute>
+        }
+      >
+        <Route path="dashboard" element={<DashboardPageManager />} />
       </Route>
     </Routes>
   );

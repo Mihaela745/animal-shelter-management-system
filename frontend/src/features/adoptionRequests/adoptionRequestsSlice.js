@@ -27,17 +27,15 @@ export const createAdoptionRequest = createAsyncThunk(
     }
   },
 );
-export const updateAppointmentStatus = createAsyncThunk(
-  "appointments/updateStatus",
-  async ({ id, status }, thunkAPI) => {
+export const fetchAllAdoptionRequests = createAsyncThunk(
+  "adoptionRequests/fetchAll",
+  async (_, thunkAPI) => {
     try {
-      const response = await axiosInstance.put(`/appointments/${id}`, {
-        status,
-      });
+      const response = await axiosInstance.get("/adoption-requests");
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare update appointment",
+        error.response?.data || "Eroare cereri adopție",
       );
     }
   },
@@ -76,15 +74,18 @@ const adoptionRequestsSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(updateAppointmentStatus.fulfilled, (state, action) => {
-        const index = state.appointments.findIndex(
-          (a) => a.id === action.payload.id,
-        );
-
-        if (index !== -1) {
-          state.appointments[index] = action.payload;
-        }
+      .addCase(fetchAllAdoptionRequests.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchAllAdoptionRequests.fulfilled, (state, action) => {
+        state.loading = false;
+        state.requests = action.payload;
+      })
+      .addCase(fetchAllAdoptionRequests.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
+      
   },
 });
 

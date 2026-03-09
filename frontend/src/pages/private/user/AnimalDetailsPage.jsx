@@ -7,9 +7,9 @@ import {
   fetchBreedMetadata,
   clearBreedMetadata,
 } from "../../../features/breedMetadata/breedMetadata";
-import AnimalGallery from "../../../Components/animals/AnimalGallery";
-import AnimalInfo from "../../../Components/animals/AnimalInfo";
-import AnimalActions from "../../../Components/animals/AnimalActions";
+import AnimalGallery from "../../../components/animals/AnimalGallery";
+import AnimalInfo from "../../../components/animals/AnimalInfo";
+import AnimalActions from "../../../components/animals/AnimalActions";
 
 export default function AnimalDetailsPage() {
   const { id } = useParams();
@@ -37,41 +37,41 @@ export default function AnimalDetailsPage() {
     );
   if (!selectedAnimal) return null;
 
- return (
-   <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: "1200px", margin: "0 auto" }}>
-     <Paper
-       elevation={0}
-       sx={{
-         display: "flex",
-         flexDirection: { xs: "column", md: "row" },
-         borderRadius: "24px",
-         overflow: "hidden",
-         boxShadow: "0 12px 40px rgba(0,0,0,0.08)",
-         backgroundColor: "white",
-         minHeight: { md: "450px" }, 
-         maxHeight: { md: "600px" },
-       }}
-     >
-       <Box
-         sx={{ flex: 1, display: "flex", minHeight: { xs: "300px", md: 0 } }}
-       >
-         <AnimalGallery animal={selectedAnimal} />
-       </Box>
+  return (
+    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: "1200px", margin: "0 auto" }}>
+      <Paper
+        elevation={0}
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          borderRadius: "24px",
+          overflow: "hidden",
+          boxShadow: "0 12px 40px rgba(0,0,0,0.08)",
+          backgroundColor: "white",
+          minHeight: { md: "450px" },
+          maxHeight: { md: "600px" },
+        }}
+      >
+        <Box
+          sx={{ flex: 1, display: "flex", minHeight: { xs: "300px", md: 0 } }}
+        >
+          <AnimalGallery animal={selectedAnimal} />
+        </Box>
 
-       <Box
-         sx={{
-           flex: 1,
-           display: "flex",
-           flexDirection: "column",
-           justifyContent: "center",
-           p: { xs: 3, md: 5 },
-           overflowY: "auto", 
-         }}
-       >
-         <AnimalInfo animal={selectedAnimal} />
-         <AnimalActions animal={selectedAnimal} />
-       </Box>
-     </Paper>
-   </Box>
- );
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            p: { xs: 3, md: 5 },
+            overflowY: "auto",
+          }}
+        >
+          <AnimalInfo animal={selectedAnimal} />
+          <AnimalActions animal={selectedAnimal} />
+        </Box>
+      </Paper>
+    </Box>
+  );
 }

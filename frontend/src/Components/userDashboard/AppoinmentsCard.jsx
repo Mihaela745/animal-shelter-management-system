@@ -2,7 +2,7 @@ import { Card, Typography, Box, Button, Chip } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { updateAppointmentStatus } from "../../features/adoptionRequests/adoptionRequestsSlice";
+import { updateAppointmentStatus } from "../../features/appointments/appointmentsSlice";
 
 export default function AppointmentsCard({ appointments = [] }) {
   const dispatch = useDispatch();
