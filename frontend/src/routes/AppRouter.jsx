@@ -15,6 +15,8 @@ import AnimalDetailsPage from "../pages/private/user/AnimalDetailsPage";
 import AiMatchPage from "../pages/private/user/AIMatchPage";
 import ManagerLayout from "../layouts/ManagerLayout";
 import DashboardPageManager from "../pages/private/manager/DashboardPage";
+import AnimalsPageManager from "../pages/private/manager/AnimalsPage";
+import AnimalDetailsPageManager from "../pages/private/manager/AnimalDetailsPage";
 export default function AppRouter() {
   return (
     <Routes>
@@ -59,6 +61,8 @@ export default function AppRouter() {
         }
       >
         <Route path="dashboard" element={<DashboardPageManager />} />
+        <Route path="animals" element={<AnimalsPageManager />} />
+        <Route path="animals/:id" element={<AnimalDetailsPageManager />} />
       </Route>
     </Routes>
   );

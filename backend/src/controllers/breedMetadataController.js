@@ -92,4 +92,17 @@ export const controller = {
       return res.status(500).send(err.message);
     }
   },
+  getBreedsBySpecies: async (req, res) => {
+    try {
+      const species = req.params.species; // "Dog" sau "Cat"
+      const breeds = await Breed_Metadata.findAll({
+        where: { species },
+        attributes: ["breed_name"],
+        order: [["breed_name", "ASC"]],
+      });
+      return res.status(200).json(breeds.map((b) => b.breed_name));
+    } catch (err) {
+      return res.status(500).send(err.message);
+    }
+  },
 };

@@ -144,7 +144,6 @@ export default function DashboardCharts({
     "#00695c",
   ];
 
-
   const axisStyle = { fontSize: 11, fill: "#bbb", fontWeight: 600 };
 
   return (
@@ -153,7 +152,7 @@ export default function DashboardCharts({
         display: "grid",
         gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
         gap: 10,
-        marginBottom:"10rem"
+        marginBottom: "10rem",
       }}
     >
       <ChartCard
@@ -277,7 +276,6 @@ export default function DashboardCharts({
         </Box>
       </ChartCard>
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-
         <ChartCard
           icon={<PetsIcon fontSize="small" />}
           title="Distribuție specii"
