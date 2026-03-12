@@ -17,6 +17,8 @@ import ManagerLayout from "../layouts/ManagerLayout";
 import DashboardPageManager from "../pages/private/manager/DashboardPage";
 import AnimalsPageManager from "../pages/private/manager/AnimalsPage";
 import AnimalDetailsPageManager from "../pages/private/manager/AnimalDetailsPage";
+import AddAnimalPage from "../pages/private/manager/AddAnimalPage";
+import AnimalMedicalPage from "../pages/private/manager/MedicalFilePage";
 export default function AppRouter() {
   return (
     <Routes>
@@ -61,8 +63,13 @@ export default function AppRouter() {
         }
       >
         <Route path="dashboard" element={<DashboardPageManager />} />
-        <Route path="animals" element={<AnimalsPageManager />} />
+        <Route path="animals" element={<AnimalsPageManager />} />{" "}
+        <Route path="animals/add" element={<AddAnimalPage />} />
         <Route path="animals/:id" element={<AnimalDetailsPageManager />} />
+        <Route
+          path="animals/:animalId/medical/:fileId"
+          element={<AnimalMedicalPage />}
+        />
       </Route>
     </Routes>
   );

@@ -14,7 +14,6 @@ export const fetchAnimals = createAsyncThunk(
       });
 
       const query = new URLSearchParams(cleanParams).toString();
-
       const response = await axiosInstance.get(`/animals?${query}`);
 
       return response.data;
@@ -23,6 +22,7 @@ export const fetchAnimals = createAsyncThunk(
     }
   },
 );
+
 export const fetchAnimalById = createAsyncThunk(
   "animals/fetchById",
   async (id, thunkAPI) => {
@@ -34,6 +34,7 @@ export const fetchAnimalById = createAsyncThunk(
     }
   },
 );
+
 export const createAnimal = createAsyncThunk(
   "animals/createAnimal",
   async (animalData, thunkAPI) => {
@@ -41,7 +42,7 @@ export const createAnimal = createAsyncThunk(
       const formData = new FormData();
 
       Object.entries(animalData).forEach(([key, value]) => {
-        if (value !== null && value !== undefined) {
+        if (value !== null && value !== undefined && value !== "") {
           formData.append(key, value);
         }
       });
@@ -56,15 +57,12 @@ export const createAnimal = createAsyncThunk(
     }
   },
 );
+
 export const updateAnimal = createAsyncThunk(
   "animals/updateAnimal",
-  async ({ id, data, isFormData = false }, thunkAPI) => {
+  async ({ id, data }, thunkAPI) => {
     try {
-      const response = await axiosInstance.put(
-        `/animals/${id}`,
-        data, 
-        isFormData ? {} : { headers: { "Content-Type": "application/json" } },
-      );
+      const response = await axiosInstance.put(`/animals/${id}`, data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -73,6 +71,7 @@ export const updateAnimal = createAsyncThunk(
     }
   },
 );
+
 export const deleteAnimal = createAsyncThunk(
   "animals/deleteAnimal",
   async (id, thunkAPI) => {
@@ -128,18 +127,8 @@ const animalsSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
-      .addCase(createAnimal.pending, (state) => {
-        state.loading = true;
-      })
-
       .addCase(createAnimal.fulfilled, (state, action) => {
-        state.loading = false;
         state.animals.unshift(action.payload);
-      })
-
-      .addCase(createAnimal.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
       })
       .addCase(updateAnimal.fulfilled, (state, action) => {
         const index = state.animals.findIndex(

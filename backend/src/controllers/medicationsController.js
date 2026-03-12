@@ -53,17 +53,17 @@ export const controller = {
       const medications = await Medications.findAll({
         where: {
           medical_file_id: medicalFileId,
-          start_date: {
-            [Op.lte]: today,
-          },
-          [Op.or]: [
-            {
-              end_date: null,
-            },
-            {
-              end_date: { [Op.gte]: today },
-            },
-          ],
+          // start_date: {
+          //   [Op.lte]: today,
+          // },
+          // [Op.or]: [
+          //   {
+          //     end_date: null,
+          //   },
+          //   {
+          //     end_date: { [Op.gte]: today },
+          //   },
+          // ],
         },
         include: [
           {

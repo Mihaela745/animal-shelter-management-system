@@ -11,7 +11,11 @@ export default function AnimalMedicalAction({ animal }) {
         variant="contained"
         fullWidth
         startIcon={<MedicalServicesOutlinedIcon />}
-        onClick={() => navigate(`/manager/animals/${animal.id}/medical`)}
+        onClick={() =>
+          navigate(
+            `/manager/animals/${animal.id}/medical/${animal.medical_file_id}`,
+          )
+        }
         sx={{
           backgroundColor: "#a91111",
           color: "white",

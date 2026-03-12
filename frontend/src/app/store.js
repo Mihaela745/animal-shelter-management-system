@@ -8,8 +8,9 @@ import aiMatchReducer from "../features/AIMatch/AiMatchSlice";
 import adoptionHistory from "../features/adoptionsHistory/adoptionsHistorySlicer";
 import boxesReducer from "../features/boxes/boxesSlice";
 import staffReducer from "../features/staff/staffSlice";
-import medicationsReducer from "../features/medications/medicationsSlice"
-import medicalFilesReducer from "../features/medicalFiles/medicalFilesSlice"
+import medicationsReducer from "../features/medications/medicationsSlice";
+import medicalFilesReducer from "../features/medicalFiles/medicalFilesSlice";
+import speciesReducer from "../features/species/speciesSlice";
 const store = configureStore({
   reducer: {
     animals: animalsReducer,
@@ -21,8 +22,9 @@ const store = configureStore({
     adoptionHistory: adoptionHistory,
     boxes: boxesReducer,
     staff: staffReducer,
-    medications:medicationsReducer,
-    medicalFiles:medicalFilesReducer
+    medications: medicationsReducer,
+    medicalFiles: medicalFilesReducer,
+    species: speciesReducer,
   },
 });
 export default store;

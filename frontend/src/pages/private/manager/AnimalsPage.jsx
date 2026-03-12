@@ -88,7 +88,7 @@ export default function AnimalsPageManager() {
         width: "100%",
         maxWidth: "1200px",
         mx: "auto",
-        boxSizing: "border-box", // IMPORTANT: oprește padding-ul să mai strice lățimea
+        boxSizing: "border-box",
       }}
     >
       <Box sx={{ mb: 4, textAlign: "center" }}>
@@ -115,14 +115,13 @@ export default function AnimalsPageManager() {
         )}
       </Box>
 
-      {/* Box Filtre Manager */}
       <Box
         sx={{
           display: "grid",
           gridTemplateColumns: {
-            xs: "1fr", // 1 filtru pe rând pe mobil (să nu se înghesuie)
-            sm: "repeat(2, 1fr)", // 2 filtre pe tabletă
-            md: "repeat(4, 1fr)", // 4 filtre pe desktop
+            xs: "1fr", 
+            sm: "repeat(2, 1fr)", 
+            md: "repeat(4, 1fr)", 
           },
           gap: 2,
           mb: 5,
@@ -197,8 +196,6 @@ export default function AnimalsPageManager() {
           <CircularProgress sx={{ color: "#a91111" }} />
         </Box>
       )}
-
-      {/* Empty State Manager */}
       {!loading && animals.length === 0 && (
         <Box
           sx={{
@@ -224,8 +221,6 @@ export default function AnimalsPageManager() {
           </Typography>
         </Box>
       )}
-
-      {/* Lista Animale Manager */}
       {!loading && animals.length > 0 && (
         <Box
           sx={{
@@ -237,7 +232,7 @@ export default function AnimalsPageManager() {
             },
             gap: 3,
             width: "100%",
-            boxSizing: "border-box", // Magia finală pentru a nu tăia grid-ul în dreapta
+            boxSizing: "border-box", 
           }}
         >
           {animals.map((animal) => (

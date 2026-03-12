@@ -13,21 +13,18 @@ import { useNavigate } from "react-router-dom";
 export default function AnimalCard({ animal }) {
   const { name, age, gender, image_url, status } = animal;
   const navigate = useNavigate();
-  const role=useSelector(state=>state.auth.user.role)
-  const handleNavigation=()=>{
-    if(role==="Manager")
-    {
-      navigate(`/manager/animals/${animal.id}`)
-    }
-    else if(role==="user")
-    {
+  const role = useSelector((state) => state.auth?.user?.role);
+  const handleNavigation = () => {
+    if (role === "Manager") {
+      navigate(`/manager/animals/${animal.id}`);
+    } else if (role === "user") {
       navigate(`/user/animals/${animal.id}`);
+    } else if (role === "Vet" || role === "Staff") {
+      navigate(`/staff/animals/${animal.id}`);
+    } else {
+      navigate("/");
     }
-    else if(role==="Vet"||role==="Staff")
-    {
-      navigate(`/staff/animals/${animal.id}`)
-    }
-  }
+  };
   return (
     <Card
       sx={{
@@ -50,7 +47,6 @@ export default function AnimalCard({ animal }) {
         />
       </Box>
 
-     
       <CardContent
         sx={{
           p: 2,

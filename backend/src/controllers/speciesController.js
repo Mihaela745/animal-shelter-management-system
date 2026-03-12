@@ -1,4 +1,4 @@
-import { Species } from "../models/Species.js";
+import { Species } from "../models/index.js";
 
 export const seedSpecies=async()=>{
    const speciesData = [{ name: "Dog" }, { name: "Cat" }];
@@ -15,9 +15,9 @@ export const controller = {
   getSpecies: async (req, res) => {
     try {
       const species = await Species.findAll();
-      return res.status(200).send(species);
+      return res.status(200).json(species);
     } catch (error) {
-      console.error("Error fetching species: ", error);
+      console.error("Error fetching species:", error);
       return res.status(500).send(`Failed to get species: ${error}`);
     }
   },

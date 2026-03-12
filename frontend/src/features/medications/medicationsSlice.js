@@ -1,82 +1,44 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../sercives/axiosInstance";
 
-export const fetchAllMedicalFiles = createAsyncThunk(
-  "medicalFiles/fetchAll",
-  async (_, thunkAPI) => {
+export const fetchMedicationsByFile = createAsyncThunk(
+  "medications/fetchByFile",
+  async (medicalFileId, thunkAPI) => {
     try {
-      const response = await axiosInstance.get("/medical-files");
+      const response = await axiosInstance.get(
+        `/medical-files/${medicalFileId}/medications`,
+      );
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare medical files",
+        error.response?.data || "Eroare medicatii",
       );
     }
   },
 );
 
-export const fetchMedicalFileById = createAsyncThunk(
-  "medicalFiles/fetchById",
-  async (id, thunkAPI) => {
-    try {
-      const response = await axiosInstance.get(`/medical-files/${id}`);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare medical file",
-      );
-    }
-  },
-);
-
-export const updateMedicalFile = createAsyncThunk(
-  "medicalFiles/update",
-  async ({ id, data }, thunkAPI) => {
-    try {
-      const response = await axiosInstance.put(`/medical-files/${id}`, data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare update medical file",
-      );
-    }
-  },
-);
-
-const medicalFilesSlice = createSlice({
-  name: "medicalFiles",
+const medicationsSlice = createSlice({
+  name: "medications",
   initialState: {
-    files: [],
-    selectedFile: null,
+    medications: [],
     loading: false,
     error: null,
   },
-
   reducers: {},
-
   extraReducers: (builder) => {
     builder
-
-      .addCase(fetchAllMedicalFiles.pending, (state) => {
+      .addCase(fetchMedicationsByFile.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchAllMedicalFiles.fulfilled, (state, action) => {
+      .addCase(fetchMedicationsByFile.fulfilled, (state, action) => {
         state.loading = false;
-        state.files = action.payload;
+        state.medications = Array.isArray(action.payload) ? action.payload : [];
       })
-      .addCase(fetchAllMedicalFiles.rejected, (state, action) => {
+      .addCase(fetchMedicationsByFile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      })
-
-      .addCase(fetchMedicalFileById.fulfilled, (state, action) => {
-        state.selectedFile = action.payload;
-      })
-
-      .addCase(updateMedicalFile.fulfilled, (state, action) => {
-        state.selectedFile = action.payload;
       });
   },
 });
 
-export default medicalFilesSlice.reducer;
+export default medicationsSlice.reducer;
