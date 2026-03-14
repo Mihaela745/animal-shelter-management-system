@@ -63,7 +63,7 @@ export default function AnimalManagerActions({ animal }) {
       Object.entries(formData).forEach(([key, val]) => fd.append(key, val));
       fd.append("image", imageFile);
       await dispatch(
-        updateAnimal({ id: animal.id, data: fd, isFormData: true }),
+        updateAnimal({ id: animal.id, data: fd}),
       );
     } else {
       await dispatch(updateAnimal({ id: animal.id, data: formData }));

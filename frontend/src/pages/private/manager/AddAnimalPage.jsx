@@ -6,6 +6,7 @@ import {
   MenuItem,
   Stack,
   alpha,
+  Alert,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -60,6 +61,7 @@ export default function AddAnimalPage() {
   const { breeds, breedsLoading } = useSelector((s) => s.breedMetadata);
   const { boxes } = useSelector((s) => s.boxes);
   const { species } = useSelector((s) => s.species);
+  const { loading } = useSelector((s) => s.animals);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -72,6 +74,7 @@ export default function AddAnimalPage() {
     image: null,
   });
   const [step, setStep] = useState(0);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     dispatch(fetchBoxes());
@@ -103,8 +106,19 @@ export default function AddAnimalPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+
     const result = await dispatch(createAnimal(formData));
-    if (result.payload?.id) navigate(`/manager/animals/${result.payload.id}`);
+
+    if (result.payload?.id) {
+      navigate(`/manager/animals/${result.payload.id}`);
+    } else {
+      setError(
+        typeof result.payload === "string"
+          ? result.payload
+          : "A apărut o eroare la crearea animalului. Încearcă din nou.",
+      );
+    }
   };
 
   const filteredBoxes = formData.species_id
@@ -190,6 +204,17 @@ export default function AddAnimalPage() {
             </Box>
           ))}
         </Box>
+
+        {error && (
+          <Alert
+            severity="error"
+            onClose={() => setError(null)}
+            sx={{ mb: 2, borderRadius: "10px" }}
+          >
+            {error}
+          </Alert>
+        )}
+
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -277,6 +302,7 @@ export default function AddAnimalPage() {
               </Stack>
             </Box>
           )}
+
           {step === 1 && (
             <Box sx={{ p: 3 }}>
               <Stack spacing={2.5}>
@@ -485,7 +511,7 @@ export default function AddAnimalPage() {
             ) : (
               <Button
                 type="submit"
-                disabled={!formData.box_id}
+                disabled={!formData.box_id || loading}
                 sx={{
                   backgroundColor: RED,
                   color: "white",
@@ -505,7 +531,7 @@ export default function AddAnimalPage() {
                   },
                 }}
               >
-                Creează animal ✓
+                {loading ? "Se salvează..." : "Creează animal ✓"}
               </Button>
             )}
           </Box>

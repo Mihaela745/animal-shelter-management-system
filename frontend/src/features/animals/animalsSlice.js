@@ -6,16 +6,13 @@ export const fetchAnimals = createAsyncThunk(
   async (params = {}, thunkAPI) => {
     try {
       const cleanParams = {};
-
       Object.entries(params).forEach(([key, value]) => {
         if (value !== "" && value !== null && value !== undefined) {
           cleanParams[key] = value;
         }
       });
-
       const query = new URLSearchParams(cleanParams).toString();
       const response = await axiosInstance.get(`/animals?${query}`);
-
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response?.data || "Error");
@@ -40,15 +37,12 @@ export const createAnimal = createAsyncThunk(
   async (animalData, thunkAPI) => {
     try {
       const formData = new FormData();
-
       Object.entries(animalData).forEach(([key, value]) => {
         if (value !== null && value !== undefined && value !== "") {
           formData.append(key, value);
         }
       });
-
       const response = await axiosInstance.post("/animals", formData);
-
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -62,7 +56,14 @@ export const updateAnimal = createAsyncThunk(
   "animals/updateAnimal",
   async ({ id, data }, thunkAPI) => {
     try {
-      const response = await axiosInstance.put(`/animals/${id}`, data);
+    const isFormData = data instanceof FormData;
+
+      const response = await axiosInstance.put(`/animals/${id}`, data, {
+        headers: isFormData
+          ? { "Content-Type": "multipart/form-data" }
+          : { "Content-Type": "application/json" },
+      });
+
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
@@ -127,26 +128,50 @@ const animalsSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(createAnimal.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(createAnimal.fulfilled, (state, action) => {
+        state.loading = false;
         state.animals.unshift(action.payload);
       })
+      .addCase(createAnimal.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateAnimal.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(updateAnimal.fulfilled, (state, action) => {
+        state.loading = false;
         const index = state.animals.findIndex(
           (a) => a.id === action.payload.id,
         );
-
         if (index !== -1) {
           state.animals[index] = action.payload;
         }
-
         state.selectedAnimal = action.payload;
       })
+      .addCase(updateAnimal.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(deleteAnimal.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(deleteAnimal.fulfilled, (state, action) => {
+        state.loading = false;
         state.animals = state.animals.filter((a) => a.id !== action.payload);
-
         if (state.selectedAnimal?.id === action.payload) {
           state.selectedAnimal = null;
         }
+      })
+      .addCase(deleteAnimal.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

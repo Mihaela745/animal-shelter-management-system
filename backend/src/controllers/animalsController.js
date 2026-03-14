@@ -1,6 +1,13 @@
 import { Animals, Species, Boxes, Medical_files } from "../models/index.js";
 import { sequelize } from "../config/db.js";
 import { Op } from "sequelize";
+
+const ANIMAL_INCLUDES = [
+  { model: Species, attributes: ["name"] },
+  { model: Boxes, attributes: ["box_number"] },
+  { model: Medical_files },
+];
+
 export const controller = {
   createAnimal: async (req, res) => {
     const t = await sequelize.transaction();
@@ -15,53 +22,60 @@ export const controller = {
         weight,
         image_url,
       } = req.body;
+
       if (!name || !species_id || !gender || !box_id) {
+        await t.rollback();
         return res.status(400).send("Must complete all parameters!");
       }
+
       const imageUrl = req.file ? req.file.path : image_url;
+
       const medicalFile = await Medical_files.create(
-        {
-          weight: weight,
-          general_observations: "",
-        },
+        { weight: weight ? Number(weight) : null, general_observations: "" },
         { transaction: t },
       );
+
       const animal = await Animals.create(
         {
           name,
-          species_id,
+          species_id: Number(species_id),
           breed,
-          age,
+          age: age ? Number(age) : null,
           gender,
-          box_id,
+          box_id: Number(box_id),
           medical_file_id: medicalFile.id,
           image_url: imageUrl,
-          weight: weight,
         },
         { transaction: t },
       );
+
       await Boxes.increment(
         { current_occupancy: 1 },
         { where: { id: box_id }, transaction: t },
       );
+
       await t.commit();
       return res.status(201).send(animal);
     } catch (err) {
       if (t) await t.rollback();
-      console.log("Error while creating animal");
-      return res.status(500).send(`Error while creating : ${err}`);
+      console.error("Error while creating animal:", err);
+      return res.status(500).send(`Error while creating: ${err.message}`);
     }
   },
+
   getAllAnimals: async (req, res) => {
     try {
-      const { species, status, gender, minAge, maxAge } = req.query;
-      const { page = 1, limit = 9 } = req.query;
-
+      const {
+        species,
+        status,
+        gender,
+        minAge,
+        maxAge,
+        page = 1,
+        limit = 9,
+      } = req.query;
       const offset = (Number(page) - 1) * Number(limit);
-
-      const isAdmin = req.user?.role === "admin";
       const whereClause = {};
-
 
       if (status) whereClause.status = status;
       if (gender) whereClause.gender = gender;
@@ -79,9 +93,7 @@ export const controller = {
             model: Species,
             attributes: ["name"],
             required: !!species,
-            ...(species && {
-              where: { name: species },
-            }),
+            ...(species && { where: { name: species } }),
           },
           { model: Boxes, attributes: ["box_number"] },
           { model: Medical_files },
@@ -100,35 +112,45 @@ export const controller = {
       return res.status(500).send(`Couldn't fetch animals: ${err.message}`);
     }
   },
+
   getAnimalById: async (req, res) => {
     try {
-      const animalId = req.params.id;
-      const animal = await Animals.findByPk(animalId, {
-        include: [
-          { model: Species, attributes: ["name"] },
-          { model: Boxes, attributes: ["box_number"] },
-          { model: Medical_files },
-        ],
+      const animal = await Animals.findByPk(req.params.id, {
+        include: ANIMAL_INCLUDES,
       });
-      if (!animal) return res.status(400).send(`Can't find animal by id!`);
+      if (!animal) return res.status(404).send("Can't find animal by id!");
       return res.status(200).send(animal);
     } catch (err) {
-      return res.status(500).send(`Couldn't fetch animal: ${err}`);
+      return res.status(500).send(`Couldn't fetch animal: ${err.message}`);
     }
   },
+
   updateAnimal: async (req, res) => {
     const t = await sequelize.transaction();
     try {
       const animalId = req.params.id;
-      let updateData = { ...req.body };
-      const animal = await Animals.findByPk(animalId);
+      const body = req.body || {};
+      const { name, breed, age, gender, status, box_id } = body;
+
+      const updateData = {};
+      if (name !== undefined) updateData.name = name;
+      if (breed !== undefined) updateData.breed = breed;
+      if (age !== undefined && age !== "") updateData.age = Number(age);
+      if (gender !== undefined) updateData.gender = gender;
+      if (status !== undefined) updateData.status = status;
+      if (box_id !== undefined) updateData.box_id = Number(box_id);
+      if (req.file) updateData.image_url = req.file.path;
+
+      const animal = await Animals.findByPk(animalId, { transaction: t });
       if (!animal) {
         await t.rollback();
         return res.status(404).send("Animal not found!");
       }
-      const oldBoxId = animal.box_id;
+
       if (updateData.box_id && updateData.box_id !== animal.box_id) {
-        const newBox = await Boxes.findByPk(updateData.box_id);
+        const newBox = await Boxes.findByPk(updateData.box_id, {
+          transaction: t,
+        });
 
         if (!newBox) {
           await t.rollback();
@@ -144,10 +166,10 @@ export const controller = {
           await t.rollback();
           return res.status(400).send("Box capacity exceeded!");
         }
-        if (oldBoxId) {
+        if (animal.box_id) {
           await Boxes.decrement(
             { current_occupancy: 1 },
-            { where: { id: oldBoxId }, transaction: t },
+            { where: { id: animal.box_id }, transaction: t },
           );
         }
         await Boxes.increment(
@@ -155,43 +177,33 @@ export const controller = {
           { where: { id: updateData.box_id }, transaction: t },
         );
       }
-      if (req.file) {
-        updateData.image_url = req.file.path;
-      }
-      const [updatedRows] = await Animals.update(updateData, {
+
+      await Animals.update(updateData, {
         where: { id: animalId },
         transaction: t,
       });
 
-      if (updatedRows === 0 && !req.file) {
-        await t.rollback();
-        return res.status(400).send("No changes applied!");
-      }
-
       await t.commit();
 
       const updatedAnimal = await Animals.findByPk(animalId, {
-        include: [
-          { model: Species, attributes: ["name"] },
-          { model: Boxes, attributes: ["box_number"] },
-          { model: Medical_files },
-        ],
+        include: ANIMAL_INCLUDES,
       });
 
       return res.status(200).send(updatedAnimal);
     } catch (err) {
       if (t) await t.rollback();
-      console.error("Update error:", err);
+      console.error("Update error:", err.message);
       return res.status(500).send(`Couldn't update animal: ${err.message}`);
     }
   },
+
   deleteAnimal: async (req, res) => {
     try {
       const animalId = req.params.id;
       const animal = await Animals.findByPk(animalId);
-      if (!animal) {
-        return res.status(404).send(`Animal not found to be deleted!`);
-      }
+
+      if (!animal)
+        return res.status(404).send("Animal not found to be deleted!");
 
       if (animal.box_id) {
         await Boxes.decrement(
@@ -201,9 +213,9 @@ export const controller = {
       }
 
       await Animals.destroy({ where: { id: animalId } });
-      return res.status(200).send(`Animal has been deleted!`);
+      return res.status(200).send("Animal has been deleted!");
     } catch (err) {
-      return res.status(500).send(`Error at deletion: ${err}`);
+      return res.status(500).send(`Error at deletion: ${err.message}`);
     }
   },
 };

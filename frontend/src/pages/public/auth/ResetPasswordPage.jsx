@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../../../features/auth/authSlice";
+import { resetPassword } from "../../../features/auth/authSlice";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -9,6 +9,8 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
+import LockResetOutlinedIcon from "@mui/icons-material/LockResetOutlined";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 const RED = "#a91111";
 const DARK = "#0f0f0f";
@@ -25,50 +27,122 @@ const inputSx = {
   "& label.Mui-focused": { color: RED },
 };
 
-export default function RegisterPage() {
+export default function ResetPasswordPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
 
-  const [form, setForm] = useState({
-    username: "",
-    email: "",
-    password: "",
-    phonenumber: "",
-    address: "",
-  });
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [localError, setLocalError] = useState(null);
+  const [searchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  const id = searchParams.get("id");
 
-  const validations = () => {
-    if (!form.username) return "Username este obligatoriu";
-    if (!/^[a-zA-Z0-9_]{3,}$/.test(form.username))
-      return "Username invalid (minim 3 caractere, litere, cifre, _)";
-    if (!form.email) return "Email este obligatoriu";
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) return "Email invalid";
-    if (!form.password) return "Parola este obligatorie";
+  const [newPassword, setNewPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [localError, setLocalError] = useState(null);
+  const [done, setDone] = useState(false);
+
+  const validatePassword = () => {
+    if (!newPassword) return "Parola este obligatorie";
     if (
-      form.password.length < 8 ||
-      !/[A-Z]/.test(form.password) ||
-      !/\d/.test(form.password) ||
-      !/[^a-zA-Z0-9]/.test(form.password)
+      newPassword.length < 8 ||
+      !/[A-Z]/.test(newPassword) ||
+      !/\d/.test(newPassword) ||
+      !/[^a-zA-Z0-9]/.test(newPassword)
     )
       return "Parola: minim 8 caractere, o majusculă, o cifră, un caracter special";
-    if (form.password !== confirmPassword) return "Parolele nu coincid";
+    if (newPassword !== confirm) return "Parolele nu coincid";
     return null;
   };
-
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalError(null);
-    const validationError = validations();
+    const validationError = validatePassword();
     if (validationError) return setLocalError(validationError);
-    const result = await dispatch(registerUser(form));
-    if (result.meta.requestStatus === "fulfilled") navigate("/login");
+    const result = await dispatch(resetPassword({ id, token, newPassword }));
+    if (result.meta.requestStatus === "fulfilled") {
+      setDone(true);
+      setTimeout(() => navigate("/login"), 2000);
+    }
   };
+
+  if (!token || !id) {
+    return (
+      <Box
+        sx={{
+          minHeight: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fafafa",
+        }}
+      >
+        <Box
+          sx={{
+            textAlign: "center",
+            p: 5,
+            backgroundColor: "white",
+            borderRadius: "24px",
+            border: "1.5px solid #f0f0f0",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.06)",
+            maxWidth: 360,
+          }}
+        >
+          <Box
+            sx={{
+              width: 56,
+              height: 56,
+              borderRadius: "16px",
+              backgroundColor: "#fff5f5",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              mx: "auto",
+              mb: 2,
+            }}
+          >
+            <ErrorOutlineIcon sx={{ color: RED, fontSize: "1.6rem" }} />
+          </Box>
+          <Typography
+            sx={{
+              fontSize: "1.2rem",
+              fontWeight: 800,
+              color: DARK,
+              mb: 1,
+              fontFamily: "'Georgia', serif",
+            }}
+          >
+            Link invalid
+          </Typography>
+          <Typography
+            sx={{
+              fontSize: "0.85rem",
+              color: "#aaa",
+              mb: 3,
+              fontFamily: "sans-serif",
+            }}
+          >
+            Acest link de resetare este invalid sau a expirat.
+          </Typography>
+          <Button
+            onClick={() => navigate("/login")}
+            sx={{
+              backgroundColor: RED,
+              color: "white",
+              borderRadius: "10px",
+              textTransform: "none",
+              fontWeight: 700,
+              px: 3,
+              py: 1,
+              "&:hover": { backgroundColor: "#8a0d0d" },
+            }}
+          >
+            Înapoi la login
+          </Button>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -81,7 +155,7 @@ export default function RegisterPage() {
       <Box
         sx={{
           display: { xs: "none", md: "flex" },
-          flex: "0 0 38%",
+          flex: "0 0 42%",
           backgroundColor: DARK,
           flexDirection: "column",
           justifyContent: "space-between",
@@ -93,34 +167,23 @@ export default function RegisterPage() {
         <Box
           sx={{
             position: "absolute",
-            top: -60,
-            right: -60,
-            width: 280,
-            height: 280,
+            top: -80,
+            right: -80,
+            width: 320,
+            height: 320,
             borderRadius: "50%",
-            border: `1px solid rgba(169,17,17,0.18)`,
+            border: `1px solid rgba(169,17,17,0.2)`,
           }}
         />
         <Box
           sx={{
             position: "absolute",
-            bottom: 80,
-            left: -120,
-            width: 400,
-            height: 400,
+            bottom: 60,
+            left: -100,
+            width: 350,
+            height: 350,
             borderRadius: "50%",
-            border: `1px solid rgba(255,255,255,0.03)`,
-          }}
-        />
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: -40,
-            right: 40,
-            width: 160,
-            height: 160,
-            borderRadius: "50%",
-            border: `1px solid rgba(169,17,17,0.1)`,
+            border: `1px solid rgba(255,255,255,0.04)`,
           }}
         />
 
@@ -148,7 +211,7 @@ export default function RegisterPage() {
         <Box>
           <Typography
             sx={{
-              fontSize: "2.6rem",
+              fontSize: "2.8rem",
               fontWeight: 900,
               color: "white",
               lineHeight: 1.1,
@@ -157,12 +220,11 @@ export default function RegisterPage() {
               fontFamily: "'Georgia', serif",
             }}
           >
-            Alătură-te
+            Parolă
             <br />
             <Box component="span" sx={{ color: RED }}>
-              echipei
-            </Box>{" "}
-            noastre.
+              nouă.
+            </Box>
           </Typography>
           <Typography
             sx={{
@@ -172,8 +234,7 @@ export default function RegisterPage() {
               maxWidth: 260,
             }}
           >
-            Creează-ți un cont și începe să ajuți animalele care au nevoie de o
-            casă.
+            Alege o parolă sigură pentru a-ți proteja contul.
           </Typography>
         </Box>
 
@@ -187,7 +248,6 @@ export default function RegisterPage() {
           © 2026 PAWS & HEARTS
         </Typography>
       </Box>
-
       <Box
         sx={{
           flex: 1,
@@ -195,37 +255,35 @@ export default function RegisterPage() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          px: { xs: 3, sm: 5, md: 7 },
-          py: 5,
+          px: { xs: 3, sm: 6, md: 8 },
           backgroundColor: "white",
-          overflowY: "auto",
         }}
       >
-        <Box sx={{ width: "100%", maxWidth: 400 }}>
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: 380,
+            backgroundColor: "white",
+            borderRadius: "20px",
+            border: "1.5px solid #f0f0f0",
+            boxShadow:
+              "0 8px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)",
+            p: { xs: 3, sm: 4 },
+          }}
+        >
           <Box
             sx={{
-              display: { xs: "flex", md: "none" },
+              width: 52,
+              height: 52,
+              borderRadius: "14px",
+              backgroundColor: "#fff0f0",
+              display: "flex",
               alignItems: "center",
-              gap: 1,
-              mb: 4,
+              justifyContent: "center",
+              mb: 3,
             }}
           >
-            <Box
-              sx={{
-                width: 32,
-                height: 32,
-                borderRadius: "9px",
-                backgroundColor: RED,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <Typography sx={{ fontSize: "1rem" }}>🐾</Typography>
-            </Box>
-            <Typography sx={{ fontWeight: 700, fontSize: "0.95rem" }}>
-              Paws & Hearts
-            </Typography>
+            <LockResetOutlinedIcon sx={{ color: RED, fontSize: "1.5rem" }} />
           </Box>
 
           <Typography
@@ -238,170 +296,127 @@ export default function RegisterPage() {
               fontFamily: "'Georgia', serif",
             }}
           >
-            Cont nou
+            Resetare parolă
           </Typography>
           <Typography
             sx={{
               fontSize: "0.85rem",
               color: "#aaa",
-              mb: 3.5,
+              mb: 4,
               fontFamily: "sans-serif",
             }}
           >
-            Completează datele pentru înregistrare
+            Introdu noua ta parolă mai jos
           </Typography>
 
-          <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ display: "flex", flexDirection: "column", gap: 1.8 }}
-          >
+          {done ? (
             <Box
-              sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.8 }}
+              sx={{
+                backgroundColor: "#f0fdf4",
+                border: "1px solid #bbf7d0",
+                borderRadius: "14px",
+                p: 3,
+                textAlign: "center",
+              }}
             >
-              <TextField
-                label="Username"
-                name="username"
-                value={form.username}
-                onChange={handleChange}
-                required
-                sx={inputSx}
-              />
-              <TextField
-                label="Email"
-                name="email"
-                type="email"
-                value={form.email}
-                onChange={handleChange}
-                required
-                sx={inputSx}
-              />
-            </Box>
-
-            <Box
-              sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.8 }}
-            >
-              <TextField
-                label="Telefon"
-                name="phonenumber"
-                type="tel"
-                value={form.phonenumber}
-                onChange={handleChange}
-                sx={inputSx}
-              />
-              <TextField
-                label="Adresă"
-                name="address"
-                value={form.address}
-                onChange={handleChange}
-                sx={inputSx}
-              />
-            </Box>
-
-            <TextField
-              label="Parolă"
-              name="password"
-              type="password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              fullWidth
-              sx={inputSx}
-            />
-            <TextField
-              label="Confirmă parola"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              fullWidth
-              sx={inputSx}
-            />
-
-            {(localError || error) && (
-              <Box
+              <Typography sx={{ fontSize: "1.5rem", mb: 1 }}>✓</Typography>
+              <Typography
                 sx={{
-                  backgroundColor: "#fff5f5",
-                  border: "1px solid #ffd6d6",
-                  borderRadius: "10px",
-                  px: 2,
-                  py: 1.2,
+                  fontWeight: 700,
+                  color: "#166534",
+                  fontFamily: "sans-serif",
                 }}
               >
-                <Typography
+                Parolă resetată cu succes!
+              </Typography>
+              <Typography
+                sx={{
+                  fontSize: "0.82rem",
+                  color: "#166534",
+                  mt: 0.5,
+                  fontFamily: "sans-serif",
+                }}
+              >
+                Ești redirecționat către login...
+              </Typography>
+            </Box>
+          ) : (
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+            >
+              <TextField
+                label="Noua parolă"
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+                fullWidth
+                sx={inputSx}
+              />
+              <TextField
+                label="Confirmă parola"
+                type="password"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+                required
+                fullWidth
+                sx={inputSx}
+              />
+
+              {(localError || error) && (
+                <Box
                   sx={{
-                    fontSize: "0.82rem",
-                    color: RED,
-                    fontWeight: 600,
-                    fontFamily: "sans-serif",
+                    backgroundColor: "#fff5f5",
+                    border: "1px solid #ffd6d6",
+                    borderRadius: "10px",
+                    px: 2,
+                    py: 1.2,
                   }}
                 >
-                  {localError || error}
-                </Typography>
-              </Box>
-            )}
-
-            <Button
-              type="submit"
-              variant="contained"
-              fullWidth
-              disabled={loading}
-              sx={{
-                backgroundColor: RED,
-                color: "white",
-                fontWeight: 700,
-                fontSize: "0.9rem",
-                borderRadius: "10px",
-                py: 1.3,
-                textTransform: "none",
-                mt: 0.5,
-                fontFamily: "sans-serif",
-                "&:hover": {
-                  backgroundColor: "#8a0d0d",
-                  boxShadow: "0 6px 20px rgba(169,17,17,0.3)",
-                },
-              }}
-            >
-              {loading ? (
-                <CircularProgress size={20} sx={{ color: "white" }} />
-              ) : (
-                "Creează cont"
+                  <Typography
+                    sx={{
+                      fontSize: "0.82rem",
+                      color: RED,
+                      fontWeight: 600,
+                      fontFamily: "sans-serif",
+                    }}
+                  >
+                    {localError || error}
+                  </Typography>
+                </Box>
               )}
-            </Button>
-          </Box>
 
-          <Box
-            sx={{
-              mt: 3,
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 0.5,
-              fontFamily: "sans-serif",
-            }}
-          >
-            <Typography sx={{ fontSize: "0.82rem", color: "#aaa" }}>
-              Ai deja un cont?
-            </Typography>
-            <Button
-              component={Link}
-              to="/login"
-              sx={{
-                fontSize: "0.82rem",
-                fontWeight: 700,
-                color: RED,
-                textTransform: "none",
-                p: 0,
-                minWidth: 0,
-                "&:hover": {
-                  backgroundColor: "transparent",
-                  textDecoration: "underline",
-                },
-              }}
-            >
-              Autentifică-te
-            </Button>
-          </Box>
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                disabled={loading}
+                sx={{
+                  backgroundColor: RED,
+                  color: "white",
+                  fontWeight: 700,
+                  fontSize: "0.9rem",
+                  borderRadius: "10px",
+                  py: 1.3,
+                  textTransform: "none",
+                  mt: 0.5,
+                  fontFamily: "sans-serif",
+                  "&:hover": {
+                    backgroundColor: "#8a0d0d",
+                    boxShadow: "0 6px 20px rgba(169,17,17,0.3)",
+                  },
+                }}
+              >
+                {loading ? (
+                  <CircularProgress size={20} sx={{ color: "white" }} />
+                ) : (
+                  "Setează parola"
+                )}
+              </Button>
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

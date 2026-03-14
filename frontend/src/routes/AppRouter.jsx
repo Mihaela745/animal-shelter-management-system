@@ -19,6 +19,7 @@ import AnimalsPageManager from "../pages/private/manager/AnimalsPage";
 import AnimalDetailsPageManager from "../pages/private/manager/AnimalDetailsPage";
 import AddAnimalPage from "../pages/private/manager/AddAnimalPage";
 import AnimalMedicalPage from "../pages/private/manager/MedicalFilePage";
+import AdoptionRequestsPage from "../pages/private/manager/AdoptionRequestsPage";
 export default function AppRouter() {
   return (
     <Routes>
@@ -70,6 +71,7 @@ export default function AppRouter() {
           path="animals/:animalId/medical/:fileId"
           element={<AnimalMedicalPage />}
         />
+        <Route path="requests" element={<AdoptionRequestsPage />} />
       </Route>
     </Routes>
   );
