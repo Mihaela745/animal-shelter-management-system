@@ -71,6 +71,7 @@ export const controller = {
         gender,
         minAge,
         maxAge,
+        box_id,
         page = 1,
         limit = 9,
       } = req.query;
@@ -79,6 +80,7 @@ export const controller = {
 
       if (status) whereClause.status = status;
       if (gender) whereClause.gender = gender;
+      if (box_id) whereClause.box_id = Number(box_id);
 
       if (minAge || maxAge) {
         whereClause.age = {};

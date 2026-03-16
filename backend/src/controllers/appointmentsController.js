@@ -160,10 +160,14 @@ export const controller = {
     try {
       const appointments = await Appointments.findAll({
         include: [
-          { model: Users, attributes: ["username"] },
-          { model: Animals, attributes: ["name"] },
-          { model: Staff, attributes: ["id"] },
-          { model: Rooms, attributes: ["room_number"] },
+          { model: Users, attributes: ["id", "username", "email"] },
+          { model: Animals, attributes: ["id", "name"] },
+          { model: Staff, attributes: ["id", "name"] },
+          { model: Rooms, attributes: ["id", "room_number"] },
+        ],
+        order: [
+          ["date", "ASC"],
+          ["hour", "ASC"],
         ],
       });
       return res.status(200).send(appointments);
@@ -180,6 +184,7 @@ export const controller = {
         include: [
           { model: Users, attributes: ["username", "email"] },
           { model: Animals, attributes: ["name"] },
+          { model: Staff, attributes: ["id", "name"] },
           { model: Rooms, attributes: ["room_number"] },
         ],
         order: [
@@ -267,7 +272,7 @@ export const controller = {
         where: { animal_id: animalId, status: "Scheduled" },
         include: [
           { model: Users, attributes: ["username"] },
-          { model: Staff, attributes: ["id"] },
+          { model: Staff, attributes: ["id", "name"] },
           { model: Rooms, attributes: ["room_number"] },
         ],
         order: [

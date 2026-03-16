@@ -10,7 +10,11 @@ import boxesReducer from "../features/boxes/boxesSlice";
 import staffReducer from "../features/staff/staffSlice";
 import medicationsReducer from "../features/medications/medicationsSlice";
 import medicalFilesReducer from "../features/medicalFiles/medicalFilesSlice";
+import positionsReducer from "../features/positions/positionsSlice";
+import responsibleBoxesReducer from "../features/responsibleBoxes/responsibleBoxesSlice";
+import roomsReducer from "../features/rooms/roomsSlice";
 import speciesReducer from "../features/species/speciesSlice";
+import usersReducer from "../features/users/usersSlice";
 const store = configureStore({
   reducer: {
     animals: animalsReducer,
@@ -24,7 +28,11 @@ const store = configureStore({
     staff: staffReducer,
     medications: medicationsReducer,
     medicalFiles: medicalFilesReducer,
+    positions: positionsReducer,
+    responsibleBoxes: responsibleBoxesReducer,
+    rooms: roomsReducer,
     species: speciesReducer,
+    users: usersReducer,
   },
 });
 export default store;

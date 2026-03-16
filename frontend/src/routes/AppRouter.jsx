@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 import RoleRouter from "./RoleRouter";
-//pages
 import LandingPage from "../pages/public/Landing/LandingPage";
 import LoginPage from "../pages/public/auth/Login";
 import RegisterPage from "../pages/public/auth/RegisterPage";
@@ -20,6 +19,12 @@ import AnimalDetailsPageManager from "../pages/private/manager/AnimalDetailsPage
 import AddAnimalPage from "../pages/private/manager/AddAnimalPage";
 import AnimalMedicalPage from "../pages/private/manager/MedicalFilePage";
 import AdoptionRequestsPage from "../pages/private/manager/AdoptionRequestsPage";
+import AppointmentsPage from "../pages/private/manager/AppointmentsPage";
+import BoxAnimalsPage from "../pages/private/manager/BoxAnimalsPage";
+import BoxesPage from "../pages/private/manager/BoxesPage";
+import ManagerProfilePage from "../pages/private/manager/ProfilePage";
+import StaffPage from "../pages/private/manager/StaffPage";
+import UsersPage from "../pages/private/manager/UsersPage";
 export default function AppRouter() {
   return (
     <Routes>
@@ -71,7 +76,13 @@ export default function AppRouter() {
           path="animals/:animalId/medical/:fileId"
           element={<AnimalMedicalPage />}
         />
+        <Route path="profile" element={<ManagerProfilePage />} />
         <Route path="requests" element={<AdoptionRequestsPage />} />
+        <Route path="appointments" element={<AppointmentsPage />} />
+        <Route path="boxes" element={<BoxesPage />} />
+        <Route path="boxes/:id/animals" element={<BoxAnimalsPage />} />
+        <Route path="users" element={<UsersPage />} />
+        <Route path="staff" element={<StaffPage />} />
       </Route>
     </Routes>
   );

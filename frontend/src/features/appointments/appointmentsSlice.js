@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../sercives/axiosInstance";
 
 export const fetchUserAppointments = createAsyncThunk(
@@ -9,7 +9,35 @@ export const fetchUserAppointments = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare programări",
+        error.response?.data || "Eroare programari",
+      );
+    }
+  },
+);
+
+export const fetchAllAppointments = createAsyncThunk(
+  "appointments/fetchAll",
+  async (_, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get("/appointments");
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Eroare appointments",
+      );
+    }
+  },
+);
+
+export const fetchAppointmentsByStaffId = createAsyncThunk(
+  "appointments/fetchByStaffId",
+  async (staffId, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(`/appointments/staff/${staffId}`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Eroare la incarcarea programarilor staff",
       );
     }
   },
@@ -28,6 +56,7 @@ export const createAppointment = createAsyncThunk(
     }
   },
 );
+
 export const updateAppointmentStatus = createAsyncThunk(
   "appointments/updateStatus",
   async ({ id, status }, thunkAPI) => {
@@ -43,6 +72,21 @@ export const updateAppointmentStatus = createAsyncThunk(
     }
   },
 );
+
+export const deleteAppointment = createAsyncThunk(
+  "appointments/delete",
+  async (id, thunkAPI) => {
+    try {
+      await axiosInstance.delete(`/appointments/${id}`);
+      return id;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Eroare la stergerea programarii",
+      );
+    }
+  },
+);
+
 export const fetchAvailableSlots = createAsyncThunk(
   "appointments/fetchAvailableSlots",
   async ({ animal_id, date }, thunkAPI) => {
@@ -75,23 +119,12 @@ export const fetchCalendarAvailability = createAsyncThunk(
     }
   },
 );
-export const fetchAllAppointments = createAsyncThunk(
-  "appointments/fetchAll",
-  async (_, thunkAPI) => {
-    try {
-      const response = await axiosInstance.get("/appointments");
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare appointments",
-      );
-    }
-  },
-);
+
 const appointmentsSlice = createSlice({
   name: "appointments",
   initialState: {
     appointments: [],
+    selectedAppointment: null,
     availableSlots: [],
     availableDates: [],
     loading: false,
@@ -113,6 +146,33 @@ const appointmentsSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+
+      .addCase(fetchAllAppointments.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllAppointments.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appointments = action.payload;
+      })
+      .addCase(fetchAllAppointments.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(fetchAppointmentsByStaffId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAppointmentsByStaffId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appointments = action.payload;
+      })
+      .addCase(fetchAppointmentsByStaffId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       .addCase(createAppointment.pending, (state) => {
         state.creating = true;
         state.error = null;
@@ -125,36 +185,61 @@ const appointmentsSlice = createSlice({
         state.creating = false;
         state.error = action.payload;
       })
+
+      .addCase(updateAppointmentStatus.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateAppointmentStatus.fulfilled, (state, action) => {
+        state.loading = false;
+
+        const index = state.appointments.findIndex(
+          (appointment) => appointment.id === action.payload.id,
+        );
+
+        if (index !== -1) {
+          state.appointments[index] = {
+            ...state.appointments[index],
+            ...action.payload,
+          };
+        }
+
+        if (state.selectedAppointment?.id === action.payload.id) {
+          state.selectedAppointment = {
+            ...state.selectedAppointment,
+            ...action.payload,
+          };
+        }
+      })
+      .addCase(updateAppointmentStatus.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(deleteAppointment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteAppointment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appointments = state.appointments.filter(
+          (appointment) => appointment.id !== action.payload,
+        );
+
+        if (state.selectedAppointment?.id === action.payload) {
+          state.selectedAppointment = null;
+        }
+      })
+      .addCase(deleteAppointment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       .addCase(fetchAvailableSlots.fulfilled, (state, action) => {
         state.availableSlots = action.payload;
       })
       .addCase(fetchCalendarAvailability.fulfilled, (state, action) => {
         state.availableDates = action.payload;
-      })
-      .addCase(updateAppointmentStatus.fulfilled, (state, action) => {
-        if (action.payload.status === "Cancelled") {
-          state.appointments = state.appointments.filter(
-            (a) => a.id !== action.payload.id,
-          );
-        } else {
-          const index = state.appointments.findIndex(
-            (a) => a.id === action.payload.id,
-          );
-          if (index !== -1) {
-            state.appointments[index] = action.payload;
-          }
-        }
-      })
-      .addCase(fetchAllAppointments.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchAllAppointments.fulfilled, (state, action) => {
-        state.loading = false;
-        state.appointments = action.payload;
-      })
-      .addCase(fetchAllAppointments.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
       });
   },
 });

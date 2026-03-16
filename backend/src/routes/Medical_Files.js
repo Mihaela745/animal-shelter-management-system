@@ -5,16 +5,13 @@ import { authorizeRoles, verifyToken } from "../middleware/authMiddleware.js";
 export const router=express.Router();
 
 let medical_fileController=controllers.medicalFileController;
-//Medical file routes 
 
 router.get("/",verifyToken,authorizeRoles("Manager","Vet"),medical_fileController.getAllMedicalFiles);
 router.get("/:id",verifyToken,medical_fileController.getMedicalFilesbyId);
 router.put("/:id",verifyToken,authorizeRoles("Vet"),medical_fileController.updateMedicalFile);
 
-//Medications routes
 const medicationsController = controllers.medicationsController;
 
-//creare de medicatie 
 router.post(
   "/:id/medications",
   verifyToken,

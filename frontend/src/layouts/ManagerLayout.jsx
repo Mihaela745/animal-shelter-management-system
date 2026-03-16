@@ -21,13 +21,15 @@ export default function ManagerLayout() {
 
         <Box
           sx={{
-            flexGrow: 1,
+            flex: "1 1 0",
             p: 3,
             mt: isMobile ? "64px" : 0,
-            width: "100%",
             height: "100%",
             overflowY: "auto",
+            overflowX: "hidden",
             minWidth: 0,
+            maxWidth: "100%",
+            boxSizing: "border-box",
             "&::-webkit-scrollbar": { width: "8px" },
             "&::-webkit-scrollbar-thumb": {
               backgroundColor: "#c1c1c1",

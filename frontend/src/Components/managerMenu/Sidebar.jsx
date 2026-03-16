@@ -18,6 +18,7 @@ import EventIcon from "@mui/icons-material/Event";
 import PeopleIcon from "@mui/icons-material/People";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import LogoutIcon from "@mui/icons-material/Logout";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -133,6 +134,20 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
           </ListItemButton>
 
           <ListItemButton
+            selected={isSelected("/manager/profile")}
+            onClick={() => {
+              navigate("/manager/profile");
+              if (mobile) onClose();
+            }}
+            sx={itemSx}
+          >
+            <ListItemIcon sx={iconSx}>
+              <AccountCircleOutlinedIcon />
+            </ListItemIcon>
+            {(mobile || !collapsed) && <ListItemText primary="Profile" />}
+          </ListItemButton>
+
+          <ListItemButton
             onClick={() => setOpenAnimals(!openAnimals)}
             sx={itemSx}
           >
@@ -182,19 +197,17 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
           </Collapse>
 
           <ListItemButton
-            selected={isSelected("/manager/requests")}
+            selected={isSelected("/manager/boxes")}
             onClick={() => {
-              navigate("/manager/requests");
+              navigate("/manager/boxes");
               if (mobile) onClose();
             }}
             sx={itemSx}
           >
             <ListItemIcon sx={iconSx}>
-              <FavoriteIcon />
+              <InventoryIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && (
-              <ListItemText primary="Adoption Requests" />
-            )}
+            {(mobile || !collapsed) && <ListItemText primary="Boxes" />}
           </ListItemButton>
 
           <ListItemButton
@@ -212,17 +225,19 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
           </ListItemButton>
 
           <ListItemButton
-            selected={isSelected("/manager/users")}
+            selected={isSelected("/manager/requests")}
             onClick={() => {
-              navigate("/manager/users");
+              navigate("/manager/requests");
               if (mobile) onClose();
             }}
             sx={itemSx}
           >
             <ListItemIcon sx={iconSx}>
-              <PeopleIcon />
+              <FavoriteIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && <ListItemText primary="Users" />}
+            {(mobile || !collapsed) && (
+              <ListItemText primary="Adoption Requests" />
+            )}
           </ListItemButton>
 
           <ListItemButton
@@ -240,17 +255,17 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
           </ListItemButton>
 
           <ListItemButton
-            selected={isSelected("/manager/boxes")}
+            selected={isSelected("/manager/users")}
             onClick={() => {
-              navigate("/manager/boxes");
+              navigate("/manager/users");
               if (mobile) onClose();
             }}
             sx={itemSx}
           >
             <ListItemIcon sx={iconSx}>
-              <InventoryIcon />
+              <PeopleIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && <ListItemText primary="Boxes" />}
+            {(mobile || !collapsed) && <ListItemText primary="Users" />}
           </ListItemButton>
         </List>
       </Box>

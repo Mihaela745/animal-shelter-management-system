@@ -125,6 +125,7 @@ export const controller = {
     try {
       const staffId = req.params.id;
       const updateData = req.body;
+      const userUpdateData = {};
 
       const staff = await Staff.findByPk(staffId);
       if (!staff) {
@@ -151,7 +152,7 @@ export const controller = {
           return res.status(409).send("Email already used by another account!");
         }
 
-        await user.update({ email: updateData.email }, { transaction: t });
+        userUpdateData.email = updateData.email;
       }
 
       if (updateData.position_id) {
@@ -161,7 +162,19 @@ export const controller = {
           return res.status(404).send("Position not found!");
         }
 
-        await user.update({ role: position.title }, { transaction: t });
+        userUpdateData.role = position.title;
+      }
+
+      if (updateData.name) {
+        userUpdateData.username = updateData.name;
+      }
+
+      if (updateData.phonenumber) {
+        userUpdateData.phonenumber = updateData.phonenumber;
+      }
+
+      if (Object.keys(userUpdateData).length > 0) {
+        await user.update(userUpdateData, { transaction: t });
       }
 
       await staff.update(updateData, { transaction: t });
