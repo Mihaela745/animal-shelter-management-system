@@ -76,6 +76,7 @@ const responsibleBoxesSlice = createSlice({
   initialState: {
     responsibleBoxes: [],
     boxResponsibles: [],
+    responsiblesByBoxId: {},
     staffBoxes: [],
     loading: false,
     error: null,
@@ -107,6 +108,7 @@ const responsibleBoxesSlice = createSlice({
         state.boxResponsibles = Array.isArray(action.payload.responsibles)
           ? action.payload.responsibles
           : [];
+        state.responsiblesByBoxId[action.payload.boxId] = state.boxResponsibles;
       })
       .addCase(fetchResponsiblesByBoxId.rejected, (state, action) => {
         state.loading = false;
@@ -153,6 +155,11 @@ const responsibleBoxesSlice = createSlice({
         state.boxResponsibles = state.boxResponsibles.filter(
           (item) => item.id !== action.payload,
         );
+        Object.keys(state.responsiblesByBoxId).forEach((boxId) => {
+          state.responsiblesByBoxId[boxId] = state.responsiblesByBoxId[
+            boxId
+          ].filter((item) => item.id !== action.payload);
+        });
         state.staffBoxes = state.staffBoxes.filter((item) => item.id !== action.payload);
       })
       .addCase(deleteResponsibleBox.rejected, (state, action) => {

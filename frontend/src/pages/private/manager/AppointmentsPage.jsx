@@ -298,7 +298,7 @@ export default function AppointmentsPage() {
     <Box
       sx={{
         p: { xs: 1.5, sm: 2, md: 4 },
-        pb: { xs: 10, sm: 4 },
+        pb: { xs: 10, sm: 4, md: 5 },
         maxWidth: 1200,
         mx: "auto",
         width: "100%",
@@ -351,9 +351,14 @@ export default function AppointmentsPage() {
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "1.2fr 1fr 1fr" },
+          gridTemplateColumns: {
+            xs: "1fr",
+            sm: "1fr 1fr",
+            md: "minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr)",
+          },
           gap: 1.5,
           mb: { xs: 2, md: 3 },
+          width: "100%",
         }}
       >
         <TextField

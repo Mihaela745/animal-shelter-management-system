@@ -27,6 +27,20 @@ export const fetchAllAdoptions = createAsyncThunk(
   },
 );
 
+export const fetchAdoptionById = createAsyncThunk(
+  "adoptions/fetchById",
+  async (id, thunkAPI) => {
+    try {
+      const response = await axiosInstance.get(`/adoptions/${id}`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Eroare adoptie",
+      );
+    }
+  },
+);
+
 export const deleteAdoption = createAsyncThunk(
   "adoptions/delete",
   async (id, thunkAPI) => {
@@ -45,6 +59,7 @@ const adoptionsSlice = createSlice({
   name: "adoptions",
   initialState: {
     adoptions: [],
+    selectedAdoption: null,
     loading: false,
     error: null,
   },
@@ -78,10 +93,27 @@ const adoptionsSlice = createSlice({
         state.error = action.payload;
       })
 
+      .addCase(fetchAdoptionById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAdoptionById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedAdoption = action.payload;
+      })
+      .addCase(fetchAdoptionById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       .addCase(deleteAdoption.fulfilled, (state, action) => {
         state.adoptions = state.adoptions.filter(
           (a) => a.id !== action.payload,
         );
+
+        if (state.selectedAdoption?.id === action.payload) {
+          state.selectedAdoption = null;
+        }
       });
   },
 });

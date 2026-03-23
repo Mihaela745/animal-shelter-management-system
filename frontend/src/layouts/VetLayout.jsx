@@ -1,17 +1,14 @@
 import { Box, useMediaQuery } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import ManagerSidebar from "../components/managerMenu/Sidebar";
-import ManagerMobileTopBar from "../components/managerMenu/MobileTopBar";
+import Sidebar from "../components/vetMenu/Sidebar";
+import MobileTopBar from "../components/vetMenu/MobileTopBar";
 import { useState } from "react";
-
-export default function ManagerLayout() {
+export default function VetLayout() {
   const isMobile = useMediaQuery("(max-width:900px)");
   const [open, setOpen] = useState(false);
-
   return (
     <>
-      {isMobile && <ManagerMobileTopBar onMenuClick={() => setOpen(true)} />}
-
+      {isMobile && <MobileTopBar onMenuClick={() => setOpen(true)} />}
       <Box
         sx={{
           display: "flex",
@@ -22,24 +19,24 @@ export default function ManagerLayout() {
           backgroundColor: "#f7f8fa",
         }}
       >
-        {!isMobile && <ManagerSidebar />}
+        {!isMobile && <Sidebar />}
 
         {isMobile && (
-          <ManagerSidebar mobile open={open} onClose={() => setOpen(false)} />
+          <Sidebar mobile open={open} onClose={() => setOpen(false)} />
         )}
 
         <Box
           sx={{
-            flex: "1 1 0",
+            flexGrow: 1,
             p: { xs: 1.5, sm: 2, md: 3 },
             mt: isMobile ? "64px" : 0,
+            width: "100%",
             height: "100%",
             overflowY: "auto",
             overflowX: "hidden",
             minWidth: 0,
             maxWidth: "100%",
             boxSizing: "border-box",
-            width: "100%",
             "&::-webkit-scrollbar": { width: "8px" },
             "&::-webkit-scrollbar-thumb": {
               backgroundColor: "#c1c1c1",
@@ -53,7 +50,7 @@ export default function ManagerLayout() {
               maxWidth: "100%",
               minWidth: 0,
               overflowX: "hidden",
-              pb: { xs: 8, md: 4 },
+              pb: { xs: 10, md: 5 },
             }}
           >
             <Outlet />

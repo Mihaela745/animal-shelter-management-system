@@ -25,6 +25,15 @@ import BoxesPage from "../pages/private/manager/BoxesPage";
 import ManagerProfilePage from "../pages/private/manager/ProfilePage";
 import StaffPage from "../pages/private/manager/StaffPage";
 import UsersPage from "../pages/private/manager/UsersPage";
+import VetLayout from "../layouts/VetLayout";
+import VetDashboard from "../pages/private/vet/DashboardPage";
+import VetProfile from "../pages/private/vet/ProfilePage";
+import VetAnimalsPage from "../pages/private/vet/AnimalsPage";
+import VetAnimalsDetails from "../pages/private/vet/AnimalDetails";
+import VetBoxesPage from "../pages/private/vet/Boxes";
+import VetBoxAnimalsPage from "../pages/private/vet/BoxAnimalsPage";
+import VetAnimalMedicalPage from "../pages/private/vet/AnimalMedicalFile";
+import VetAddMedicationPage from "../pages/private/vet/AddMedicationPage";
 export default function AppRouter() {
   return (
     <Routes>
@@ -83,6 +92,28 @@ export default function AppRouter() {
         <Route path="boxes/:id/animals" element={<BoxAnimalsPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="staff" element={<StaffPage />} />
+      </Route>
+      <Route
+        path="/vet"
+        element={
+          <ProtectedRoute>
+            <RoleRouter allowedRoles={["Vet"]}>
+              <VetLayout />
+            </RoleRouter>
+          </ProtectedRoute>
+        }
+      >
+        <Route path="dashboard" element={<VetDashboard />} />
+        <Route path="profile" element={<VetProfile />} />
+        <Route path="animals" element={<VetAnimalsPage />} />
+        <Route path="animals/:id" element={<VetAnimalsDetails />} />
+        <Route path="add-medication" element={<VetAddMedicationPage />} />
+        <Route path="boxes" element={<VetBoxesPage />} />
+        <Route path="boxes/:id/animals" element={<VetBoxAnimalsPage />} />
+        <Route
+          path="animals/:animalId/medical/:fileId"
+          element={<VetAnimalMedicalPage />}
+        />
       </Route>
     </Routes>
   );

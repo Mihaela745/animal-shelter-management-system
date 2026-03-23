@@ -1,9 +1,23 @@
 import { Box, Button } from "@mui/material";
 import MedicalServicesOutlinedIcon from "@mui/icons-material/MedicalServicesOutlined";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function AnimalMedicalAction({ animal }) {
   const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+
+  const roleBasePath = {
+    Manager: "manager",
+    Vet: "vet",
+    Caretaker: "staff",
+  };
+
+  const base = roleBasePath[user?.role] || "user";
+
+  const handleOpenMedical = () => {
+    navigate(`/${base}/animals/${animal.id}/medical/${animal.medical_file_id}`);
+  };
 
   return (
     <Box mt={2} sx={{ width: "100%", boxSizing: "border-box" }}>
@@ -11,11 +25,7 @@ export default function AnimalMedicalAction({ animal }) {
         variant="contained"
         fullWidth
         startIcon={<MedicalServicesOutlinedIcon />}
-        onClick={() =>
-          navigate(
-            `/manager/animals/${animal.id}/medical/${animal.medical_file_id}`,
-          )
-        }
+        onClick={handleOpenMedical}
         sx={{
           backgroundColor: "#a91111",
           color: "white",
@@ -24,7 +34,6 @@ export default function AnimalMedicalAction({ animal }) {
           borderRadius: "12px",
           py: 1.2,
           fontSize: "0.9rem",
-          minWidth: 0,
           transition: "all 0.2s ease",
           "&:hover": {
             backgroundColor: "#74021f",

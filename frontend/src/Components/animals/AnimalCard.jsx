@@ -19,7 +19,9 @@ export default function AnimalCard({ animal }) {
       navigate(`/manager/animals/${animal.id}`);
     } else if (role === "user") {
       navigate(`/user/animals/${animal.id}`);
-    } else if (role === "Vet" || role === "Staff") {
+    } else if (role === "Vet") {
+      navigate(`/vet/animals/${animal.id}`);
+    } else if (role === "Staff") {
       navigate(`/staff/animals/${animal.id}`);
     } else {
       navigate("/");

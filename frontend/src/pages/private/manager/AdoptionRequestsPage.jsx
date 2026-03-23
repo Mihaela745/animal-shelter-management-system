@@ -307,10 +307,13 @@ export default function AdoptionRequestsPage() {
   return (
     <Box
       sx={{
-        p: { xs: 2, md: 4 },
+        p: { xs: 1.5, sm: 2, md: 4 },
         maxWidth: 1200,
         mx: "auto",
         pb: { xs: 8, md: 4 },
+        width: "100%",
+        boxSizing: "border-box",
+        overflowX: "hidden",
       }}
     >
       <Box sx={{ mb: 4 }}>
