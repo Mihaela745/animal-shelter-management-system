@@ -20,15 +20,15 @@ router.get(
   staffController.getAllStaff,
 );
 
+router.get("/me", verifyToken, staffController.getMyProfile);
+router.put("/me", verifyToken, staffController.updateMyProfile);
+
 router.get(
   "/:id",
   verifyToken,
   authorizeRoles("Manager"),
   staffController.getStaffById,
 );
-
-router.get("/me", verifyToken, staffController.getMyProfile);
-router.put("/me", verifyToken, staffController.updateMyProfile);
 router.put(
   "/:id",
   verifyToken,

@@ -21,7 +21,7 @@ export default function AnimalCard({ animal }) {
       navigate(`/user/animals/${animal.id}`);
     } else if (role === "Vet") {
       navigate(`/vet/animals/${animal.id}`);
-    } else if (role === "Staff") {
+    } else if (role === "Caretaker") {
       navigate(`/staff/animals/${animal.id}`);
     } else {
       navigate("/");

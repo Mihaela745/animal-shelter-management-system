@@ -34,6 +34,15 @@ import VetBoxesPage from "../pages/private/vet/Boxes";
 import VetBoxAnimalsPage from "../pages/private/vet/BoxAnimalsPage";
 import VetAnimalMedicalPage from "../pages/private/vet/AnimalMedicalFile";
 import VetAddMedicationPage from "../pages/private/vet/AddMedicationPage";
+import CaretakerLayout from "../layouts/CaretakerLayout";
+import CaretakerDashboardPage from "../pages/private/caretaker/DashboardPage";
+import CaretakerProfilePage from "../pages/private/caretaker/ProfilePage"
+import CaretakerAnimalsPage from "../pages/private/caretaker/AnimalsPage"
+import CaretakerAnimalDetailsPage from "../pages/private/caretaker/AnimalDetailsPage"
+import CaretakerMedicalFilePage from "../pages/private/caretaker/MedicalFilePage"
+import CaretakerBoxesPage from "../pages/private/caretaker/BoxesPage"
+import CaretakerBoxAnimalsPage from "../pages/private/caretaker/BoxAnimalsPage";
+import CaretakerAppointmentsPage from "../pages/private/caretaker/AppointmentsPage";
 export default function AppRouter() {
   return (
     <Routes>
@@ -113,6 +122,28 @@ export default function AppRouter() {
         <Route
           path="animals/:animalId/medical/:fileId"
           element={<VetAnimalMedicalPage />}
+        />
+      </Route>
+      <Route
+        path="/staff"
+        element={
+          <ProtectedRoute>
+            <RoleRouter allowedRoles={["Caretaker"]}>
+              <CaretakerLayout/>
+            </RoleRouter>
+          </ProtectedRoute>
+        }
+      >
+        <Route path="dashboard" element={<CaretakerDashboardPage/>} />
+         <Route path="profile" element={<CaretakerProfilePage />} />
+        <Route path="animals" element={<CaretakerAnimalsPage />} />
+        <Route path="animals/:id" element={<CaretakerAnimalDetailsPage/>} />
+        <Route path="appointments" element={<CaretakerAppointmentsPage />} />
+        <Route path="boxes" element={<CaretakerBoxesPage />} />
+        <Route path="boxes/:id/animals" element={<CaretakerBoxAnimalsPage />} /> 
+        <Route
+          path="animals/:animalId/medical/:fileId"
+          element={<CaretakerMedicalFilePage/>}
         />
       </Route>
     </Routes>

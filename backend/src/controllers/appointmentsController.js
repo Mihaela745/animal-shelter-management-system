@@ -180,7 +180,7 @@ export const controller = {
       const staffId = req.params.id;
 
       const appointments = await Appointments.findAll({
-        where: { staff_id: staffId, status: "Scheduled" },
+        where: { staff_id: staffId },
         include: [
           { model: Users, attributes: ["username", "email"] },
           { model: Animals, attributes: ["name"] },
