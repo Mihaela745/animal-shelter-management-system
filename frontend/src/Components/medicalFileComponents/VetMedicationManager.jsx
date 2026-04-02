@@ -644,7 +644,7 @@ export default function VetMedicationManager({ medicalFileId }) {
                     <Checkbox checked={selectedAnimalIds.includes(String(animal.id))} />
                     <ListItemText
                       primary={animal.name}
-                      secondary={animal.Boxes?.box_number || "Fara boxa"}
+                      secondary={animal.Boxes?.box_number || ""}
                     />
                   </MenuItem>
                 ))}

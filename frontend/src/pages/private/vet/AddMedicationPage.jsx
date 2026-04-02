@@ -338,7 +338,7 @@ export default function AddMedicationPage() {
                   <Checkbox checked={selectedAnimalIds.includes(String(animal.id))} />
                   <ListItemText
                     primary={animal.name}
-                    secondary={animal.Boxes?.box_number || "Fara boxa"}
+                    secondary={animal.Boxes?.box_number || ""}
                   />
                 </MenuItem>
               ))}
@@ -457,9 +457,11 @@ export default function AddMedicationPage() {
                     <Typography sx={{ fontSize: "0.8rem", fontWeight: 600 }}>
                       {animal.name}
                     </Typography>
-                    <Typography sx={{ fontSize: "0.74rem", color: "#999" }}>
-                      {animal.Boxes?.box_number || "Fara boxa"}
-                    </Typography>
+                    {animal.Boxes?.box_number ? (
+                      <Typography sx={{ fontSize: "0.74rem", color: "#999" }}>
+                        {animal.Boxes.box_number}
+                      </Typography>
+                    ) : null}
                   </Box>
                 ))}
               </Box>

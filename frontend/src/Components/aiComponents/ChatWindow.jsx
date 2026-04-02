@@ -16,6 +16,9 @@ const ChatWindow = ({ messages }) => {
         if (msg.type === "ai_loading") {
           return <AiLoading key={index} />;
         }
+        if (msg.type === "ai_error") {
+          return <MessageBubble key={index} text={msg.text} sender="ai" />;
+        }
         if (msg.type === "ai_results") {
           return <AiResponseCard key={index} results={msg.results} />;
         }

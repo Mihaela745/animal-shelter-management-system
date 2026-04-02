@@ -6,6 +6,7 @@ import {
   Button,
   Divider,
   Chip,
+  Stack,
 } from "@mui/material";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
@@ -13,20 +14,23 @@ import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-
 import { useSelector } from "react-redux";
 import { useState } from "react";
-
 import ChangePasswordDialog from "./ChangePasswordDialog";
+
+const RED = "#a91111";
+const RED_LIGHT = "#fff0f0";
+const RED_DARK = "#8a0d0d";
 
 const InfoRow = ({ icon, label, value }) => (
   <Box
     sx={{
       display: "flex",
-      alignItems: "center",
+      alignItems: "flex-start",
       gap: 2,
       py: 1.5,
       px: 2,
+      minWidth: 0,
       borderRadius: "12px",
       "&:hover": { backgroundColor: "#fafafa" },
       transition: "background 0.2s",
@@ -37,7 +41,7 @@ const InfoRow = ({ icon, label, value }) => (
         width: 36,
         height: 36,
         borderRadius: "10px",
-        backgroundColor: "#fff0f0",
+        backgroundColor: RED_LIGHT,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -46,7 +50,7 @@ const InfoRow = ({ icon, label, value }) => (
     >
       {icon}
     </Box>
-    <Box>
+    <Box sx={{ minWidth: 0 }}>
       <Typography
         fontSize="0.72rem"
         color="#aaa"
@@ -55,8 +59,14 @@ const InfoRow = ({ icon, label, value }) => (
       >
         {label}
       </Typography>
-      <Typography fontSize="0.92rem" fontWeight={600} color="#1a1a1a" mt={0.3}>
-        {value || "—"}
+      <Typography
+        fontSize="0.92rem"
+        fontWeight={600}
+        color="#1a1a1a"
+        mt={0.3}
+        sx={{ wordBreak: "break-word" }}
+      >
+        {value || "-"}
       </Typography>
     </Box>
   </Box>
@@ -78,15 +88,15 @@ export default function ProfileCard() {
           overflow: "hidden",
           boxShadow: "0 8px 40px rgba(0,0,0,0.08)",
           border: "1px solid #f0f0f0",
-          padding: 0,
+          p: 0,
         }}
       >
         <Box
           sx={{
             background: "linear-gradient(135deg, #a91111 0%, #6d0a0a 100%)",
-            pt: 5,
-            pb: 7,
-            px: 3,
+            pt: { xs: 4, sm: 5 },
+            pb: { xs: 6, sm: 7 },
+            px: { xs: 2, sm: 3 },
             position: "relative",
             "&::after": {
               content: '""',
@@ -113,22 +123,24 @@ export default function ProfileCard() {
 
         <Box
           sx={{
-            px: 3,
-            mt: "-48px",
+            px: { xs: 2, sm: 3 },
+            mt: { xs: "-42px", sm: "-48px" },
             display: "flex",
             alignItems: "flex-end",
             justifyContent: "space-between",
             mb: 2,
+            gap: 2,
+            flexWrap: "wrap",
           }}
         >
           <Avatar
             sx={{
-              width: 90,
-              height: 90,
-              fontSize: "2rem",
+              width: { xs: 80, sm: 90 },
+              height: { xs: 80, sm: 90 },
+              fontSize: { xs: "1.7rem", sm: "2rem" },
               fontWeight: 800,
               backgroundColor: "#fff",
-              color: "#a91111",
+              color: RED,
               border: "4px solid #fff",
               boxShadow: "0 4px 20px rgba(169,17,17,0.2)",
             }}
@@ -145,16 +157,17 @@ export default function ProfileCard() {
                 mb: 1,
                 fontWeight: 700,
                 fontSize: "0.72rem",
-                backgroundColor: user.role === "admin" ? "#fff3e0" : "#f0f0f0",
-                color: user.role === "admin" ? "#e65100" : "#555",
+                backgroundColor:
+                  user.role === "admin" ? "#fff3e0" : "#eff6ff",
+                color: user.role === "admin" ? "#e65100" : "#1d4ed8",
                 border: "1px solid",
-                borderColor: user.role === "admin" ? "#ffcc80" : "#e0e0e0",
+                borderColor: user.role === "admin" ? "#ffcc80" : "#bfdbfe",
               }}
             />
           )}
         </Box>
 
-        <Box sx={{ px: 3, mb: 1 }}>
+        <Box sx={{ px: { xs: 2, sm: 3 }, mb: 1 }}>
           <Typography
             variant="h6"
             fontWeight={800}
@@ -168,54 +181,81 @@ export default function ProfileCard() {
           </Typography>
         </Box>
 
-        <Divider sx={{ my: 2, mx: 3 }} />
+        <Divider sx={{ my: 2, mx: { xs: 2, sm: 3 } }} />
 
-        <Box sx={{ px: 1, pb: 1 }}>
-          <InfoRow
-            icon={<PersonOutlineIcon sx={{ color: "#a91111", fontSize: 18 }} />}
-            label="Nume utilizator"
-            value={user?.username}
-          />
-          <InfoRow
-            icon={<EmailOutlinedIcon sx={{ color: "#a91111", fontSize: 18 }} />}
-            label="Email"
-            value={user?.email}
-          />
-          <InfoRow
-            icon={<PhoneOutlinedIcon sx={{ color: "#a91111", fontSize: 18 }} />}
-            label="Telefon"
-            value={user?.phonenumber}
-          />
-          <InfoRow
-            icon={<HomeOutlinedIcon sx={{ color: "#a91111", fontSize: 18 }} />}
-            label="Adresă"
-            value={user?.address}
-          />
-        </Box>
-
-        <Divider sx={{ mx: 3, my: 1 }} />
-
-        <Box sx={{ px: 3, pb: 3, pt: 2 }}>
-          <Button
-            fullWidth
-            variant="outlined"
-            startIcon={<LockOutlinedIcon />}
-            onClick={() => setOpenPassword(true)}
+        <Box sx={{ px: { xs: 1, sm: 1.5 }, pb: 1 }}>
+          <Box
             sx={{
-              borderRadius: "12px",
-              border: "2px solid #a91111",
-              color: "#a91111",
-              fontWeight: 700,
-              textTransform: "none",
-              py: 1,
-              "&:hover": {
-                backgroundColor: "#fff0f0",
-                border: "2px solid #8a0d0d",
-              },
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
+              gap: 1,
             }}
           >
-            Schimbă parola
-          </Button>
+            <InfoRow
+              icon={<PersonOutlineIcon sx={{ color: RED, fontSize: 18 }} />}
+              label="Nume utilizator"
+              value={user?.username}
+            />
+            <InfoRow
+              icon={<EmailOutlinedIcon sx={{ color: RED, fontSize: 18 }} />}
+              label="Email"
+              value={user?.email}
+            />
+            <InfoRow
+              icon={<PhoneOutlinedIcon sx={{ color: RED, fontSize: 18 }} />}
+              label="Telefon"
+              value={user?.phonenumber}
+            />
+            <InfoRow
+              icon={<HomeOutlinedIcon sx={{ color: RED, fontSize: 18 }} />}
+              label="Adresa"
+              value={user?.address}
+            />
+          </Box>
+        </Box>
+
+        <Divider sx={{ mx: { xs: 2, sm: 3 }, my: 1 }} />
+
+        <Box sx={{ px: { xs: 2, sm: 3 }, pb: 3, pt: 2 }}>
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+            <Button
+              fullWidth
+              variant="outlined"
+              startIcon={<PersonOutlineIcon />}
+              disabled
+              sx={{
+                borderRadius: "12px",
+                border: "2px solid #e5e7eb",
+                color: "#9ca3af",
+                fontWeight: 700,
+                textTransform: "none",
+                py: 1,
+              }}
+            >
+              Profil utilizator
+            </Button>
+
+            <Button
+              fullWidth
+              variant="outlined"
+              startIcon={<LockOutlinedIcon />}
+              onClick={() => setOpenPassword(true)}
+              sx={{
+                borderRadius: "12px",
+                border: `2px solid ${RED}`,
+                color: RED,
+                fontWeight: 700,
+                textTransform: "none",
+                py: 1,
+                "&:hover": {
+                  backgroundColor: RED_LIGHT,
+                  border: `2px solid ${RED_DARK}`,
+                },
+              }}
+            >
+              Schimba parola
+            </Button>
+          </Stack>
         </Box>
       </Card>
 

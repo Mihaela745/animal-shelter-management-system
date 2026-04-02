@@ -45,7 +45,11 @@ function BoxCard({ boxItem, speciesName, responsibles, onOpenAnimals }) {
       : 0;
 
   const occupancyColor =
-    occupancyRate >= 100 ? "#d32f2f" : occupancyRate >= 70 ? "#f59e0b" : "#2e7d32";
+    occupancyRate >= 100
+      ? "#d32f2f"
+      : occupancyRate >= 70
+        ? "#f59e0b"
+        : "#2e7d32";
 
   return (
     <Box
@@ -193,9 +197,11 @@ function BoxCard({ boxItem, speciesName, responsibles, onOpenAnimals }) {
             border: "1px solid #f0f0f0",
           }}
         >
-          <Typography sx={{ fontSize: "0.78rem", color: "#777", lineHeight: 1.5 }}>
-            Apasa pe boxa pentru a vedea animalele atribuite acesteia si a continua
-            activitatea de caretaker.
+          <Typography
+            sx={{ fontSize: "0.78rem", color: "#777", lineHeight: 1.5 }}
+          >
+            Apasa pe boxa pentru a vedea animalele atribuite acesteia si a
+            continua activitatea de caretaker.
           </Typography>
         </Box>
       </Box>

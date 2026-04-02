@@ -118,7 +118,9 @@ function SectionCard({ title, subtitle, action, children }) {
           }}
         >
           <Box>
-            <Typography sx={{ fontWeight: 800, fontSize: "1rem", color: "#1a1a1a" }}>
+            <Typography
+              sx={{ fontWeight: 800, fontSize: "1rem", color: "#1a1a1a" }}
+            >
               {title}
             </Typography>
             {subtitle ? (
@@ -214,9 +216,11 @@ export default function DashboardPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { myProfile, loading: profileLoading, error: profileError } = useSelector(
-    (state) => state.staff,
-  );
+  const {
+    myProfile,
+    loading: profileLoading,
+    error: profileError,
+  } = useSelector((state) => state.staff);
   const {
     staffBoxes,
     responsiblesByBoxId,
@@ -228,9 +232,11 @@ export default function DashboardPage() {
     loading: appointmentsLoading,
     error: appointmentsError,
   } = useSelector((state) => state.appointments);
-  const { animals, loading: animalsLoading, error: animalsError } = useSelector(
-    (state) => state.animals,
-  );
+  const {
+    animals,
+    loading: animalsLoading,
+    error: animalsError,
+  } = useSelector((state) => state.animals);
 
   useEffect(() => {
     dispatch(fetchMyStaffProfile());
@@ -268,7 +274,8 @@ export default function DashboardPage() {
   );
 
   const animalsInMyBoxes = useMemo(
-    () => animals.filter((animal) => assignedBoxIds.has(getAnimalBoxId(animal))),
+    () =>
+      animals.filter((animal) => assignedBoxIds.has(getAnimalBoxId(animal))),
     [animals, assignedBoxIds],
   );
 
@@ -304,7 +311,10 @@ export default function DashboardPage() {
     (appointment) => appointment.status === "Scheduled",
   ).length;
 
-  const totalCapacity = staffBoxes.reduce((sum, boxItem) => sum + (boxItem.capacity || 0), 0);
+  const totalCapacity = staffBoxes.reduce(
+    (sum, boxItem) => sum + (boxItem.capacity || 0),
+    0,
+  );
   const totalOccupancy = staffBoxes.reduce(
     (sum, boxItem) => sum + (boxItem.current_occupancy || 0),
     0,
@@ -325,14 +335,19 @@ export default function DashboardPage() {
     [staffBoxes],
   );
 
-  const recentAnimals = useMemo(() => animalsInMyBoxes.slice(0, 5), [animalsInMyBoxes]);
+  const recentAnimals = useMemo(
+    () => animalsInMyBoxes.slice(0, 5),
+    [animalsInMyBoxes],
+  );
 
   const isLoading =
     profileLoading || boxesLoading || appointmentsLoading || animalsLoading;
   const error = profileError || boxesError || appointmentsError || animalsError;
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: "auto", width: "100%", pb: { xs: 10, md: 5 } }}>
+    <Box
+      sx={{ maxWidth: 1200, mx: "auto", width: "100%", pb: { xs: 10, md: 5 } }}
+    >
       <Box
         sx={{
           mb: 4,
@@ -468,13 +483,28 @@ export default function DashboardPage() {
                           }}
                         >
                           <Box>
-                            <Typography sx={{ fontWeight: 800, fontSize: "0.92rem" }}>
+                            <Typography
+                              sx={{ fontWeight: 800, fontSize: "0.92rem" }}
+                            >
                               {appointment.Animal?.name || "Animal necunoscut"}
                             </Typography>
-                            <Typography sx={{ fontSize: "0.78rem", color: "#999", mt: 0.4 }}>
-                              {formatDate(appointment.date)} la {appointment.hour || "-"}
+                            <Typography
+                              sx={{
+                                fontSize: "0.78rem",
+                                color: "#999",
+                                mt: 0.4,
+                              }}
+                            >
+                              {formatDate(appointment.date)} la{" "}
+                              {appointment.hour || "-"}
                             </Typography>
-                            <Typography sx={{ fontSize: "0.78rem", color: "#666", mt: 0.5 }}>
+                            <Typography
+                              sx={{
+                                fontSize: "0.78rem",
+                                color: "#666",
+                                mt: 0.5,
+                              }}
+                            >
                               Camera: {appointment.Room?.room_number || "-"}
                             </Typography>
                           </Box>
@@ -524,7 +554,9 @@ export default function DashboardPage() {
                   {busiestBoxes.map((boxItem) => {
                     const responsibles = responsiblesByBoxId[boxItem.id] || [];
                     const occupancy = boxItem.capacity
-                      ? Math.round((boxItem.current_occupancy / boxItem.capacity) * 100)
+                      ? Math.round(
+                          (boxItem.current_occupancy / boxItem.capacity) * 100,
+                        )
                       : 0;
 
                     return (
@@ -546,13 +578,28 @@ export default function DashboardPage() {
                           }}
                         >
                           <Box>
-                            <Typography sx={{ fontWeight: 800, fontSize: "0.92rem" }}>
+                            <Typography
+                              sx={{ fontWeight: 800, fontSize: "0.92rem" }}
+                            >
                               {boxItem.box_number}
                             </Typography>
-                            <Typography sx={{ fontSize: "0.78rem", color: "#666", mt: 0.4 }}>
-                              {boxItem.current_occupancy || 0} / {boxItem.capacity || 0} locuri
+                            <Typography
+                              sx={{
+                                fontSize: "0.78rem",
+                                color: "#666",
+                                mt: 0.4,
+                              }}
+                            >
+                              {boxItem.current_occupancy || 0} /{" "}
+                              {boxItem.capacity || 0} locuri
                             </Typography>
-                            <Typography sx={{ fontSize: "0.76rem", color: "#999", mt: 0.5 }}>
+                            <Typography
+                              sx={{
+                                fontSize: "0.76rem",
+                                color: "#999",
+                                mt: 0.5,
+                              }}
+                            >
                               {responsibles.length} responsabili asignati
                             </Typography>
                           </Box>
@@ -588,7 +635,8 @@ export default function DashboardPage() {
             >
               {recentAnimals.length === 0 ? (
                 <Typography sx={{ fontSize: "0.86rem", color: "#999" }}>
-                  Nu exista animale in boxele tale sau datele nu sunt disponibile inca.
+                  Nu exista animale in boxele tale sau datele nu sunt
+                  disponibile inca.
                 </Typography>
               ) : (
                 <Stack spacing={1.2}>
@@ -611,21 +659,32 @@ export default function DashboardPage() {
                         }}
                       >
                         <Box>
-                          <Typography sx={{ fontWeight: 800, fontSize: "0.92rem" }}>
+                          <Typography
+                            sx={{ fontWeight: 800, fontSize: "0.92rem" }}
+                          >
                             {animal.name}
                           </Typography>
-                          <Typography sx={{ fontSize: "0.78rem", color: "#666", mt: 0.4 }}>
-                            {animal.Species?.name || "-"} • {animal.gender || "-"} •{" "}
-                            {animal.age ?? "-"} ani
+                          <Typography
+                            sx={{ fontSize: "0.78rem", color: "#666", mt: 0.4 }}
+                          >
+                            {animal.Species?.name || "-"} •{" "}
+                            {animal.gender || "-"} • {animal.age ?? "-"} ani
                           </Typography>
-                          <Typography sx={{ fontSize: "0.76rem", color: "#999", mt: 0.5 }}>
-                            Boxa: {animal.Boxes?.box_number || animal.Box?.box_number || "-"}
+                          <Typography
+                            sx={{ fontSize: "0.76rem", color: "#999", mt: 0.5 }}
+                          >
+                            Boxa:{" "}
+                            {animal.Boxes?.box_number ||
+                              animal.Box?.box_number ||
+                              "-"}
                           </Typography>
                         </Box>
 
                         <Button
                           size="small"
-                          onClick={() => navigate(`/staff/animals/${animal.id}`)}
+                          onClick={() =>
+                            navigate(`/staff/animals/${animal.id}`)
+                          }
                           sx={{
                             textTransform: "none",
                             color: RED,
@@ -658,9 +717,11 @@ export default function DashboardPage() {
                   <Typography sx={{ fontWeight: 800, fontSize: "0.9rem" }}>
                     Activitate azi
                   </Typography>
-                  <Typography sx={{ fontSize: "0.8rem", color: "#666", mt: 0.5 }}>
-                    Ai {todayAppointments.length} programari astazi si {scheduledTodayCount} sunt
-                    inca planificate.
+                  <Typography
+                    sx={{ fontSize: "0.8rem", color: "#666", mt: 0.5 }}
+                  >
+                    Ai {todayAppointments.length} programari astazi si{" "}
+                    {scheduledTodayCount} sunt inca planificate.
                   </Typography>
                 </Box>
 
@@ -675,9 +736,12 @@ export default function DashboardPage() {
                   <Typography sx={{ fontWeight: 800, fontSize: "0.9rem" }}>
                     Boxe in grija ta
                   </Typography>
-                  <Typography sx={{ fontSize: "0.8rem", color: "#666", mt: 0.5 }}>
-                    Ai in responsabilitate {staffBoxes.length} boxe cu o ocupare cumulata de{" "}
-                    {totalOccupancy} din {totalCapacity || 0} locuri.
+                  <Typography
+                    sx={{ fontSize: "0.8rem", color: "#666", mt: 0.5 }}
+                  >
+                    Ai in responsabilitate {staffBoxes.length} boxe cu o ocupare
+                    cumulata de {totalOccupancy} din {totalCapacity || 0}{" "}
+                    locuri.
                   </Typography>
                 </Box>
 
@@ -689,14 +753,24 @@ export default function DashboardPage() {
                     border: "1px solid #ffe6bf",
                   }}
                 >
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 0.5 }}>
-                    <AccessTimeRoundedIcon sx={{ fontSize: 18, color: "#ef6c00" }} />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      mb: 0.5,
+                    }}
+                  >
+                    <AccessTimeRoundedIcon
+                      sx={{ fontSize: 18, color: "#ef6c00" }}
+                    />
                     <Typography sx={{ fontWeight: 800, fontSize: "0.9rem" }}>
                       Luna curenta
                     </Typography>
                   </Box>
                   <Typography sx={{ fontSize: "0.8rem", color: "#666" }}>
-                    Sunt {thisMonthAppointments.length} programari alocate tie in luna aceasta.
+                    Sunt {thisMonthAppointments.length} programari alocate tie
+                    in luna aceasta.
                   </Typography>
                 </Box>
               </Stack>

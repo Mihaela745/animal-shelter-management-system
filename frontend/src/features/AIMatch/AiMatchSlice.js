@@ -70,6 +70,18 @@ const aiMatchSlice = createSlice({
       .addCase(searchAnimalAI.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        if (
+          state.messages.length > 0 &&
+          state.messages[state.messages.length - 1].type === "ai_loading"
+        ) {
+          state.messages.pop();
+        }
+        state.messages.push({
+          type: "ai_error",
+          text:
+            action.payload?.message ||
+            "Promptul oferit nu este valid pentru cautarea AI.",
+        });
       });
   },
 });

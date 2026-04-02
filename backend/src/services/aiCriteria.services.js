@@ -1,11 +1,53 @@
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+
+function createInvalidPromptError(message = "INVALID_PROMPT") {
+  const err = new Error(message);
+  err.code = "INVALID_PROMPT";
+  return err;
+}
+
+function isAllowedValue(value, allowedValues) {
+  return value == null || allowedValues.includes(value);
+}
+
+function validateExtractedCriteria(criteria) {
+  if (!criteria || typeof criteria !== "object" || Array.isArray(criteria)) {
+    throw createInvalidPromptError();
+  }
+
+  if (
+    !isAllowedValue(criteria.species, ["Dog", "Cat", "Other"]) ||
+    !isAllowedValue(criteria.age_preference, [
+      "Puppy/Kitten",
+      "Young",
+      "Adult",
+      "Senior",
+    ]) ||
+    !isAllowedValue(criteria.gender_preference, ["Male", "Female"]) ||
+    !isAllowedValue(criteria.activity_level, ["Low", "Medium", "High"]) ||
+    !isAllowedValue(criteria.housing, [
+      "Apartment",
+      "House",
+      "Yard",
+      "NoPreference",
+    ])
+  ) {
+    throw createInvalidPromptError();
+  }
+}
+
 export async function extractCriteriaFromDescription(description) {
   if (!description || typeof description !== "string") {
     throw new Error("Description is required and must be a string.");
   }
-  const prompt = `
-Return ONLY valid JSON (no markdown).
 
+  const prompt = `
+Ești un asistent pentru o platformă de adopție animale.
+
+Dacă descrierea utilizatorului NU este legată de adopția unui animal, returnează DOAR:
+{"error": "NOT_ADOPTION_RELATED"}
+
+Dacă este relevantă, extrage criteriile și returnează DOAR JSON valid cu schema de mai jos:
 {
   "species": "Dog|Cat|Other|null",
   "age_preference": "Puppy/Kitten|Young|Adult|Senior|null",
@@ -19,19 +61,16 @@ Return ONLY valid JSON (no markdown).
   "special_needs_ok": true|false|null
 }
 
-User description:
-${description}
+Returnează DOAR JSON, fără markdown, fără explicații.
+
+Descriere utilizator: "${description}"
 `;
 
   const resp = await fetch(GEMINI_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      contents: [
-        {
-          parts: [{ text: prompt }],
-        },
-      ],
+      contents: [{ parts: [{ text: prompt }] }],
     }),
   });
 
@@ -41,11 +80,10 @@ ${description}
   }
 
   const data = await resp.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-
   const raw = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
   if (!raw) throw new Error("Gemini returned empty response.");
+
   const cleaned = raw
     .replace(/```json/g, "")
     .replace(/```/g, "")
@@ -59,38 +97,47 @@ ${description}
     throw new Error("Gemini returned invalid JSON");
   }
 
+  if (parsed.error === "NOT_ADOPTION_RELATED") {
+    const err = new Error("NOT_ADOPTION_RELATED");
+    err.code = "NOT_ADOPTION_RELATED";
+    throw err;
+  }
+
+  validateExtractedCriteria(parsed);
+
   return parsed;
 }
 
 export async function rankAnimalsWithAI(criteria, animals) {
   const prompt = `
-You are an adoption advisor.
+Ești un consilier de adopție animale.
 
-User criteria:
+Criteriile utilizatorului:
 ${JSON.stringify(criteria)}
 
-Candidate animals:
+Animale candidate:
 ${JSON.stringify(animals, null, 2)}
 
-Rules:
-- Rank animals from BEST (1) to WORST (N).
-- Each rank MUST be unique.
-- Do NOT assign the same rank to multiple animals.
-- Consider activity_level, housing, good_with_kids and temperament carefully.
-- Use EXACTLY the animal objects provided.
-- Do NOT modify their structure.
-- Return ONLY raw JSON.
-- Do NOT use markdown.
-- Do NOT use \`\`\`json.
+Reguli:
+- Rankuiește animalele de la CEL MAI POTRIVIT (1) la CEL MAI PUȚIN POTRIVIT (N).
+- Fiecare rank TREBUIE să fie unic.
+- NU atribui același rank la mai multe animale.
+- Ia în considerare activity_level, housing, good_with_kids și temperament.
+- Folosește EXACT obiectele din lista de candidate.
+- NU modifica structura lor.
+- Returnează DOAR JSON valid.
+- NU folosi markdown.
+- NU folosi \`\`\`json.
+- Explicațiile trebuie scrise în limba română.
 
-Return in this format:
+Returnează în acest format:
 
 {
   "ranked_results": [
     {
-      "animal": { exact object from Candidate animals },
-      "rank": number,
-      "explanation": "short explanation"
+      "animal": { obiectul exact din lista de candidate },
+      "rank": număr,
+      "explanation": "explicație scurtă în română"
     }
   ]
 }
@@ -100,11 +147,7 @@ Return in this format:
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      contents: [
-        {
-          parts: [{ text: prompt }],
-        },
-      ],
+      contents: [{ parts: [{ text: prompt }] }],
     }),
   });
 

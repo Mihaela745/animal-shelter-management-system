@@ -110,6 +110,12 @@ function UserCard({ user, onDelete }) {
         borderRadius: "16px",
         border: "1.5px solid #f0f0f0",
         p: 2.5,
+        width: "100%",
+        height: "100%",
+        minWidth: 0,
+        boxSizing: "border-box",
+        display: "flex",
+        flexDirection: "column",
         transition: "box-shadow 0.2s, transform 0.2s",
         "&:hover": {
           boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
@@ -405,19 +411,33 @@ export default function UsersPage() {
       ) : (
         <Box
           sx={{
-            display: "grid",
-            gridTemplateColumns: {
-              xs: "1fr",
-              sm: "repeat(2, 1fr)",
-              md: "repeat(3, 1fr)",
-              lg: "repeat(4, 1fr)",
-            },
+            display: "flex",
+            flexWrap: "wrap",
             gap: { xs: 1.5, md: 2 },
             alignItems: "stretch",
+            width: "100%",
           }}
         >
           {filtered.map((user) => (
-            <UserCard key={user.id} user={user} onDelete={handleDeleteClick} />
+            <Box
+              key={user.id}
+              sx={{
+                flex: {
+                  xs: "1 1 100%",
+                  sm: "1 1 calc(50% - 8px)",
+                  md: "1 1 calc(33.333% - 11px)",
+                },
+                maxWidth: {
+                  xs: "100%",
+                  sm: "calc(50% - 8px)",
+                  md: "calc(33.333% - 11px)",
+                },
+                minWidth: 0,
+                display: "flex",
+              }}
+            >
+              <UserCard user={user} onDelete={handleDeleteClick} />
+            </Box>
           ))}
         </Box>
       )}
