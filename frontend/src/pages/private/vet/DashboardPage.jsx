@@ -233,7 +233,7 @@ export default function DashboardPage() {
             fontSize: { xs: "1.2rem", md: "1.5rem" },
           }}
         >
-          Vet Dashboard
+          Panou veterinar
         </Typography>
         <Typography sx={{ opacity: 0.86, mt: 0.6, fontSize: "0.9rem" }}>
           Urmareste animalele care au nevoie de control, tratamentele recente si
@@ -245,7 +245,7 @@ export default function DashboardPage() {
         <Alert severity="error" sx={{ mb: 3, borderRadius: "14px" }}>
           {typeof medicalError === "string"
             ? medicalError
-            : "Nu am putut incarca datele pentru dashboard."}
+            : "Nu am putut incarca datele pentru panou."}
         </Alert>
       ) : null}
 
@@ -425,7 +425,7 @@ export default function DashboardPage() {
                         {medication.frequency}
                       </Typography>
                       <Typography sx={{ fontSize: "0.76rem", color: "#999", mt: 0.5 }}>
-                        Start: {new Date(medication.start_date).toLocaleDateString("ro-RO")}
+                        Inceput: {new Date(medication.start_date).toLocaleDateString("ro-RO")}
                       </Typography>
                     </Box>
                   ))}

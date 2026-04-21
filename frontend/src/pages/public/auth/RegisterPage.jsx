@@ -41,9 +41,9 @@ export default function RegisterPage() {
   const [localError, setLocalError] = useState(null);
 
   const validations = () => {
-    if (!form.username) return "Username este obligatoriu";
+    if (!form.username) return "Numele de utilizator este obligatoriu";
     if (!/^[a-zA-Z0-9_]{3,}$/.test(form.username))
-      return "Username invalid (minim 3 caractere, litere, cifre, _)";
+      return "Nume de utilizator invalid (minim 3 caractere, litere, cifre, _)";
     if (!form.email) return "Email este obligatoriu";
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) return "Email invalid";
     if (!form.password) return "Parola este obligatorie";
@@ -260,7 +260,7 @@ export default function RegisterPage() {
               sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.8 }}
             >
               <TextField
-                label="Username"
+                label="Nume utilizator"
                 name="username"
                 value={form.username}
                 onChange={handleChange}

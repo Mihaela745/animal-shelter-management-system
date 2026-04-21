@@ -31,14 +31,13 @@ const filterFieldSx = {
 
 export default function AnimalsPageManager() {
   const dispatch = useDispatch();
-
   const { animals, loading, totalPages } = useSelector(
     (state) => state.animals,
   );
-
   const [searchParams, setSearchParams] = useSearchParams();
 
   const filters = {
+    name: searchParams.get("name") || "",
     species: searchParams.get("species") || "",
     gender: searchParams.get("gender") || "",
     minAge: searchParams.get("minAge") || "",
@@ -51,6 +50,7 @@ export default function AnimalsPageManager() {
     dispatch(fetchAnimals({ ...filters, page }));
   }, [
     dispatch,
+    filters.name,
     filters.species,
     filters.gender,
     filters.minAge,
@@ -105,12 +105,12 @@ export default function AnimalsPageManager() {
         </Typography>
 
         <Typography variant="body2" sx={{ color: "#888", mt: 0.5 }}>
-          Găsește companionul perfect pentru tine 🐾
+          Gaseste rapid animalele dupa nume sau filtre
         </Typography>
 
         {!loading && (
           <Typography variant="body2" sx={{ color: "#666", mt: 1 }}>
-            {animals.length} animale găsite
+            {animals.length} animale gasite
           </Typography>
         )}
       </Box>
@@ -121,7 +121,7 @@ export default function AnimalsPageManager() {
           gridTemplateColumns: {
             xs: "1fr",
             sm: "repeat(2, 1fr)",
-            md: "repeat(4, 1fr)",
+            md: "repeat(5, 1fr)",
           },
           gap: 2,
           mb: 5,
@@ -135,6 +135,16 @@ export default function AnimalsPageManager() {
         }}
       >
         <TextField
+          size="small"
+          label="Nume"
+          name="name"
+          value={filters.name}
+          onChange={handleFilterChange}
+          placeholder="Cauta dupa nume"
+          sx={filterFieldSx}
+        />
+
+        <TextField
           select
           size="small"
           label="Specie"
@@ -144,8 +154,8 @@ export default function AnimalsPageManager() {
           sx={filterFieldSx}
         >
           <MenuItem value="">Toate</MenuItem>
-          <MenuItem value="Dog">Câine</MenuItem>
-          <MenuItem value="Cat">Pisică</MenuItem>
+          <MenuItem value="Dog">Caine</MenuItem>
+          <MenuItem value="Cat">Pisica</MenuItem>
         </TextField>
 
         <TextField
@@ -159,12 +169,12 @@ export default function AnimalsPageManager() {
         >
           <MenuItem value="">Toate</MenuItem>
           <MenuItem value="Male">Mascul</MenuItem>
-          <MenuItem value="Female">Femelă</MenuItem>
+          <MenuItem value="Female">Femela</MenuItem>
         </TextField>
 
         <TextField
           size="small"
-          label="Vârstă min."
+          label="Varsta min."
           name="minAge"
           type="number"
           value={filters.minAge}
@@ -178,7 +188,7 @@ export default function AnimalsPageManager() {
 
         <TextField
           size="small"
-          label="Vârstă max."
+          label="Varsta max."
           name="maxAge"
           type="number"
           value={filters.maxAge}
@@ -196,6 +206,7 @@ export default function AnimalsPageManager() {
           <CircularProgress sx={{ color: "#a91111" }} />
         </Box>
       )}
+
       {!loading && animals.length === 0 && (
         <Box
           sx={{
@@ -210,17 +221,15 @@ export default function AnimalsPageManager() {
           }}
         >
           <PetsIcon sx={{ fontSize: 48, color: "#ddd", mb: 2 }} />
-
           <Typography variant="h6" color="text.secondary" fontWeight={600}>
-            Nu am găsit animale conform filtrelor tale
+            Nu am gasit animale conform filtrelor tale
           </Typography>
-
           <Typography variant="body2" color="text.disabled" mt={1}>
-            Încearcă să modifici vârsta sau specia pentru a vedea mai multe
-            rezultate.
+            Incearca sa cauti dupa nume sau sa modifici ceilalti parametri.
           </Typography>
         </Box>
       )}
+
       {!loading && animals.length > 0 && (
         <Box
           sx={{

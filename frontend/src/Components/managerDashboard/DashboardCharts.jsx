@@ -127,7 +127,7 @@ export default function DashboardCharts({
 
   const speciesCount = {};
   animals.forEach((a) => {
-    const name = a.Species?.name || "Other";
+    const name = a.Species?.name || "Alta specie";
     speciesCount[name] = (speciesCount[name] || 0) + 1;
   });
   const speciesData = Object.entries(speciesCount).map(([name, value]) => ({

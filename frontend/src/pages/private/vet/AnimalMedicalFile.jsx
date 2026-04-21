@@ -11,7 +11,7 @@ import {
 } from "../../../features/medicalFiles/medicalFilesSlice";
 import MedicalFileInfo from "../../../components/medicalFileComponents/MedicalFileInfo";
 import VetMedicalFileEditor from "../../../components/medicalFileComponents/VetMedicalFileEditor";
-import MedicationsList from "../../../components/medicalFileComponents/MedicationsList";
+import VetMedicationManager from "../../../components/medicalFileComponents/VetMedicationManager";
 import { fetchMedicationsByFile } from "../../../features/medications/medicationsSlice";
 
 const RED = "#a91111";
@@ -135,7 +135,7 @@ export default function AnimalMedicalPage() {
           onSave={handleSaveMedicalFile}
         />
         <Divider sx={{ my: 3 }} />
-        <MedicationsList />
+        <VetMedicationManager medicalFileId={fileId} />
       </Box>
     </Box>
   );

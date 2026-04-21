@@ -3,6 +3,7 @@ import MonitorWeightOutlinedIcon from "@mui/icons-material/MonitorWeightOutlined
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import PetsOutlinedIcon from "@mui/icons-material/PetsOutlined";
 import NotesOutlinedIcon from "@mui/icons-material/NotesOutlined";
+import { formatAnimalStatus } from "../../utils/labels";
 
 function InfoCard({ icon, label, value }) {
   return (
@@ -72,7 +73,7 @@ export default function MedicalFileInfo({ file }) {
           </Typography>
         </Box>
         <Chip
-          label={animal?.status === "Available" ? "Disponibil" : animal?.status}
+          label={formatAnimalStatus(animal?.status)}
           sx={{
             fontWeight: 700,
             fontSize: "0.75rem",

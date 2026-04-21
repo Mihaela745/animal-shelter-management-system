@@ -15,7 +15,7 @@ export const fetchAnimals = createAsyncThunk(
       const response = await axiosInstance.get(`/animals?${query}`);
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || "Error");
+      return thunkAPI.rejectWithValue(error.response?.data || "Eroare");
     }
   },
 );
@@ -67,7 +67,7 @@ export const updateAnimal = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare update animal",
+        error.response?.data || "Eroare la actualizarea animalului",
       );
     }
   },

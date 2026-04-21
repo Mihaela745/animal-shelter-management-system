@@ -17,6 +17,29 @@ import { fetchBoxes } from "../../../features/boxes/boxesSlice";
 import { fetchStaff } from "../../../features/staff/staffSlice";
 import DashboardCharts from "../../../components/managerDashboard/DashboardCharts";
 
+function parseDateValue(dateValue) {
+  if (!dateValue) return null;
+  if (typeof dateValue === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+    return new Date(`${dateValue}T00:00:00`);
+  }
+  const parsed = new Date(dateValue);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function getDiffInDays(startDate, endDate) {
+  if (!startDate || !endDate) return null;
+  const msPerDay = 1000 * 60 * 60 * 24;
+  return Math.max(
+    0,
+    Math.round((endDate.getTime() - startDate.getTime()) / msPerDay),
+  );
+}
+
+function formatPercent(value) {
+  if (!Number.isFinite(value)) return "0%";
+  return `${value.toFixed(1)}%`;
+}
+
 export default function DashboardPage() {
   const dispatch = useDispatch();
 
@@ -39,19 +62,52 @@ export default function DashboardPage() {
   }, [dispatch]);
 
   const availableAnimals = animals.filter(
-    (a) => a.status === "Available",
+    (animal) => animal.status === "Available",
   ).length;
-  const adoptedAnimals = animals.filter((a) => a.status === "Adopted").length;
-  const pendingRequests = requests.filter((r) => r.status === "Pending").length;
+  const adoptedAnimals = animals.filter(
+    (animal) => animal.status === "Adopted",
+  ).length;
+  const pendingRequests = requests.filter(
+    (request) => request.status === "Pending",
+  ).length;
 
   const today = new Date().toISOString().split("T")[0];
   const appointmentsToday = appointments.filter(
-    (a) => a.date?.split("T")[0] === today,
+    (appointment) => appointment.date?.split("T")[0] === today,
   ).length;
 
-  const totalCapacity = boxes.reduce((sum, b) => sum + (b.capacity || 0), 0);
+  const totalEntries = animals.filter((animal) =>
+    Boolean(parseDateValue(animal.date_added)),
+  ).length;
+
+  const adoptionRate =
+    totalEntries > 0 ? (adoptions.length / totalEntries) * 100 : 0;
+
+  const animalEntryDateById = animals.reduce((acc, animal) => {
+    const entryDate = parseDateValue(animal.date_added);
+    if (entryDate) {
+      acc[animal.id] = entryDate;
+    }
+    return acc;
+  }, {});
+
+  const resolvedStayDurations = adoptions
+    .map((adoption) => {
+      const entryDate = animalEntryDateById[adoption.animal_id];
+      const resolutionDate = parseDateValue(adoption.adoption_date);
+      return getDiffInDays(entryDate, resolutionDate);
+    })
+    .filter((value) => value !== null);
+
+  const averageLos =
+    resolvedStayDurations.length > 0
+      ? resolvedStayDurations.reduce((sum, value) => sum + value, 0) /
+        resolvedStayDurations.length
+      : 0;
+
+  const totalCapacity = boxes.reduce((sum, box) => sum + (box.capacity || 0), 0);
   const totalOccupied = boxes.reduce(
-    (sum, b) => sum + (b.current_occupancy || 0),
+    (sum, box) => sum + (box.current_occupancy || 0),
     0,
   );
   const occupancyRate =
@@ -89,7 +145,7 @@ export default function DashboardPage() {
             {title.toUpperCase()}
           </Typography>
           {warning && (
-            <Tooltip title="Adăpostul este supraîncărcat!" arrow>
+            <Tooltip title="Adapostul este supraincarcat!" arrow>
               <WarningAmberIcon sx={{ fontSize: 16, color: "#e65100" }} />
             </Tooltip>
           )}
@@ -106,17 +162,28 @@ export default function DashboardPage() {
   );
 
   const stats = [
-    { title: "Total Animals", value: totalAnimals, color: "#a91111" },
-    { title: "Available", value: availableAnimals, color: "#2e7d32" },
-    { title: "Adopted", value: adoptedAnimals, color: "#1565c0" },
-    { title: "Pending Requests", value: pendingRequests, color: "#e65100" },
-    { title: "Appointments Today", value: appointmentsToday, color: "#a91111" },
-    { title: "Staff Members", value: staff.length, color: "#6a1b9a" },
-    { title: "Shelter Capacity", value: totalCapacity, color: "#00695c" },
+    { title: "Total animale", value: totalAnimals, color: "#a91111" },
+    { title: "Total intrari", value: totalEntries, color: "#5d4037" },
+    { title: "Disponibile", value: availableAnimals, color: "#2e7d32" },
+    { title: "Adoptate", value: adoptedAnimals, color: "#1565c0" },
     {
-      title: "Occupancy %",
+      title: "Rata adoptie",
+      value: formatPercent(adoptionRate),
+      color: "#00897b",
+    },
+    {
+      title: "LOS mediu",
+      value: `${averageLos.toFixed(1)} zile`,
+      color: "#6a1b9a",
+    },
+    { title: "Cereri in asteptare", value: pendingRequests, color: "#e65100" },
+    { title: "Programari azi", value: appointmentsToday, color: "#a91111" },
+    { title: "Membri personal", value: staff.length, color: "#3949ab" },
+    { title: "Capacitate adapost", value: totalCapacity, color: "#00695c" },
+    {
+      title: "Ocupare %",
       value: isOverCapacity
-        ? `⚠ ${((totalOccupied / totalCapacity) * 100).toFixed(1)}%`
+        ? `! ${((totalOccupied / totalCapacity) * 100).toFixed(1)}%`
         : `${occupancyRate}%`,
       color: isOverCapacity ? "#e65100" : "#c62828",
       warning: isOverCapacity,
@@ -153,17 +220,21 @@ export default function DashboardPage() {
             fontSize: { xs: "1.1rem", md: "1.4rem" },
           }}
         >
-          Manager Dashboard 🐾
+          Panou manager
         </Typography>
         <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
-          Statistici și activitate în timp real.
+          Statistici si activitate in timp real.
+        </Typography>
+        <Typography variant="body2" sx={{ opacity: 0.9, mt: 1.25 }}>
+          Indicatori integrati: total intrari, rata de adoptie si durata medie a
+          sederii pentru animalele rezolvate prin adoptie.
         </Typography>
       </Box>
 
       <Grid container spacing={{ xs: 1.5, md: 3 }} mb={4}>
-        {stats.map((s) => (
-          <Grid item xs={6} sm={6} md={3} key={s.title}>
-            <StatCard {...s} />
+        {stats.map((stat) => (
+          <Grid item xs={6} sm={6} md={3} key={stat.title}>
+            <StatCard {...stat} />
           </Grid>
         ))}
       </Grid>
@@ -183,8 +254,8 @@ export default function DashboardPage() {
         >
           <WarningAmberIcon sx={{ color: "#e65100" }} />
           <Typography fontSize="0.88rem" fontWeight={600} color="#bf360c">
-            Adăpostul este supraîncărcat! Capacitate totală: {totalCapacity},
-            ocupate: {totalOccupied}. Verificați distribuția animalelor pe boxe.
+            Adapostul este supraincarcat! Capacitate totala: {totalCapacity},
+            ocupate: {totalOccupied}. Verifica distributia animalelor pe boxe.
           </Typography>
         </Box>
       )}

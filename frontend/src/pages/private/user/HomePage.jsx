@@ -161,7 +161,7 @@ export default function HomePage() {
                     mb: 1,
                   }}
                 >
-                  Gaseste-mi match-ul
+                  Gaseste-mi potrivirea
                 </Typography>
                 <Typography
                   sx={{
@@ -201,7 +201,7 @@ export default function HomePage() {
               },
             }}
           >
-            Mergi la dashboard
+            Mergi la panou
           </Button>
         </Box>
       </Box>

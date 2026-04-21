@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchAnimals } from "../../../features/animals/animalsSlice";
 import { fetchBoxById } from "../../../features/boxes/boxesSlice";
+import { formatAnimalStatus, formatGender } from "../../../utils/labels";
 
 const RED = "#a91111";
 const RED_DARK = "#8a0d0d";
@@ -49,13 +50,13 @@ function AnimalViewCard({ animal, currentBoxNumber, onOpen }) {
             {animal.name}
           </Typography>
           <Typography sx={{ fontSize: "0.78rem", color: "#888", mt: 0.5 }}>
-            {animal.Species?.name || "-"} • {animal.gender || "-"} • {animal.age ?? "-"} ani
+            {animal.Species?.name || "-"} • {formatGender(animal.gender)} • {animal.age ?? "-"} ani
           </Typography>
         </Box>
 
         <Chip
           size="small"
-          label={animal.status}
+          label={formatAnimalStatus(animal.status)}
           sx={{
             fontWeight: 700,
             backgroundColor: "#f5f5f5",
@@ -171,7 +172,7 @@ export default function VetBoxAnimalsPage() {
           </Box>
 
           <Typography sx={{ fontSize: "0.85rem", color: "#aaa", ml: "52px" }}>
-            Vizualizare read-only pentru activitatea vetului
+            Vizualizare doar pentru activitatea veterinarului
           </Typography>
         </Box>
       </Box>

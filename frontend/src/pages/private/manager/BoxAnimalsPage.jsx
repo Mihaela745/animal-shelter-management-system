@@ -22,6 +22,7 @@ import {
   updateAnimal,
 } from "../../../features/animals/animalsSlice";
 import { fetchBoxes, fetchBoxById } from "../../../features/boxes/boxesSlice";
+import { formatAnimalStatus, formatGender } from "../../../utils/labels";
 
 const RED = "#a91111";
 const RED_DARK = "#8a0d0d";
@@ -77,14 +78,14 @@ function AnimalMoveCard({ animal, currentBoxNumber, onMove }) {
             {animal.name}
           </Typography>
           <Typography sx={{ fontSize: "0.78rem", color: "#888", mt: 0.5 }}>
-            {animal.Species?.name || "-"} • {animal.gender || "-"} •{" "}
+            {animal.Species?.name || "-"} • {formatGender(animal.gender)} •{" "}
             {animal.age ?? "-"} ani
           </Typography>
         </Box>
 
         <Chip
           size="small"
-          label={animal.status}
+          label={formatAnimalStatus(animal.status)}
           sx={{
             fontWeight: 700,
             backgroundColor: "#f5f5f5",

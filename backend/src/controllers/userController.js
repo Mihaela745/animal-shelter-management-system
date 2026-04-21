@@ -31,6 +31,42 @@ export const seedManager = async () => {
 };
 
 export const controller = {
+  getMyProfile: async (req, res) => {
+    try {
+      const user = await Users.findByPk(req.user.id, {
+        attributes: ["id", "username", "email", "phonenumber", "address", "role"],
+      });
+
+      if (!user) {
+        return res.status(404).send("User not found");
+      }
+
+      return res.status(200).json(user);
+    } catch (err) {
+      return res.status(500).send(`Couldn't fetch profile: ${err.message}`);
+    }
+  },
+  updateMyProfile: async (req, res) => {
+    try {
+      const userId = req.user.id;
+      const { username, phonenumber, address } = req.body;
+
+      const user = await Users.findByPk(userId);
+      if (!user) {
+        return res.status(404).send("User not found");
+      }
+
+      await user.update({
+        username: username ?? user.username,
+        phonenumber: phonenumber ?? user.phonenumber,
+        address: address ?? user.address,
+      });
+
+      return res.status(200).json(user);
+    } catch (err) {
+      return res.status(500).send(`Couldn't update profile: ${err.message}`);
+    }
+  },
   getAllUsers: async (req, res) => {
     try {
       const users = await Users.findAll();

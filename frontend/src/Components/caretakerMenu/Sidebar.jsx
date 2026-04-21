@@ -32,7 +32,7 @@ export default function CaretakerSidebar({ mobile = false, open, onClose }) {
   const [collapsed, setCollapsed] = useState(false);
 
   const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/staff/dashboard" },
+    { text: "Panou", icon: <DashboardIcon />, path: "/staff/dashboard" },
     { text: "Animale", icon: <PetsIcon />, path: "/staff/animals" },
     { text: "Boxe", icon: <Inventory2Icon />, path: "/staff/boxes" },
     { text: "Programări", icon: <EventIcon />, path: "/staff/appointments" },
@@ -170,7 +170,7 @@ export default function CaretakerSidebar({ mobile = false, open, onClose }) {
             <LogoutIcon />
           </ListItemIcon>
 
-          {(mobile || !collapsed) && <ListItemText primary="Logout" />}
+          {(mobile || !collapsed) && <ListItemText primary="Deconectare" />}
         </ListItemButton>
       </Box>
     </Box>

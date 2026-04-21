@@ -4,7 +4,7 @@ import { Op } from "sequelize";
 
 const ANIMAL_INCLUDES = [
   { model: Species, attributes: ["name"] },
-  { model: Boxes, attributes: ["box_number"] },
+  { model: Boxes, attributes: ["id", "box_number"] },
   { model: Medical_files },
 ];
 
@@ -17,6 +17,7 @@ export const controller = {
         species_id,
         breed,
         age,
+        date_added,
         gender,
         box_id,
         weight,
@@ -41,6 +42,7 @@ export const controller = {
           species_id: Number(species_id),
           breed,
           age: age ? Number(age) : null,
+          date_added: date_added || new Date().toISOString().split("T")[0],
           gender,
           box_id: Number(box_id),
           medical_file_id: medicalFile.id,
@@ -66,6 +68,7 @@ export const controller = {
   getAllAnimals: async (req, res) => {
     try {
       const {
+        name,
         species,
         status,
         gender,
@@ -78,6 +81,7 @@ export const controller = {
       const offset = (Number(page) - 1) * Number(limit);
       const whereClause = {};
 
+      if (name) whereClause.name = { [Op.like]: `%${name}%` };
       if (status) whereClause.status = status;
       if (gender) whereClause.gender = gender;
       if (box_id) whereClause.box_id = Number(box_id);
@@ -97,7 +101,7 @@ export const controller = {
             required: !!species,
             ...(species && { where: { name: species } }),
           },
-          { model: Boxes, attributes: ["box_number"] },
+          { model: Boxes, attributes: ["id", "box_number"] },
           { model: Medical_files },
         ],
         limit: Number(limit),
@@ -132,12 +136,15 @@ export const controller = {
     try {
       const animalId = req.params.id;
       const body = req.body || {};
-      const { name, breed, age, gender, status, box_id } = body;
+      const { name, breed, age, date_added, gender, status, box_id } = body;
 
       const updateData = {};
       if (name !== undefined) updateData.name = name;
       if (breed !== undefined) updateData.breed = breed;
       if (age !== undefined && age !== "") updateData.age = Number(age);
+      if (date_added !== undefined && date_added !== "") {
+        updateData.date_added = date_added;
+      }
       if (gender !== undefined) updateData.gender = gender;
       if (status !== undefined) updateData.status = status;
       if (box_id !== undefined) updateData.box_id = Number(box_id);

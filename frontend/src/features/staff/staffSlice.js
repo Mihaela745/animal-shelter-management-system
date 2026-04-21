@@ -9,7 +9,7 @@ export const fetchStaff = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare încărcare staff",
+        error.response?.data || "Eroare la incarcarea personalului",
       );
     }
   },
@@ -23,7 +23,7 @@ export const fetchStaffById = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare încărcare membru staff",
+        error.response?.data || "Eroare la incarcarea membrului din personal",
       );
     }
   },
@@ -65,7 +65,7 @@ export const createStaff = createAsyncThunk(
       return response.data.staff;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare creare staff",
+        error.response?.data || "Eroare la crearea membrului din personal",
       );
     }
   },
@@ -79,7 +79,7 @@ export const updateStaff = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare update staff",
+        error.response?.data || "Eroare la actualizarea membrului din personal",
       );
     }
   },
@@ -93,7 +93,7 @@ export const deleteStaff = createAsyncThunk(
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare ștergere staff",
+        error.response?.data || "Eroare la stergerea membrului din personal",
       );
     }
   },

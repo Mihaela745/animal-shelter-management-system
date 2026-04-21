@@ -9,7 +9,7 @@ export const fetchAllMedicalFiles = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare medical files",
+        error.response?.data || "Eroare la incarcarea fiselor medicale",
       );
     }
   },
@@ -23,7 +23,7 @@ export const fetchMedicalFileById = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare medical file",
+        error.response?.data || "Eroare la incarcarea fisei medicale",
       );
     }
   },
@@ -37,7 +37,7 @@ export const updateMedicalFile = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare update medical file",
+        error.response?.data || "Eroare la actualizarea fisei medicale",
       );
     }
   },

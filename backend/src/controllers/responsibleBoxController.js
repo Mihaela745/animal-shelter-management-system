@@ -98,11 +98,22 @@ export const controller = {
         include: [
           {
             model: Boxes,
-            attributes: ["id", "box_number"],
+            attributes: [
+              "id",
+              "box_number",
+              "capacity",
+              "current_occupancy",
+              "species_id",
+            ],
           },
         ],
       });
-      return res.status(200).send(response);
+
+      const boxes = response
+        .map((item) => item.Boxes || item.Box || null)
+        .filter(Boolean);
+
+      return res.status(200).send(boxes);
     } catch (err) {
       console.log("Error while fetching!");
       return res.status(500).send(`Error while fetching:${err}`);

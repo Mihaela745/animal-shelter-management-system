@@ -137,7 +137,7 @@ export default function ResetPasswordPage() {
               "&:hover": { backgroundColor: "#8a0d0d" },
             }}
           >
-            Înapoi la login
+            Înapoi la autentificare
           </Button>
         </Box>
       </Box>
@@ -337,7 +337,7 @@ export default function ResetPasswordPage() {
                   fontFamily: "sans-serif",
                 }}
               >
-                Ești redirecționat către login...
+              Ești redirecționat către autentificare...
               </Typography>
             </Box>
           ) : (

@@ -16,7 +16,7 @@ export default function AnimalsPreview() {
   const { animals, loading } = useSelector((state) => state.animals);
 
   useEffect(() => {
-    dispatch(fetchAnimals());
+    dispatch(fetchAnimals({ status: "Available" }));
   }, [dispatch]);
 
   return (

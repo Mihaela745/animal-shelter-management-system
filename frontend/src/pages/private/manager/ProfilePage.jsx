@@ -25,6 +25,7 @@ import {
   updateMyStaffProfile,
 } from "../../../features/staff/staffSlice";
 import { setAuthUser } from "../../../features/auth/authSlice";
+import { formatRole } from "../../../utils/labels";
 
 const inputSx = {
   "& .MuiOutlinedInput-root": {
@@ -219,7 +220,7 @@ export default function ManagerProfilePage() {
 
           <Chip
             icon={<AdminPanelSettingsOutlinedIcon sx={{ fontSize: 16 }} />}
-            label={user?.role || "Manager"}
+            label={formatRole(user?.role || "Manager")}
             size="small"
             sx={{
               mb: 1,
@@ -318,7 +319,7 @@ export default function ManagerProfilePage() {
                   <InfoRow
                     icon={<WorkOutlineIcon sx={{ color: "#a91111", fontSize: 18 }} />}
                     label="Pozitie"
-                    value={myProfile?.Position?.title || user?.role}
+                    value={myProfile?.Position?.title || formatRole(user?.role)}
                   />
                 </>
               )}

@@ -217,7 +217,7 @@ function AppointmentCard({ appointment, onStatusChange, actionLoading }) {
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <PersonOutlineIcon sx={{ fontSize: 14, color: "#bbb" }} />
           <Typography sx={{ fontSize: "0.78rem", color: "#666" }}>
-            Staff responsabil: {appointment.Staff?.name || "-"}
+            Personal responsabil: {appointment.Staff?.name || "-"}
           </Typography>
         </Box>
       </Box>
@@ -444,7 +444,7 @@ export default function AppointmentsPage() {
         }}
       >
         <TextField
-          placeholder="Cauta dupa user, animal sau staff..."
+          placeholder="Cauta dupa utilizator, animal sau personal..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           sx={fieldSx}

@@ -8,7 +8,7 @@ export const loginUser = createAsyncThunk(
       const response = await axiosInstance.post("/auth/login", credentials);
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || "Login failed");
+      return thunkAPI.rejectWithValue(error.response?.data || "Autentificarea a esuat");
     }
   },
 );
@@ -21,7 +21,7 @@ export const registerUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Register failed",
+        error.response?.data || "Inregistrarea a esuat",
       );
     }
   },
@@ -65,6 +65,20 @@ export const updatePassword = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue(
         error.response?.data || "Eroare actualizare parola",
+      );
+    }
+  },
+);
+
+export const updateMyProfile = createAsyncThunk(
+  "auth/updateMyProfile",
+  async (data, thunkAPI) => {
+    try {
+      const response = await axiosInstance.put("/users/me", data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Eroare actualizare profil",
       );
     }
   },
@@ -150,6 +164,22 @@ const authSlice = createSlice({
       })
 
       .addCase(updatePassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateMyProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateMyProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = {
+          ...state.user,
+          ...action.payload,
+        };
+        localStorage.setItem("user", JSON.stringify(state.user));
+      })
+      .addCase(updateMyProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { formatAnimalStatus, formatGender } from "../../utils/labels";
 
 export default function AnimalCard({ animal }) {
   const { name, age, gender, image_url, status } = animal;
@@ -24,7 +25,11 @@ export default function AnimalCard({ animal }) {
     } else if (role === "Caretaker") {
       navigate(`/staff/animals/${animal.id}`);
     } else {
-      navigate("/");
+      navigate("/login", {
+        state: {
+          postLoginAnimalId: animal.id,
+        },
+      });
     }
   };
   return (
@@ -83,11 +88,7 @@ export default function AnimalCard({ animal }) {
               sx={{ color: "#555", fontSize: "0.85rem" }}
             >
               {age} ani |{" "}
-              {gender === "Male"
-                ? "Mascul"
-                : gender === "Female"
-                  ? "Femelă"
-                  : gender}
+              {formatGender(gender)}
             </Typography>
           </Box>
 
@@ -101,7 +102,7 @@ export default function AnimalCard({ animal }) {
           >
             <Chip
               size="small"
-              label={status}
+              label={formatAnimalStatus(status)}
               sx={{
                 fontWeight: 600,
                 backgroundColor: "#f0f0f0",

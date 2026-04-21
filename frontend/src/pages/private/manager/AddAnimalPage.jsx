@@ -68,6 +68,7 @@ export default function AddAnimalPage() {
     species_id: "",
     breed: "",
     age: "",
+    date_added: new Date().toISOString().split("T")[0],
     gender: "",
     weight: "",
     box_id: "",
@@ -337,6 +338,17 @@ export default function AddAnimalPage() {
                   </Field>
                 </Box>
 
+                <Field label="Data adaugarii">
+                  <TextField
+                    type="date"
+                    name="date_added"
+                    value={formData.date_added}
+                    onChange={handleChange}
+                    sx={fieldSx}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Field>
+
                 <Field label="Fotografie">
                   <Button
                     variant="outlined"
@@ -547,6 +559,9 @@ export default function AddAnimalPage() {
               label: formData.gender === "Male" ? "Mascul" : "Femelă",
             },
             formData.age && { label: `${formData.age} ani` },
+            formData.date_added && {
+              label: `Adaugat pe ${new Date(`${formData.date_added}T00:00:00`).toLocaleDateString("ro-RO")}`,
+            },
             formData.box_id && {
               label: boxes.find((b) => b.id === formData.box_id)?.box_number,
             },

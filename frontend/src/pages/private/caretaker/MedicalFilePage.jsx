@@ -41,7 +41,7 @@ export default function AnimalMedicalPage() {
   return (
     <Box sx={{ maxWidth: 800, mx: "auto", p: { xs: 2, md: 4 } }}>
       <Box
-        onClick={() => navigate(`/manager/animals/${animalId}`)}
+        onClick={() => navigate(`/staff/animals/${animalId}`)}
         sx={{
           display: "flex",
           alignItems: "center",

@@ -525,7 +525,7 @@ export default function BoxesPage() {
           <TextField
             select
             fullWidth
-            label="Caretaker"
+            label="Ingrijitor"
             value={selectedResponsible}
             onChange={(e) => setSelectedResponsible(e.target.value)}
             sx={fieldSx}

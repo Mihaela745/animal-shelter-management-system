@@ -11,7 +11,7 @@ export const searchAnimalAI = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "AI search failed",
+        error.response?.data || "Cautarea AI a esuat",
       );
     }
   },

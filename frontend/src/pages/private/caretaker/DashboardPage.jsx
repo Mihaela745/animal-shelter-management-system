@@ -378,7 +378,7 @@ export default function DashboardPage() {
         <Alert severity="error" sx={{ mb: 3, borderRadius: "14px" }}>
           {typeof error === "string"
             ? error
-            : "Nu am putut incarca datele pentru dashboard."}
+            : "Nu am putut incarca datele pentru panou."}
         </Alert>
       ) : null}
 

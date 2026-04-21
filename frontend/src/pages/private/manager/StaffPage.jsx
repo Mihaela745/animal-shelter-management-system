@@ -27,6 +27,7 @@ import {
   updateStaff,
   deleteStaff,
 } from "../../../features/staff/staffSlice";
+import { formatRole } from "../../../utils/labels";
 import { fetchPositions } from "../../../features/positions/positionsSlice";
 
 const RED = "#a91111";
@@ -253,7 +254,7 @@ function StaffCard({ member, positionTitle, onEdit, onDelete }) {
                         : "#888",
               }}
             >
-              {role}
+              {formatRole(role)}
             </Typography>
           </Box>
         </Box>

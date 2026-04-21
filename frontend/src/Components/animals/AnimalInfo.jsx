@@ -7,6 +7,19 @@ import {
   Stack,
 } from "@mui/material";
 import { useSelector } from "react-redux";
+import { formatAnimalStatus, formatGender } from "../../utils/labels";
+
+const formatDate = (value) => {
+  if (!value) return "-";
+  const normalized =
+    typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)
+      ? `${value}T00:00:00`
+      : value;
+  const date = new Date(normalized);
+  return Number.isNaN(date.getTime())
+    ? value
+    : date.toLocaleDateString("ro-RO");
+};
 
 const InfoRow = ({ label, value }) => (
   <Box sx={{ display: "flex", justifyContent: "space-between", py: 1 }}>
@@ -34,7 +47,7 @@ export default function AnimalInfo({ animal }) {
           {animal.name}
         </Typography>
         <Chip
-          label={animal.status}
+          label={formatAnimalStatus(animal.status)}
           color={animal.status === "Available" ? "success" : "error"}
           sx={{ fontWeight: 500, borderRadius: "8px" }}
         />
@@ -43,9 +56,13 @@ export default function AnimalInfo({ animal }) {
       <Divider sx={{ mb: 2 }} />
 
       <Stack spacing={0.1}>
-        <InfoRow label="Vârstă" value={`${animal.age} ani`} />
-        <InfoRow label="Sex" value={animal.gender} />
-        <InfoRow label="Rasă" value={animal.breed} />
+        <InfoRow
+          label="Varsta"
+          value={animal.age != null ? `${animal.age} ani` : "-"}
+        />
+        <InfoRow label="Sex" value={formatGender(animal.gender)} />
+        <InfoRow label="Rasa" value={animal.breed || "-"} />
+        <InfoRow label="Adaugat in sistem" value={formatDate(animal.date_added)} />
 
         {loading && (
           <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
@@ -61,7 +78,7 @@ export default function AnimalInfo({ animal }) {
               <InfoRow label="Temperament" value={metadata.temperament} />
             )}
             {metadata.life_expectancy && (
-              <InfoRow label="Durată viață" value={metadata.life_expectancy} />
+              <InfoRow label="Durata viata" value={metadata.life_expectancy} />
             )}
           </>
         )}

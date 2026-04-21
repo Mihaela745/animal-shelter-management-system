@@ -32,7 +32,7 @@ export default function Sidebar({ mobile = false, open, onClose }) {
   const [collapsed, setCollapsed] = useState(false);
 
   const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/vet/dashboard" },
+    { text: "Panou", icon: <DashboardIcon />, path: "/vet/dashboard" },
     { text: "Animale", icon: <PetsIcon />, path: "/vet/animals" },
     {
       text: "Adaugă medicament",
@@ -174,7 +174,7 @@ export default function Sidebar({ mobile = false, open, onClose }) {
             <LogoutIcon />
           </ListItemIcon>
 
-          {(mobile || !collapsed) && <ListItemText primary="Logout" />}
+          {(mobile || !collapsed) && <ListItemText primary="Deconectare" />}
         </ListItemButton>
       </Box>
     </Box>

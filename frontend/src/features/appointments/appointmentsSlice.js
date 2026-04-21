@@ -23,7 +23,7 @@ export const fetchAllAppointments = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare appointments",
+        error.response?.data || "Eroare la incarcarea programarilor",
       );
     }
   },
@@ -37,7 +37,7 @@ export const fetchAppointmentsByStaffId = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la incarcarea programarilor staff",
+        error.response?.data || "Eroare la incarcarea programarilor personalului",
       );
     }
   },
@@ -67,7 +67,7 @@ export const updateAppointmentStatus = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare update appointment",
+        error.response?.data || "Eroare la actualizarea programarii",
       );
     }
   },

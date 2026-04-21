@@ -130,7 +130,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
             <ListItemIcon sx={iconSx}>
               <DashboardIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && <ListItemText primary="Dashboard" />}
+            {(mobile || !collapsed) && <ListItemText primary="Panou" />}
           </ListItemButton>
 
           <ListItemButton
@@ -144,7 +144,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
             <ListItemIcon sx={iconSx}>
               <AccountCircleOutlinedIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && <ListItemText primary="Profile" />}
+            {(mobile || !collapsed) && <ListItemText primary="Profil" />}
           </ListItemButton>
 
           <ListItemButton
@@ -154,7 +154,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
             <ListItemIcon sx={iconSx}>
               <PetsIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && <ListItemText primary="Animals" />}
+            {(mobile || !collapsed) && <ListItemText primary="Animale" />}
             {(mobile || !collapsed) &&
               (openAnimals ? <ExpandLessIcon /> : <ExpandMoreIcon />)}
           </ListItemButton>
@@ -177,7 +177,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
                   if (mobile) onClose();
                 }}
               >
-                <ListItemText primary="View Animals" />
+                <ListItemText primary="Vezi animale" />
               </ListItemButton>
               <ListItemButton
                 sx={{
@@ -191,7 +191,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
                   if (mobile) onClose();
                 }}
               >
-                <ListItemText primary="Add Animal" />
+                <ListItemText primary="Adauga animal" />
               </ListItemButton>
             </List>
           </Collapse>
@@ -207,7 +207,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
             <ListItemIcon sx={iconSx}>
               <InventoryIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && <ListItemText primary="Boxes" />}
+            {(mobile || !collapsed) && <ListItemText primary="Boxe" />}
           </ListItemButton>
 
           <ListItemButton
@@ -221,7 +221,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
             <ListItemIcon sx={iconSx}>
               <EventIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && <ListItemText primary="Appointments" />}
+            {(mobile || !collapsed) && <ListItemText primary="Programari" />}
           </ListItemButton>
 
           <ListItemButton
@@ -236,7 +236,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
               <FavoriteIcon />
             </ListItemIcon>
             {(mobile || !collapsed) && (
-              <ListItemText primary="Adoption Requests" />
+              <ListItemText primary="Cereri de adoptie" />
             )}
           </ListItemButton>
 
@@ -251,7 +251,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
             <ListItemIcon sx={iconSx}>
               <PeopleIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && <ListItemText primary="Staff" />}
+            {(mobile || !collapsed) && <ListItemText primary="Personal" />}
           </ListItemButton>
 
           <ListItemButton
@@ -265,7 +265,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
             <ListItemIcon sx={iconSx}>
               <PeopleIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && <ListItemText primary="Users" />}
+            {(mobile || !collapsed) && <ListItemText primary="Utilizatori" />}
           </ListItemButton>
         </List>
       </Box>
@@ -290,7 +290,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
           <ListItemIcon sx={iconSx}>
             <LogoutIcon />
           </ListItemIcon>
-          {(mobile || !collapsed) && <ListItemText primary="Logout" />}
+          {(mobile || !collapsed) && <ListItemText primary="Deconectare" />}
         </ListItemButton>
       </Box>
     </Box>

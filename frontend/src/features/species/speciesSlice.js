@@ -9,7 +9,7 @@ export const fetchSpecies = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la fetch species",
+        error.response?.data || "Eroare la incarcarea speciilor",
       );
     }
   },

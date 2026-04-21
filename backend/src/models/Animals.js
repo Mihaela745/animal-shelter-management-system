@@ -29,6 +29,11 @@ export const Animals = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    date_added: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+      defaultValue: DataTypes.NOW,
+    },
     gender: {
       type: DataTypes.ENUM("Male", "Female"),
       allowNull: false,

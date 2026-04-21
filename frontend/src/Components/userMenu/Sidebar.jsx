@@ -31,9 +31,9 @@ export default function Sidebar({ mobile = false, open, onClose }) {
   const [collapsed, setCollapsed] = useState(false);
 
   const menuItems = [
-    { text: "Dashboard", icon: <DashboardIcon />, path: "/user/dashboard" },
+    { text: "Panou", icon: <DashboardIcon />, path: "/user/dashboard" },
     { text: "Animale", icon: <PetsIcon />, path: "/user/animals" },
-    { text: "AI Match", icon: <PsychologyIcon />, path: "/user/match" },
+    { text: "Potrivire AI", icon: <PsychologyIcon />, path: "/user/match" },
     { text: "Profil", icon: <PersonIcon />, path: "/user/profile" },
   ];
 
@@ -167,7 +167,7 @@ export default function Sidebar({ mobile = false, open, onClose }) {
             <LogoutIcon />
           </ListItemIcon>
 
-          {(mobile || !collapsed) && <ListItemText primary="Logout" />}
+          {(mobile || !collapsed) && <ListItemText primary="Deconectare" />}
         </ListItemButton>
       </Box>
     </Box>

@@ -143,7 +143,7 @@ export default function NavbarLanding() {
                 },
               }}
             >
-              Login
+            Autentificare
             </Button>
             <Button
               component={Link}
@@ -308,7 +308,7 @@ export default function NavbarLanding() {
               },
             }}
           >
-            Login
+              Autentificare
           </Button>
           <Button
             component={Link}

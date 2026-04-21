@@ -21,6 +21,7 @@ import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlin
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteUser, fetchUsers } from "../../../features/users/usersSlice";
+import { formatRole } from "../../../utils/labels";
 
 const RED = "#a91111";
 const RED_LIGHT = "#fff0f0";
@@ -241,7 +242,7 @@ function UserCard({ user, onDelete }) {
                 color: roleStyle.color,
               }}
             >
-              {user.role}
+              {formatRole(user.role)}
             </Typography>
           </Box>
         </Box>
@@ -380,10 +381,10 @@ export default function UsersPage() {
           }}
         >
           <MenuItem value="all">Toate rolurile</MenuItem>
-          <MenuItem value="user">user</MenuItem>
+          <MenuItem value="user">Utilizator</MenuItem>
           <MenuItem value="Manager">Manager</MenuItem>
-          <MenuItem value="Vet">Vet</MenuItem>
-          <MenuItem value="Caretaker">Caretaker</MenuItem>
+          <MenuItem value="Vet">Veterinar</MenuItem>
+          <MenuItem value="Caretaker">Ingrijitor</MenuItem>
         </TextField>
       </Box>
 

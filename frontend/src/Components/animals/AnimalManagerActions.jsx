@@ -36,6 +36,9 @@ export default function AnimalManagerActions({ animal }) {
     name: animal.name,
     breed: animal.breed || "",
     age: animal.age || "",
+    date_added: animal.date_added
+      ? String(animal.date_added).split("T")[0]
+      : "",
     gender: animal.gender || "",
     status: animal.status || "",
   });
@@ -57,14 +60,11 @@ export default function AnimalManagerActions({ animal }) {
   };
 
   const handleUpdate = async () => {
-
     if (imageFile) {
       const fd = new FormData();
       Object.entries(formData).forEach(([key, val]) => fd.append(key, val));
       fd.append("image", imageFile);
-      await dispatch(
-        updateAnimal({ id: animal.id, data: fd}),
-      );
+      await dispatch(updateAnimal({ id: animal.id, data: fd }));
     } else {
       await dispatch(updateAnimal({ id: animal.id, data: formData }));
     }
@@ -113,7 +113,7 @@ export default function AnimalManagerActions({ animal }) {
             },
           }}
         >
-          Editează animal
+          Editeaza animal
         </Button>
 
         <Button
@@ -136,7 +136,7 @@ export default function AnimalManagerActions({ animal }) {
             },
           }}
         >
-          Șterge animal
+          Sterge animal
         </Button>
       </Stack>
 
@@ -161,7 +161,7 @@ export default function AnimalManagerActions({ animal }) {
               <EditOutlinedIcon sx={{ color: "#d21919", fontSize: 18 }} />
             </Box>
             <Typography fontWeight={800} fontSize="1rem">
-              Editează animal
+              Editeaza animal
             </Typography>
           </Box>
         </DialogTitle>
@@ -172,7 +172,7 @@ export default function AnimalManagerActions({ animal }) {
               <Box
                 component="img"
                 src={imagePreview}
-                alt="preview"
+                alt="Previzualizare"
                 sx={{
                   width: "100%",
                   height: 160,
@@ -209,7 +209,7 @@ export default function AnimalManagerActions({ animal }) {
                 },
               }}
             >
-              {imageFile ? imageFile.name : "Încarcă imagine nouă"}
+              {imageFile ? imageFile.name : "Incarca imagine noua"}
             </Button>
           </Box>
 
@@ -226,7 +226,7 @@ export default function AnimalManagerActions({ animal }) {
             select
             fullWidth
             margin="dense"
-            label="Rasă"
+            label="Rasa"
             name="breed"
             value={formData.breed}
             onChange={handleChange}
@@ -243,7 +243,7 @@ export default function AnimalManagerActions({ animal }) {
               )
             ) : (
               <MenuItem value={formData.breed}>
-                {formData.breed || "—"}
+                {formData.breed || "-"}
               </MenuItem>
             )}
           </TextField>
@@ -251,11 +251,22 @@ export default function AnimalManagerActions({ animal }) {
             fullWidth
             margin="dense"
             type="number"
-            label="Vârstă"
+            label="Varsta"
             name="age"
             value={formData.age}
             onChange={handleChange}
             sx={inputSx}
+          />
+          <TextField
+            fullWidth
+            margin="dense"
+            type="date"
+            label="Data adaugarii"
+            name="date_added"
+            value={formData.date_added}
+            onChange={handleChange}
+            sx={inputSx}
+            InputLabelProps={{ shrink: true }}
           />
           <TextField
             select
@@ -268,20 +279,21 @@ export default function AnimalManagerActions({ animal }) {
             sx={inputSx}
           >
             <MenuItem value="Male">Mascul</MenuItem>
-            <MenuItem value="Female">Femelă</MenuItem>
+            <MenuItem value="Female">Femela</MenuItem>
           </TextField>
           <TextField
             select
             fullWidth
             margin="dense"
-            label="Status"
+            label="Stare"
             name="status"
             value={formData.status}
             onChange={handleChange}
             sx={inputSx}
           >
-            <MenuItem value="Available">Available</MenuItem>
-            <MenuItem value="Adopted">Adopted</MenuItem>
+            <MenuItem value="Available">Disponibil</MenuItem>
+            <MenuItem value="Adopted">Adoptat</MenuItem>
+            <MenuItem value="Fostered">In foster</MenuItem>
           </TextField>
         </DialogContent>
 
@@ -295,7 +307,7 @@ export default function AnimalManagerActions({ animal }) {
               borderRadius: "10px",
             }}
           >
-            Anulează
+            Anuleaza
           </Button>
           <Button
             variant="contained"
@@ -309,7 +321,7 @@ export default function AnimalManagerActions({ animal }) {
               "&:hover": { backgroundColor: "#1565c0" },
             }}
           >
-            Salvează
+            Salveaza
           </Button>
         </DialogActions>
       </Dialog>
@@ -335,14 +347,14 @@ export default function AnimalManagerActions({ animal }) {
               <DeleteOutlineIcon sx={{ color: "#d32f2f", fontSize: 18 }} />
             </Box>
             <Typography fontWeight={800} fontSize="1rem">
-              Confirmă ștergerea
+              Confirma stergerea
             </Typography>
           </Box>
         </DialogTitle>
         <DialogContent sx={{ pt: "1rem !important" }}>
           <Typography fontSize="0.9rem" color="#555">
-            Ești sigur că vrei să ștergi <strong>{animal.name}</strong>? Această
-            acțiune nu poate fi anulată.
+            Esti sigur ca vrei sa stergi <strong>{animal.name}</strong>? Aceasta
+            actiune nu poate fi anulata.
           </Typography>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
@@ -355,7 +367,7 @@ export default function AnimalManagerActions({ animal }) {
               borderRadius: "10px",
             }}
           >
-            Anulează
+            Anuleaza
           </Button>
           <Button
             variant="contained"
@@ -369,7 +381,7 @@ export default function AnimalManagerActions({ animal }) {
               "&:hover": { backgroundColor: "#b71c1c" },
             }}
           >
-            Șterge
+            Sterge
           </Button>
         </DialogActions>
       </Dialog>

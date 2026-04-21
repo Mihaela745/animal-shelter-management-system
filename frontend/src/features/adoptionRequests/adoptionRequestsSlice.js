@@ -58,7 +58,7 @@ export const updateAdoptionRequestStatus = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare actualizare status cerere",
+        error.response?.data || "Eroare la actualizarea starii cererii",
       );
     }
   },

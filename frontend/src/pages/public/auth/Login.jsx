@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginUser, forgotPassword } from "../../../features/auth/authSlice";
 import {
   Typography,
@@ -32,6 +32,7 @@ const inputSx = {
 export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { loading } = useSelector((state) => state.auth);
 
   const [form, setForm] = useState({ email: "", password: "" });
@@ -41,14 +42,27 @@ export default function LoginPage() {
   const [open, setOpen] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const postLoginAnimalId = location.state?.postLoginAnimalId;
+
+  const getAnimalRouteForRole = (role, animalId) => {
+    if (!animalId) return null;
+    if (role === "user") return `/user/animals/${animalId}`;
+    if (role === "Manager") return `/manager/animals/${animalId}`;
+    if (role === "Vet") return `/vet/animals/${animalId}`;
+    if (role === "Caretaker") return `/staff/animals/${animalId}`;
+    return null;
+  };
+
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleForgotPassword = async () => {
     setForgotError(null);
     if (!email) return setForgotError("Email obligatoriu");
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       return setForgotError("Email invalid");
+    }
+
     const result = await dispatch(forgotPassword(email));
     if (result.meta.requestStatus === "fulfilled") {
       setSuccess(true);
@@ -65,15 +79,25 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoginError(null);
+
     const result = await dispatch(loginUser(form));
     if (result.meta.requestStatus === "fulfilled") {
       const role = result.payload.user.role;
-      if (role === "user") navigate("/user/home");
-      else if (role === "Manager") navigate("/manager/dashboard");
-      else if (role === "Vet") navigate("/vet/dashboard");
-      else if (role === "Caretaker") navigate("/staff/dashboard");
+      const animalRoute = getAnimalRouteForRole(role, postLoginAnimalId);
+
+      if (animalRoute) {
+        navigate(animalRoute, { replace: true });
+      } else if (role === "user") {
+        navigate("/user/home");
+      } else if (role === "Manager") {
+        navigate("/manager/dashboard");
+      } else if (role === "Vet") {
+        navigate("/vet/dashboard");
+      } else if (role === "Caretaker") {
+        navigate("/staff/dashboard");
+      }
     } else {
-      setLoginError(result.payload || "Email sau parolă incorecte");
+      setLoginError(result.payload || "Email sau parola incorecte");
     }
   };
 
@@ -174,9 +198,9 @@ export default function LoginPage() {
             Fiecare animal
             <br />
             <Box component="span" sx={{ color: RED }}>
-              merită
+              merita
             </Box>{" "}
-            o casă.
+            o casa.
           </Typography>
           <Typography
             sx={{
@@ -186,7 +210,7 @@ export default function LoginPage() {
               maxWidth: 280,
             }}
           >
-            Gestionează adopțiile, îngrijirile medicale și echipa adăpostului
+            Gestioneaza adoptiile, ingrijirile medicale si echipa adapostului
             dintr-un singur loc.
           </Typography>
         </Box>
@@ -271,7 +295,7 @@ export default function LoginPage() {
               fontFamily: "sans-serif",
             }}
           >
-            Intră în contul tău pentru a continua
+            Intra in contul tau pentru a continua
           </Typography>
 
           <Box
@@ -290,7 +314,7 @@ export default function LoginPage() {
               sx={inputSx}
             />
             <TextField
-              label="Parolă"
+              label="Parola"
               name="password"
               type="password"
               value={form.password}
@@ -377,7 +401,7 @@ export default function LoginPage() {
                   },
                 }}
               >
-                Înregistrează-te
+                Inregistreaza-te
               </Button>
             </Box>
             <Button
@@ -415,7 +439,7 @@ export default function LoginPage() {
             fontFamily: "'Georgia', serif",
           }}
         >
-          Resetare parolă
+          Resetare parola
         </DialogTitle>
         <DialogContent sx={{ pt: 1.5 }}>
           <Typography
@@ -426,7 +450,7 @@ export default function LoginPage() {
               fontFamily: "sans-serif",
             }}
           >
-            Introdu adresa de email și îți trimitem un link de resetare.
+            Introdu adresa de email si iti trimitem un link de resetare.
           </Typography>
           <TextField
             fullWidth
@@ -449,7 +473,7 @@ export default function LoginPage() {
               <Typography
                 sx={{ fontSize: "0.82rem", color: "#166534", fontWeight: 600 }}
               >
-                ✓ Email trimis! Verifică inbox-ul.
+                Email trimis! Verifica inbox-ul.
               </Typography>
             </Box>
           )}
@@ -487,7 +511,7 @@ export default function LoginPage() {
               "&:hover": { backgroundColor: "#f5f5f5" },
             }}
           >
-            Anulează
+            Anuleaza
           </Button>
           <Button
             variant="contained"

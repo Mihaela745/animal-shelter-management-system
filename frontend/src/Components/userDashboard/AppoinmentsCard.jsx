@@ -48,7 +48,7 @@ export default function AppointmentsCard({ appointments = [] }) {
             Programări
           </Typography>
           <Typography fontSize="0.75rem" color="#999">
-            {appointments.length} active
+            {appointments.length} programari active
           </Typography>
         </Box>
       </Box>
