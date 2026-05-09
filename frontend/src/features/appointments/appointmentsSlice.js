@@ -9,7 +9,7 @@ export const fetchUserAppointments = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare programari",
+        error.response?.data || "Eroare la încărcarea programărilor.",
       );
     }
   },
@@ -17,13 +17,13 @@ export const fetchUserAppointments = createAsyncThunk(
 
 export const fetchAllAppointments = createAsyncThunk(
   "appointments/fetchAll",
-  async (_, thunkAPI) => {
+  async (params = {}, thunkAPI) => {
     try {
-      const response = await axiosInstance.get("/appointments");
+      const response = await axiosInstance.get("/appointments", { params });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la incarcarea programarilor",
+        error.response?.data || "Eroare la încărcarea programărilor.",
       );
     }
   },
@@ -31,13 +31,20 @@ export const fetchAllAppointments = createAsyncThunk(
 
 export const fetchAppointmentsByStaffId = createAsyncThunk(
   "appointments/fetchByStaffId",
-  async (staffId, thunkAPI) => {
+  async (payload, thunkAPI) => {
     try {
-      const response = await axiosInstance.get(`/appointments/staff/${staffId}`);
+      const staffId =
+        typeof payload === "object" && payload !== null ? payload.staffId : payload;
+      const params =
+        typeof payload === "object" && payload !== null ? payload.params || {} : {};
+
+      const response = await axiosInstance.get(`/appointments/staff/${staffId}`, {
+        params,
+      });
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la incarcarea programarilor personalului",
+        error.response?.data || "Eroare la încărcarea programărilor personalului.",
       );
     }
   },
@@ -51,7 +58,7 @@ export const createAppointment = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare creare programare",
+        error.response?.data || "Eroare la crearea programării.",
       );
     }
   },
@@ -67,7 +74,7 @@ export const updateAppointmentStatus = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la actualizarea programarii",
+        error.response?.data || "Eroare la actualizarea programării.",
       );
     }
   },
@@ -81,7 +88,7 @@ export const deleteAppointment = createAsyncThunk(
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la stergerea programarii",
+        error.response?.data || "Eroare la ștergerea programării.",
       );
     }
   },
@@ -97,7 +104,7 @@ export const fetchAvailableSlots = createAsyncThunk(
       return response.data.availableHours;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare sloturi disponibile",
+        error.response?.data || "Eroare la încărcarea intervalelor disponibile.",
       );
     }
   },
@@ -114,7 +121,7 @@ export const fetchCalendarAvailability = createAsyncThunk(
       return response.data.availableDates;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare calendar",
+        error.response?.data || "Eroare la încărcarea calendarului.",
       );
     }
   },

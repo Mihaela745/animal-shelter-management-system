@@ -26,7 +26,7 @@ export const controller = {
 
       if (!name || !species_id || !gender || !box_id) {
         await t.rollback();
-        return res.status(400).send("Must complete all parameters!");
+        return res.status(400).send("Toți parametrii obligatorii trebuie completați.");
       }
 
       const imageUrl = req.file ? req.file.path : image_url;
@@ -61,7 +61,7 @@ export const controller = {
     } catch (err) {
       if (t) await t.rollback();
       console.error("Error while creating animal:", err);
-      return res.status(500).send(`Error while creating: ${err.message}`);
+      return res.status(500).send(`A apărut o eroare la creare: ${err.message}`);
     }
   },
 
@@ -115,7 +115,7 @@ export const controller = {
         currentPage: Number(page),
       });
     } catch (err) {
-      return res.status(500).send(`Couldn't fetch animals: ${err.message}`);
+      return res.status(500).send(`Nu am putut încărca animalele: ${err.message}`);
     }
   },
 
@@ -124,10 +124,10 @@ export const controller = {
       const animal = await Animals.findByPk(req.params.id, {
         include: ANIMAL_INCLUDES,
       });
-      if (!animal) return res.status(404).send("Can't find animal by id!");
+      if (!animal) return res.status(404).send("Animalul nu a fost găsit după ID.");
       return res.status(200).send(animal);
     } catch (err) {
-      return res.status(500).send(`Couldn't fetch animal: ${err.message}`);
+      return res.status(500).send(`Nu am putut încărca animalul: ${err.message}`);
     }
   },
 
@@ -153,7 +153,7 @@ export const controller = {
       const animal = await Animals.findByPk(animalId, { transaction: t });
       if (!animal) {
         await t.rollback();
-        return res.status(404).send("Animal not found!");
+        return res.status(404).send("Animalul nu a fost găsit.");
       }
 
       if (updateData.box_id && updateData.box_id !== animal.box_id) {
@@ -163,17 +163,17 @@ export const controller = {
 
         if (!newBox) {
           await t.rollback();
-          return res.status(404).send("Box doesn't exist!");
+          return res.status(404).send("Boxa nu există.");
         }
         if (newBox.species_id !== animal.species_id) {
           await t.rollback();
           return res
             .status(400)
-            .send("Box is not suitable for this animal species!");
+            .send("Boxa nu este potrivită pentru specia acestui animal.");
         }
         if (newBox.current_occupancy >= newBox.capacity) {
           await t.rollback();
-          return res.status(400).send("Box capacity exceeded!");
+          return res.status(400).send("Capacitatea boxei a fost depășită.");
         }
         if (animal.box_id) {
           await Boxes.decrement(
@@ -202,7 +202,7 @@ export const controller = {
     } catch (err) {
       if (t) await t.rollback();
       console.error("Update error:", err.message);
-      return res.status(500).send(`Couldn't update animal: ${err.message}`);
+      return res.status(500).send(`Nu am putut actualiza animalul: ${err.message}`);
     }
   },
 
@@ -212,7 +212,7 @@ export const controller = {
       const animal = await Animals.findByPk(animalId);
 
       if (!animal)
-        return res.status(404).send("Animal not found to be deleted!");
+        return res.status(404).send("Animalul pentru ștergere nu a fost găsit.");
 
       if (animal.box_id) {
         await Boxes.decrement(
@@ -222,9 +222,9 @@ export const controller = {
       }
 
       await Animals.destroy({ where: { id: animalId } });
-      return res.status(200).send("Animal has been deleted!");
+      return res.status(200).send("Animalul a fost șters.");
     } catch (err) {
-      return res.status(500).send(`Error at deletion: ${err.message}`);
+      return res.status(500).send(`A apărut o eroare la ștergere: ${err.message}`);
     }
   },
 };

@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { transporter } from "../config/mail.js";
 import { Position, Users } from "../models/index.js";
 import { sequelize } from "../config/db.js";
+import { isValidFullName, normalizeFullName } from "../utils/nameValidation.js";
 
 export const controller = {
   createStaff: async (req, res) => {
@@ -14,6 +15,11 @@ export const controller = {
       if (!name || !email || !position_id || !phonenumber) {
         await t.rollback();
         return res.status(400).send(`All fields must be completed`);
+      }
+
+      if (!isValidFullName(name)) {
+        await t.rollback();
+        return res.status(400).send("Numele trebuie sa fie de forma Nume Prenume");
       }
 
       const positionExists = await Position.findByPk(position_id);
@@ -36,7 +42,7 @@ export const controller = {
 
       const newUser = await Users.create(
         {
-          username: name,
+          username: normalizeFullName(name),
           email: email,
           password: hashedPassword,
           phonenumber: phonenumber,
@@ -47,7 +53,7 @@ export const controller = {
 
       const newStaff = await Staff.create(
         {
-          name,
+          name: normalizeFullName(name),
           email,
           position_id,
           phonenumber: phonenumber,
@@ -166,6 +172,12 @@ export const controller = {
       }
 
       if (updateData.name) {
+        if (!isValidFullName(updateData.name)) {
+          await t.rollback();
+          return res.status(400).send("Numele trebuie sa fie de forma Nume Prenume");
+        }
+
+        updateData.name = normalizeFullName(updateData.name);
         userUpdateData.username = updateData.name;
       }
 
@@ -231,14 +243,20 @@ export const controller = {
         return res.status(404).send("Staff profile not found!");
       }
 
+      if (name && !isValidFullName(name)) {
+        return res.status(400).send("Numele trebuie sa fie de forma Nume Prenume");
+      }
+
+      const normalizedName = name ? normalizeFullName(name) : null;
+
       await staff.update({
-        name: name ?? staff.name,
+        name: normalizedName ?? staff.name,
         phonenumber: phonenumber ?? staff.phonenumber,
       });
 
       await Users.update(
         {
-          username: name ?? staff.name,
+          username: normalizedName ?? staff.name,
           phonenumber: phonenumber ?? staff.phonenumber,
         },
         { where: { id: userId } },

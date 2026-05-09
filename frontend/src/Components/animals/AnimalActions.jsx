@@ -1,18 +1,19 @@
 import {
+  Alert,
   Box,
   Button,
   Dialog,
-  DialogTitle,
-  DialogContent,
   DialogActions,
-  TextField,
+  DialogContent,
+  DialogTitle,
   MenuItem,
   Stack,
+  TextField,
 } from "@mui/material";
-
 import { useDispatch, useSelector } from "react-redux";
-import { useState, useEffect } from "react";
-
+import { useEffect, useState } from "react";
+import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { createAdoptionRequest } from "../../features/adoptionRequests/adoptionRequestsSlice";
 import {
   createAppointment,
@@ -20,8 +21,21 @@ import {
   fetchCalendarAvailability,
 } from "../../features/appointments/appointmentsSlice";
 
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+function normalizeErrorMessage(error) {
+  if (!error) {
+    return "Programarea nu a putut fi creată.";
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  if (typeof error?.message === "string") {
+    return error.message;
+  }
+
+  return "Programarea nu a putut fi creată.";
+}
 
 export default function AnimalActions({ animal }) {
   const dispatch = useDispatch();
@@ -34,11 +48,13 @@ export default function AnimalActions({ animal }) {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState("");
+  const [appointmentError, setAppointmentError] = useState("");
 
-  const alreadyRequested = requests.some((r) => r.animal_id === animal.id);
+  const alreadyRequested = requests.some((request) => request.animal_id === animal.id);
 
   useEffect(() => {
     if (open) {
+      setAppointmentError("");
       dispatch(fetchCalendarAvailability({ animal_id: animal.id }));
     }
   }, [open, dispatch, animal.id]);
@@ -46,6 +62,7 @@ export default function AnimalActions({ animal }) {
   useEffect(() => {
     if (!selectedDate) return;
 
+    setAppointmentError("");
     dispatch(
       fetchAvailableSlots({
         animal_id: animal.id,
@@ -59,7 +76,9 @@ export default function AnimalActions({ animal }) {
   };
 
   const handleCreateAppointment = async () => {
-    await dispatch(
+    setAppointmentError("");
+
+    const result = await dispatch(
       createAppointment({
         animal_id: animal.id,
         date: selectedDate.format("YYYY-MM-DD"),
@@ -67,14 +86,29 @@ export default function AnimalActions({ animal }) {
       }),
     );
 
+    if (createAppointment.fulfilled.match(result)) {
+      setOpen(false);
+      setSelectedDate(null);
+      setSelectedTime("");
+      return;
+    }
+
+    setAppointmentError(normalizeErrorMessage(result.payload));
+  };
+
+  const handleCloseDialog = () => {
+    if (creating) {
+      return;
+    }
+
     setOpen(false);
     setSelectedDate(null);
     setSelectedTime("");
+    setAppointmentError("");
   };
 
   return (
     <Box mt={3}>
-     
       <Stack spacing={2} alignItems="flex-start">
         <Button
           variant="contained"
@@ -96,7 +130,7 @@ export default function AnimalActions({ animal }) {
               boxShadow: "0 4px 12px rgba(169, 17, 17, 0.3)",
             },
             "&.Mui-disabled": {
-              backgroundColor: "#f8bbd0",
+              backgroundColor: "#d8aaaa",
               color: "#fff",
             },
           }}
@@ -119,9 +153,9 @@ export default function AnimalActions({ animal }) {
             transition: "all 0.25s ease",
             maxWidth: "350px",
             "&:hover": {
-              border: "2px solid #c2185b",
-              backgroundColor: "#fde4ec",
-              color: "#c2185b",
+              border: "2px solid #8a0d0d",
+              backgroundColor: "#fff0f0",
+              color: "#8a0d0d",
             },
           }}
         >
@@ -131,7 +165,7 @@ export default function AnimalActions({ animal }) {
 
       <Dialog
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={handleCloseDialog}
         PaperProps={{
           sx: {
             borderRadius: "18px",
@@ -142,46 +176,77 @@ export default function AnimalActions({ animal }) {
         <DialogTitle
           sx={{
             fontWeight: 700,
-            color: "#c2185b",
-            pb: 1, 
+            color: "#a91111",
+            pb: 1,
           }}
         >
           Programează vizită
         </DialogTitle>
 
         <DialogContent sx={{ minWidth: 300, pt: "1rem !important" }}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="Alege data"
-              value={selectedDate}
-              onChange={setSelectedDate}
-              shouldDisableDate={(date) =>
-                !availableDates.includes(date.format("YYYY-MM-DD"))
-              }
-              sx={{ width: "100%" }}
-            />
-          </LocalizationProvider>
+          <Stack spacing={2}>
+            {appointmentError ? (
+              <Alert severity="error" sx={{ borderRadius: "12px" }}>
+                {appointmentError}
+              </Alert>
+            ) : null}
 
-          <TextField
-            select
-            fullWidth
-            label="Interval orar"
-            sx={{ mt: 3 }}
-            value={selectedTime}
-            onChange={(e) => setSelectedTime(e.target.value)}
-            disabled={!selectedDate}
-          >
-            {availableSlots.map((hour) => (
-              <MenuItem key={hour} value={hour}>
-                {hour}
-              </MenuItem>
-            ))}
-          </TextField>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Alege data"
+                value={selectedDate}
+                onChange={setSelectedDate}
+                shouldDisableDate={(date) =>
+                  !availableDates.includes(date.format("YYYY-MM-DD"))
+                }
+                sx={{
+                  width: "100%",
+                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#a91111",
+                  },
+                  "& .MuiInputLabel-root.Mui-focused": {
+                    color: "#a91111",
+                  },
+                }}
+              />
+            </LocalizationProvider>
+
+            <TextField
+              select
+              fullWidth
+              label="Interval orar"
+              sx={{
+                "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "#a91111",
+                },
+                "& .MuiInputLabel-root.Mui-focused": {
+                  color: "#a91111",
+                },
+              }}
+              value={selectedTime}
+              onChange={(e) => {
+                setSelectedTime(e.target.value);
+                setAppointmentError("");
+              }}
+              disabled={!selectedDate}
+              helperText={
+                selectedDate && availableSlots.length === 0
+                  ? "Nu mai există intervale disponibile pentru data selectată."
+                  : " "
+              }
+            >
+              {availableSlots.map((hour) => (
+                <MenuItem key={hour} value={hour}>
+                  {hour}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Stack>
         </DialogContent>
 
         <DialogActions sx={{ px: 3, pb: 2 }}>
           <Button
-            onClick={() => setOpen(false)}
+            onClick={handleCloseDialog}
             sx={{
               color: "text.secondary",
               textTransform: "none",
@@ -196,14 +261,15 @@ export default function AnimalActions({ animal }) {
             disabled={!selectedDate || !selectedTime || creating}
             onClick={handleCreateAppointment}
             sx={{
-              background: "linear-gradient(135deg, #c2185b, #e91e63)",
+              background: "linear-gradient(135deg, #8f1111, #c53a1c)",
               color: "white",
               borderRadius: "10px",
               textTransform: "none",
               fontWeight: 600,
-              px: 3, 
+              px: 3,
               "&:hover": {
-                boxShadow: "0 8px 20px rgba(233, 30, 99, 0.4)",
+                background: "linear-gradient(135deg, #7d0d0d, #a92c16)",
+                boxShadow: "0 8px 20px rgba(169, 17, 17, 0.35)",
               },
             }}
           >

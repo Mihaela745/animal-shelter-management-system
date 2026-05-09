@@ -1,16 +1,15 @@
 import {
+  Avatar,
   Box,
+  Collapse,
+  Drawer,
+  IconButton,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  IconButton,
-  Avatar,
   Typography,
-  Drawer,
-  Collapse,
 } from "@mui/material";
-
 import MenuIcon from "@mui/icons-material/Menu";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PetsIcon from "@mui/icons-material/Pets";
@@ -22,7 +21,7 @@ import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined
 import LogoutIcon from "@mui/icons-material/Logout";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
+import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -133,24 +132,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
             {(mobile || !collapsed) && <ListItemText primary="Panou" />}
           </ListItemButton>
 
-          <ListItemButton
-            selected={isSelected("/manager/profile")}
-            onClick={() => {
-              navigate("/manager/profile");
-              if (mobile) onClose();
-            }}
-            sx={itemSx}
-          >
-            <ListItemIcon sx={iconSx}>
-              <AccountCircleOutlinedIcon />
-            </ListItemIcon>
-            {(mobile || !collapsed) && <ListItemText primary="Profil" />}
-          </ListItemButton>
-
-          <ListItemButton
-            onClick={() => setOpenAnimals(!openAnimals)}
-            sx={itemSx}
-          >
+          <ListItemButton onClick={() => setOpenAnimals(!openAnimals)} sx={itemSx}>
             <ListItemIcon sx={iconSx}>
               <PetsIcon />
             </ListItemIcon>
@@ -191,7 +173,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
                   if (mobile) onClose();
                 }}
               >
-                <ListItemText primary="Adauga animal" />
+                <ListItemText primary="Adaugă animal" />
               </ListItemButton>
             </List>
           </Collapse>
@@ -221,7 +203,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
             <ListItemIcon sx={iconSx}>
               <EventIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && <ListItemText primary="Programari" />}
+            {(mobile || !collapsed) && <ListItemText primary="Programări" />}
           </ListItemButton>
 
           <ListItemButton
@@ -235,9 +217,7 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
             <ListItemIcon sx={iconSx}>
               <FavoriteIcon />
             </ListItemIcon>
-            {(mobile || !collapsed) && (
-              <ListItemText primary="Cereri de adoptie" />
-            )}
+            {(mobile || !collapsed) && <ListItemText primary="Cereri de adopție" />}
           </ListItemButton>
 
           <ListItemButton
@@ -266,6 +246,34 @@ export default function ManagerSidebar({ mobile = false, open, onClose }) {
               <PeopleIcon />
             </ListItemIcon>
             {(mobile || !collapsed) && <ListItemText primary="Utilizatori" />}
+          </ListItemButton>
+
+          <ListItemButton
+            selected={isSelected("/manager/reports")}
+            onClick={() => {
+              navigate("/manager/reports");
+              if (mobile) onClose();
+            }}
+            sx={itemSx}
+          >
+            <ListItemIcon sx={iconSx}>
+              <AssessmentOutlinedIcon />
+            </ListItemIcon>
+            {(mobile || !collapsed) && <ListItemText primary="Rapoarte" />}
+          </ListItemButton>
+
+          <ListItemButton
+            selected={isSelected("/manager/profile")}
+            onClick={() => {
+              navigate("/manager/profile");
+              if (mobile) onClose();
+            }}
+            sx={itemSx}
+          >
+            <ListItemIcon sx={iconSx}>
+              <AccountCircleOutlinedIcon />
+            </ListItemIcon>
+            {(mobile || !collapsed) && <ListItemText primary="Profil" />}
           </ListItemButton>
         </List>
       </Box>

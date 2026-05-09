@@ -43,6 +43,7 @@ import CaretakerMedicalFilePage from "../pages/private/caretaker/MedicalFilePage
 import CaretakerBoxesPage from "../pages/private/caretaker/BoxesPage"
 import CaretakerBoxAnimalsPage from "../pages/private/caretaker/BoxAnimalsPage";
 import CaretakerAppointmentsPage from "../pages/private/caretaker/AppointmentsPage";
+import ReportsPage from "../pages/private/shared/ReportsPage";
 export default function AppRouter() {
   return (
     <Routes>
@@ -101,6 +102,7 @@ export default function AppRouter() {
         <Route path="boxes/:id/animals" element={<BoxAnimalsPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="staff" element={<StaffPage />} />
+        <Route path="reports" element={<ReportsPage />} />
       </Route>
       <Route
         path="/vet"
@@ -119,6 +121,7 @@ export default function AppRouter() {
         <Route path="add-medication" element={<VetAddMedicationPage />} />
         <Route path="boxes" element={<VetBoxesPage />} />
         <Route path="boxes/:id/animals" element={<VetBoxAnimalsPage />} />
+        <Route path="reports" element={<ReportsPage />} />
         <Route
           path="animals/:animalId/medical/:fileId"
           element={<VetAnimalMedicalPage />}
@@ -141,6 +144,7 @@ export default function AppRouter() {
         <Route path="appointments" element={<CaretakerAppointmentsPage />} />
         <Route path="boxes" element={<CaretakerBoxesPage />} />
         <Route path="boxes/:id/animals" element={<CaretakerBoxAnimalsPage />} /> 
+        <Route path="reports" element={<ReportsPage />} />
         <Route
           path="animals/:animalId/medical/:fileId"
           element={<CaretakerMedicalFilePage/>}

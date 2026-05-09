@@ -1,23 +1,27 @@
 import {
+  Alert,
   Box,
-  Typography,
-  TextField,
   Button,
   MenuItem,
   Stack,
+  TextField,
+  Typography,
   alpha,
-  Alert,
 } from "@mui/material";
-import { useState, useEffect } from "react";
+import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
+import UploadOutlinedIcon from "@mui/icons-material/UploadOutlined";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { createAnimal } from "../../../features/animals/animalsSlice";
 import { useNavigate } from "react-router-dom";
+import { createAnimal } from "../../../features/animals/animalsSlice";
 import {
-  fetchBreedsBySpecies,
   clearBreedMetadata,
+  fetchBreedsBySpecies,
 } from "../../../features/breedMetadata/breedMetadata";
 import { fetchBoxes } from "../../../features/boxes/boxesSlice";
 import { fetchSpecies } from "../../../features/species/speciesSlice";
+import CameraCaptureDialog from "../../../components/animals/CameraCaptureDialog";
+import { formatGender, formatSpecies } from "../../../utils/labels";
 
 const RED = "#a91111";
 const RED_DARK = "#8a0d0d";
@@ -76,6 +80,8 @@ export default function AddAnimalPage() {
   });
   const [step, setStep] = useState(0);
   const [error, setError] = useState(null);
+  const [openCamera, setOpenCamera] = useState(false);
+  const uploadInputRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchBoxes());
@@ -83,17 +89,21 @@ export default function AddAnimalPage() {
   }, [dispatch]);
 
   useEffect(() => {
-    const sel = species.find(
-      (s) => Number(s.id) === Number(formData.species_id),
+    const selectedSpecies = species.find(
+      (item) => Number(item.id) === Number(formData.species_id),
     );
-    if (sel) dispatch(fetchBreedsBySpecies(sel.name));
+
+    if (selectedSpecies) {
+      dispatch(fetchBreedsBySpecies(selectedSpecies.name));
+    }
+
     return () => {
       dispatch(clearBreedMetadata());
     };
   }, [dispatch, formData.species_id, species]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (event) => {
+    const { name, value } = event.target;
     setFormData((prev) => ({
       ...prev,
       [name]:
@@ -102,11 +112,21 @@ export default function AddAnimalPage() {
     }));
   };
 
-  const handleImage = (e) =>
-    setFormData((prev) => ({ ...prev, image: e.target.files[0] }));
+  const handleImage = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+    setFormData((prev) => ({ ...prev, image: file }));
+  };
+
+  const handleCameraCapture = (file) => {
+    setFormData((prev) => ({ ...prev, image: file }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     setError(null);
 
     const result = await dispatch(createAnimal(formData));
@@ -123,10 +143,8 @@ export default function AddAnimalPage() {
   };
 
   const filteredBoxes = formData.species_id
-    ? boxes.filter((b) => Number(b.species_id) === Number(formData.species_id))
+    ? boxes.filter((box) => Number(box.species_id) === Number(formData.species_id))
     : [];
-
-  const speciesEmoji = { Dog: "🐶", Cat: "🐱" };
 
   const steps = ["Identitate", "Detalii", "Plasament"];
 
@@ -154,7 +172,9 @@ export default function AddAnimalPage() {
                 justifyContent: "center",
               }}
             >
-              <Typography sx={{ fontSize: "1.1rem" }}>🐾</Typography>
+              <Typography sx={{ fontSize: "1rem", color: "white", fontWeight: 800 }}>
+                A
+              </Typography>
             </Box>
             <Typography
               sx={{
@@ -168,15 +188,15 @@ export default function AddAnimalPage() {
             </Typography>
           </Box>
           <Typography sx={{ fontSize: "0.85rem", color: "#aaa", ml: "52px" }}>
-            Completează informațiile pentru a adăuga un animal în adăpost
+            Completează informațiile pentru a adăuga un animal în adăpost.
           </Typography>
         </Box>
 
         <Box sx={{ display: "flex", gap: 1, mb: 4 }}>
-          {steps.map((s, i) => (
+          {steps.map((label, index) => (
             <Box
-              key={s}
-              onClick={() => setStep(i)}
+              key={label}
+              onClick={() => setStep(index)}
               sx={{
                 flex: 1,
                 py: 1,
@@ -184,10 +204,10 @@ export default function AddAnimalPage() {
                 borderRadius: "10px",
                 cursor: "pointer",
                 border: "1.5px solid",
-                borderColor: step === i ? RED : "#ebebeb",
-                backgroundColor: step === i ? RED_LIGHT : "white",
+                borderColor: step === index ? RED : "#ebebeb",
+                backgroundColor: step === index ? RED_LIGHT : "white",
                 transition: "all 0.2s",
-                "&:hover": { borderColor: step === i ? RED : "#ccc" },
+                "&:hover": { borderColor: step === index ? RED : "#ccc" },
               }}
             >
               <Typography
@@ -195,12 +215,12 @@ export default function AddAnimalPage() {
                   fontSize: "0.65rem",
                   fontWeight: 700,
                   letterSpacing: "0.08em",
-                  color: step === i ? RED : "#bbb",
+                  color: step === index ? RED : "#bbb",
                   textTransform: "uppercase",
                   textAlign: "center",
                 }}
               >
-                {i + 1}. {s}
+                {index + 1}. {label}
               </Typography>
             </Box>
           ))}
@@ -232,7 +252,7 @@ export default function AddAnimalPage() {
               <Stack spacing={2.5}>
                 <Field label="Nume animal">
                   <TextField
-                    placeholder="ex: Rex, Miau..."
+                    placeholder="ex: Rex, Mia..."
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
@@ -253,9 +273,9 @@ export default function AddAnimalPage() {
                     <MenuItem value="" disabled>
                       <em style={{ color: "#bbb" }}>Alege specia</em>
                     </MenuItem>
-                    {species.map((s) => (
-                      <MenuItem key={s.id} value={s.id}>
-                        {speciesEmoji[s.name] || "🐾"}&nbsp;&nbsp;{s.name}
+                    {species.map((item) => (
+                      <MenuItem key={item.id} value={item.id}>
+                        {formatSpecies(item.name)}
                       </MenuItem>
                     ))}
                   </TextField>
@@ -275,10 +295,10 @@ export default function AddAnimalPage() {
                         {breedsLoading ? "Se încarcă..." : "Alege rasa"}
                       </em>
                     </MenuItem>
-                    <MenuItem value="Maidanez">🐕 Maidanez</MenuItem>
-                    {breeds.map((b) => (
-                      <MenuItem key={b} value={b}>
-                        {b}
+                    <MenuItem value="Maidanez">Maidanez</MenuItem>
+                    {breeds.map((breed) => (
+                      <MenuItem key={breed} value={breed}>
+                        {breed}
                       </MenuItem>
                     ))}
                   </TextField>
@@ -296,8 +316,8 @@ export default function AddAnimalPage() {
                     <MenuItem value="" disabled>
                       <em style={{ color: "#bbb" }}>Alege genul</em>
                     </MenuItem>
-                    <MenuItem value="Male">♂ Mascul</MenuItem>
-                    <MenuItem value="Female">♀ Femelă</MenuItem>
+                    <MenuItem value="Male">Mascul</MenuItem>
+                    <MenuItem value="Female">Femelă</MenuItem>
                   </TextField>
                 </Field>
               </Stack>
@@ -338,7 +358,7 @@ export default function AddAnimalPage() {
                   </Field>
                 </Box>
 
-                <Field label="Data adaugarii">
+                <Field label="Data adăugării">
                   <TextField
                     type="date"
                     name="date_added"
@@ -350,37 +370,63 @@ export default function AddAnimalPage() {
                 </Field>
 
                 <Field label="Fotografie">
-                  <Button
-                    variant="outlined"
-                    component="label"
-                    sx={{
-                      border: "2px dashed",
-                      borderColor: formData.image ? RED : "#e0e0e0",
-                      borderRadius: "10px",
-                      backgroundColor: formData.image ? RED_LIGHT : "#fafafa",
-                      color: formData.image ? RED : "#aaa",
-                      textTransform: "none",
-                      fontWeight: 600,
-                      fontSize: "0.85rem",
-                      py: 1.5,
-                      "&:hover": {
+                  <Stack spacing={1.2}>
+                    <Button
+                      variant="outlined"
+                      startIcon={<UploadOutlinedIcon />}
+                      onClick={() => uploadInputRef.current?.click()}
+                      sx={{
                         border: "2px dashed",
-                        borderColor: RED,
-                        backgroundColor: RED_LIGHT,
+                        borderColor: formData.image ? RED : "#e0e0e0",
+                        borderRadius: "10px",
+                        backgroundColor: formData.image ? RED_LIGHT : "#fafafa",
+                        color: formData.image ? RED : "#aaa",
+                        textTransform: "none",
+                        fontWeight: 600,
+                        fontSize: "0.85rem",
+                        py: 1.5,
+                        "&:hover": {
+                          border: "2px dashed",
+                          borderColor: RED,
+                          backgroundColor: RED_LIGHT,
+                          color: RED,
+                        },
+                      }}
+                    >
+                      {formData.image
+                        ? `Fișier selectat: ${formData.image.name}`
+                        : "Alege fotografie din dispozitiv"}
+                    </Button>
+
+                    <Button
+                      variant="outlined"
+                      startIcon={<PhotoCameraOutlinedIcon />}
+                      onClick={() => setOpenCamera(true)}
+                      sx={{
+                        borderRadius: "10px",
+                        borderColor: "#f0c9c9",
+                        backgroundColor: "#fff8f8",
                         color: RED,
-                      },
-                    }}
-                  >
-                    {formData.image
-                      ? `📎 ${formData.image.name}`
-                      : "📷  Alege fotografie"}
+                        textTransform: "none",
+                        fontWeight: 700,
+                        py: 1.2,
+                        "&:hover": {
+                          borderColor: RED,
+                          backgroundColor: RED_LIGHT,
+                        },
+                      }}
+                    >
+                      Fă poză pe loc
+                    </Button>
+
                     <input
+                      ref={uploadInputRef}
                       hidden
                       type="file"
                       accept="image/*"
                       onChange={handleImage}
                     />
-                  </Button>
+                  </Stack>
                 </Field>
               </Stack>
             </Box>
@@ -399,9 +445,6 @@ export default function AddAnimalPage() {
                       border: "1.5px dashed #e0e0e0",
                     }}
                   >
-                    <Typography sx={{ fontSize: "1.8rem", mb: 1 }}>
-                      🐾
-                    </Typography>
                     <Typography
                       sx={{
                         fontSize: "0.85rem",
@@ -409,13 +452,11 @@ export default function AddAnimalPage() {
                         fontWeight: 600,
                       }}
                     >
-                      Selectează mai întâi o specie
+                      Selectează mai întâi o specie.
                     </Typography>
                   </Box>
                 ) : (
-                  <Field
-                    label={`Boxă disponibilă (${filteredBoxes.length} opțiuni)`}
-                  >
+                  <Field label={`Boxă disponibilă (${filteredBoxes.length} opțiuni)`}>
                     <TextField
                       select
                       name="box_id"
@@ -463,9 +504,7 @@ export default function AddAnimalPage() {
                               }}
                             >
                               {box.current_occupancy}/{box.capacity}
-                              {box.current_occupancy >= box.capacity
-                                ? " plin"
-                                : " locuri"}
+                              {box.current_occupancy >= box.capacity ? " plină" : " locuri"}
                             </Box>
                           </Box>
                         </MenuItem>
@@ -489,7 +528,7 @@ export default function AddAnimalPage() {
             }}
           >
             <Button
-              onClick={() => setStep((s) => Math.max(0, s - 1))}
+              onClick={() => setStep((current) => Math.max(0, current - 1))}
               disabled={step === 0}
               sx={{
                 color: "#999",
@@ -500,12 +539,12 @@ export default function AddAnimalPage() {
                 visibility: step === 0 ? "hidden" : "visible",
               }}
             >
-              ← Înapoi
+              Înapoi
             </Button>
 
             {step < 2 ? (
               <Button
-                onClick={() => setStep((s) => Math.min(2, s + 1))}
+                onClick={() => setStep((current) => Math.min(2, current + 1))}
                 sx={{
                   backgroundColor: RED,
                   color: "white",
@@ -518,7 +557,7 @@ export default function AddAnimalPage() {
                   "&:hover": { backgroundColor: RED_DARK },
                 }}
               >
-                Continuă →
+                Continuă
               </Button>
             ) : (
               <Button
@@ -543,33 +582,38 @@ export default function AddAnimalPage() {
                   },
                 }}
               >
-                {loading ? "Se salvează..." : "Creează animal ✓"}
+                {loading ? "Se salvează..." : "Creează animal"}
               </Button>
             )}
           </Box>
         </Box>
+
         <Box sx={{ mt: 2, px: 1, display: "flex", gap: 1, flexWrap: "wrap" }}>
           {[
             formData.name && { label: formData.name },
             formData.species_id && {
-              label: species.find((s) => s.id === formData.species_id)?.name,
+              label: formatSpecies(
+                species.find((item) => item.id === formData.species_id)?.name,
+              ),
             },
             formData.breed && { label: formData.breed },
             formData.gender && {
-              label: formData.gender === "Male" ? "Mascul" : "Femelă",
+              label: formatGender(formData.gender),
             },
             formData.age && { label: `${formData.age} ani` },
             formData.date_added && {
-              label: `Adaugat pe ${new Date(`${formData.date_added}T00:00:00`).toLocaleDateString("ro-RO")}`,
+              label: `Adăugat pe ${new Date(
+                `${formData.date_added}T00:00:00`,
+              ).toLocaleDateString("ro-RO")}`,
             },
             formData.box_id && {
-              label: boxes.find((b) => b.id === formData.box_id)?.box_number,
+              label: boxes.find((box) => box.id === formData.box_id)?.box_number,
             },
           ]
             .filter(Boolean)
-            .map((tag, i) => (
+            .map((tag, index) => (
               <Box
-                key={i}
+                key={index}
                 sx={{
                   px: 1.5,
                   py: 0.4,
@@ -586,6 +630,12 @@ export default function AddAnimalPage() {
               </Box>
             ))}
         </Box>
+
+        <CameraCaptureDialog
+          open={openCamera}
+          onClose={() => setOpenCamera(false)}
+          onCapture={handleCameraCapture}
+        />
       </Box>
     </Box>
   );

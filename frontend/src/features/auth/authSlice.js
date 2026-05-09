@@ -8,7 +8,7 @@ export const loginUser = createAsyncThunk(
       const response = await axiosInstance.post("/auth/login", credentials);
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || "Autentificarea a esuat");
+      return thunkAPI.rejectWithValue(error.response?.data || "Autentificarea a eșuat.");
     }
   },
 );
@@ -21,7 +21,7 @@ export const registerUser = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Inregistrarea a esuat",
+        error.response?.data || "Înregistrarea a eșuat.",
       );
     }
   },
@@ -35,7 +35,7 @@ export const resetPassword = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Resetare esuata",
+        error.response?.data || "Resetarea a eșuat.",
       );
     }
   },
@@ -51,7 +51,7 @@ export const forgotPassword = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la trimiterea emailului",
+        error.response?.data || "Eroare la trimiterea emailului.",
       );
     }
   },
@@ -64,7 +64,7 @@ export const updatePassword = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare actualizare parola",
+        error.response?.data || "Eroare la actualizarea parolei.",
       );
     }
   },
@@ -78,7 +78,7 @@ export const updateMyProfile = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare actualizare profil",
+        error.response?.data || "Eroare la actualizarea profilului.",
       );
     }
   },

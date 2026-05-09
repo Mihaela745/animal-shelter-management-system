@@ -1,23 +1,22 @@
 import {
+  Avatar,
   Box,
+  Drawer,
+  IconButton,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  IconButton,
-  Avatar,
   Typography,
-  Drawer,
 } from "@mui/material";
-
 import MenuIcon from "@mui/icons-material/Menu";
 import PetsIcon from "@mui/icons-material/Pets";
-import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
 import MedicationIcon from "@mui/icons-material/Medication";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DashboardIcon from "@mui/icons-material/Dashboard";
+import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,12 +33,13 @@ export default function Sidebar({ mobile = false, open, onClose }) {
   const menuItems = [
     { text: "Panou", icon: <DashboardIcon />, path: "/vet/dashboard" },
     { text: "Animale", icon: <PetsIcon />, path: "/vet/animals" },
+    { text: "Boxe", icon: <Inventory2Icon />, path: "/vet/boxes" },
     {
       text: "Adaugă medicament",
       icon: <MedicationIcon />,
       path: "/vet/add-medication",
     },
-    { text: "Boxe", icon: <Inventory2Icon />, path: "/vet/boxes" },
+    { text: "Rapoarte", icon: <AssessmentOutlinedIcon />, path: "/vet/reports" },
     { text: "Profil", icon: <PersonIcon />, path: "/vet/profile" },
   ];
 
@@ -118,7 +118,9 @@ export default function Sidebar({ mobile = false, open, onClose }) {
               selected={location.pathname === item.path}
               onClick={() => {
                 navigate(item.path);
-                if (mobile) onClose();
+                if (mobile) {
+                  onClose();
+                }
               }}
               sx={{
                 px: 2,

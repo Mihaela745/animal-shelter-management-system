@@ -34,7 +34,7 @@ export const controller = {
     try {
       const { box_number, capacity, species_id } = req.body;
       if (!box_number || !capacity || !species_id) {
-        return res.status(400).send(`All fields must be completed`);
+        return res.status(400).send("Toate câmpurile sunt obligatorii.");
       }
       const newBox = await Boxes.create({
         box_number,
@@ -44,7 +44,7 @@ export const controller = {
       });
       return res.status(201).send(newBox);
     } catch (error) {
-      return res.status(500).send(`Failed creating box: ${error}`);
+      return res.status(500).send(`Nu am putut crea boxa: ${error}`);
     }
   },
   getAllBoxes: async (req, res) => {
@@ -52,7 +52,7 @@ export const controller = {
       const boxes = await Boxes.findAll();
       return res.status(200).send(boxes);
     } catch (error) {
-      return res.status(500).send(`Failed fetching boxes: ${error}`);
+      return res.status(500).send(`Nu am putut încărca boxele: ${error}`);
     }
   },
   getBoxById: async (req, res) => {
@@ -60,9 +60,9 @@ export const controller = {
       const box = await Boxes.findByPk(req.params.id);
       if (box) {
         return res.status(200).send(box);
-      } else return res.status(404).send(`Box doesn't exists!`);
+      } else return res.status(404).send("Boxa nu există.");
     } catch (error) {
-      return res.status(500).send(`Failed fetching box: ${error}`);
+      return res.status(500).send(`Nu am putut încărca boxa: ${error}`);
     }
   },
   deleteBox: async (req, res) => {
@@ -71,17 +71,17 @@ export const controller = {
         where: { box_id: req.params.id },
       });
       if (animalsInBox > 0) {
-        return res.status(400).send("Box still contains animals!");
+        return res.status(400).send("Boxa conține încă animale.");
       }
       const deletedRows = await Boxes.destroy({
         where: {
           id: req.params.id,
         },
       });
-      if (deletedRows === 0) return res.status(404).send(`Box not found!`);
-      return res.status(200).send(`Deletion succesfull!`);
+      if (deletedRows === 0) return res.status(404).send("Boxa nu a fost găsită.");
+      return res.status(200).send("Boxa a fost ștearsă cu succes.");
     } catch (error) {
-      return res.status(500).send(`Failed deleting box: ${error}`);
+      return res.status(500).send(`Nu am putut șterge boxa: ${error}`);
     }
   },
   updateBox: async (req, res) => {
@@ -93,7 +93,7 @@ export const controller = {
         if (updateData.capacity < box.current_occupancy) {
           return res
             .status(400)
-            .send("Capacity cannot be lower than current occupancy!");
+            .send("Capacitatea nu poate fi mai mică decât ocuparea curentă.");
         }
       }
       const [updatedRows] = await Boxes.update(updateData, {
@@ -102,12 +102,12 @@ export const controller = {
         },
       });
       if (updatedRows === 0) {
-        return res.status(404).send(`No boxes where updated!`);
+        return res.status(404).send("Nu a fost actualizată nicio boxă.");
       }
       const updatedBox = await Boxes.findByPk(boxId);
       return res.status(200).send(updatedBox);
     } catch (error) {
-      return res.status(500).send(`Failed updating box: ${error}`);
+      return res.status(500).send(`Nu am putut actualiza boxa: ${error}`);
     }
   },
 };

@@ -16,6 +16,7 @@ import { router as boxesRouter } from "./Boxes.js";
 import { router as requestRouter } from "./Adoption_request.js";
 import { router as aiRouter } from "./AIRouter.js";
 import { router as breedMetadataRouter } from "./breedMetadata.js";
+import { router as reportsRouter } from "./Reports.js";
 export const router = express.Router();
 
 router.use("/", otherRouter);
@@ -35,3 +36,4 @@ router.use("/users", usersRouter);
 router.use("/boxes", boxesRouter);
 router.use("/ai", aiRouter);
 router.use("/breed-metadata", breedMetadataRouter);
+router.use("/reports", reportsRouter);

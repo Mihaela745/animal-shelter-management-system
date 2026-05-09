@@ -9,7 +9,7 @@ export const fetchStaff = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la incarcarea personalului",
+        error.response?.data || "Eroare la încărcarea personalului.",
       );
     }
   },
@@ -23,7 +23,7 @@ export const fetchStaffById = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la incarcarea membrului din personal",
+        error.response?.data || "Eroare la încărcarea membrului din personal.",
       );
     }
   },
@@ -37,7 +37,7 @@ export const fetchMyStaffProfile = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare încărcare profil",
+        error.response?.data || "Eroare la încărcarea profilului.",
       );
     }
   },
@@ -51,7 +51,7 @@ export const updateMyStaffProfile = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare actualizare profil",
+        error.response?.data || "Eroare la actualizarea profilului.",
       );
     }
   },
@@ -65,7 +65,7 @@ export const createStaff = createAsyncThunk(
       return response.data.staff;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la crearea membrului din personal",
+        error.response?.data || "Eroare la crearea membrului din personal.",
       );
     }
   },
@@ -79,7 +79,7 @@ export const updateStaff = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la actualizarea membrului din personal",
+        error.response?.data || "Eroare la actualizarea membrului din personal.",
       );
     }
   },
@@ -93,7 +93,7 @@ export const deleteStaff = createAsyncThunk(
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la stergerea membrului din personal",
+        error.response?.data || "Eroare la ștergerea membrului din personal.",
       );
     }
   },

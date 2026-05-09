@@ -22,6 +22,7 @@ import { useMemo, useState } from "react";
 import ChangePasswordDialog from "./ChangePasswordDialog";
 import { formatRole } from "../../utils/labels";
 import { setAuthUser, updateMyProfile } from "../../features/auth/authSlice";
+import { isValidFullName, normalizeFullName } from "../../utils/nameValidation";
 
 const RED = "#a91111";
 const RED_LIGHT = "#fff0f0";
@@ -120,7 +121,17 @@ export default function ProfileCard() {
 
   const handleSave = async () => {
     setSaveError(null);
-    const result = await dispatch(updateMyProfile(formData));
+    if (!isValidFullName(formData.username)) {
+      setSaveError("Numele trebuie sa fie de forma Nume Prenume.");
+      return;
+    }
+
+    const result = await dispatch(
+      updateMyProfile({
+        ...formData,
+        username: normalizeFullName(formData.username),
+      }),
+    );
 
     if (result.meta?.requestStatus === "fulfilled") {
       dispatch(
@@ -264,7 +275,7 @@ export default function ProfileCard() {
           {isEditing ? (
             <Box sx={{ px: { xs: 1, sm: 1.5 }, display: "grid", gap: 2 }}>
               <TextField
-                label="Nume utilizator"
+                label="Nume complet"
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
@@ -307,7 +318,7 @@ export default function ProfileCard() {
             >
               <InfoRow
                 icon={<PersonOutlineIcon sx={{ color: RED, fontSize: 18 }} />}
-                label="Nume utilizator"
+                label="Nume complet"
                 value={user?.username}
               />
               <InfoRow

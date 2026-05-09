@@ -9,7 +9,7 @@ export const fetchBoxes = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la incarcarea boxelor",
+        error.response?.data || "Eroare la încărcarea boxelor.",
       );
     }
   },
@@ -23,7 +23,7 @@ export const fetchBoxById = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la incarcarea boxei",
+        error.response?.data || "Eroare la încărcarea boxei.",
       );
     }
   },
@@ -65,7 +65,7 @@ export const deleteBox = createAsyncThunk(
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la stergerea boxei",
+        error.response?.data || "Eroare la ștergerea boxei.",
       );
     }
   },

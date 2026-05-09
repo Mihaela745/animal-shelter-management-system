@@ -9,7 +9,7 @@ export const fetchRooms = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la incarcarea camerelor",
+        error.response?.data || "Eroare la încărcarea camerelor.",
       );
     }
   },
@@ -23,7 +23,7 @@ export const fetchRoomById = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la incarcarea camerei",
+        error.response?.data || "Eroare la încărcarea camerei.",
       );
     }
   },
@@ -65,7 +65,7 @@ export const deleteRoom = createAsyncThunk(
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la stergerea camerei",
+        error.response?.data || "Eroare la ștergerea camerei.",
       );
     }
   },

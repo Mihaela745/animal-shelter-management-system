@@ -3,6 +3,7 @@ import { Appointments } from "../models/index.js";
 import { Adoption_history } from "../models/index.js";
 import { Position } from "../models/index.js";
 import bcrypt from "bcrypt";
+import { isValidFullName, normalizeFullName } from "../utils/nameValidation.js";
 
 export const seedManager = async () => {
   const existingManager = await Users.findOne({ where: { role: "Manager" } });
@@ -12,14 +13,14 @@ export const seedManager = async () => {
         where: { title: "Manager" },
       });
     const newUser=await Users.create({
-      username: "Manager_Shelter",
+      username: "Manager Shelter",
       email: "mihaelaneacsu745@gmail.com",
       password: hashedPassword,
       phonenumber: "0700000000",
       role: "Manager",
     });
     await Staff.create({
-      name: "Manager_Shelter",
+      name: "Manager Shelter",
       email: newUser.email,
       phonenumber: newUser.phonenumber,
       position_id: managerPosition.id,
@@ -38,12 +39,12 @@ export const controller = {
       });
 
       if (!user) {
-        return res.status(404).send("User not found");
+        return res.status(404).send("Utilizatorul nu a fost găsit.");
       }
 
       return res.status(200).json(user);
     } catch (err) {
-      return res.status(500).send(`Couldn't fetch profile: ${err.message}`);
+      return res.status(500).send(`Nu am putut încărca profilul: ${err.message}`);
     }
   },
   updateMyProfile: async (req, res) => {
@@ -53,28 +54,32 @@ export const controller = {
 
       const user = await Users.findByPk(userId);
       if (!user) {
-        return res.status(404).send("User not found");
+        return res.status(404).send("Utilizatorul nu a fost găsit.");
+      }
+
+      if (username && !isValidFullName(username)) {
+        return res.status(400).send("Numele trebuie să fie de forma Nume Prenume.");
       }
 
       await user.update({
-        username: username ?? user.username,
+        username: username ? normalizeFullName(username) : user.username,
         phonenumber: phonenumber ?? user.phonenumber,
         address: address ?? user.address,
       });
 
       return res.status(200).json(user);
     } catch (err) {
-      return res.status(500).send(`Couldn't update profile: ${err.message}`);
+      return res.status(500).send(`Nu am putut actualiza profilul: ${err.message}`);
     }
   },
   getAllUsers: async (req, res) => {
     try {
       const users = await Users.findAll();
       if (users.length === 0)
-        return res.status(404).send("No data found for users!");
+        return res.status(404).send("Nu au fost găsite date pentru utilizatori.");
       else return res.status(200).send(users);
     } catch (err) {
-      return res.status(500).send(`Couldn't fetch users: ${err}`);
+      return res.status(500).send(`Nu am putut încărca utilizatorii: ${err}`);
     }
   },
   getUserById: async (req, res) => {
@@ -84,18 +89,18 @@ export const controller = {
      const role = req.user.role;
 
      if (role !== "Manager" && requestedId !== loggedUserId) {
-       return res.status(403).send("Access denied");
+       return res.status(403).send("Acces interzis.");
      }
 
      const user = await Users.findByPk(requestedId);
 
      if (!user) {
-       return res.status(404).send("User not found");
+       return res.status(404).send("Utilizatorul nu a fost găsit.");
      }
 
      return res.status(200).json(user);
     } catch (err) {
-      return res.status(500).send(`Couldn't fetch user: ${err}`);
+      return res.status(500).send(`Nu am putut încărca utilizatorul: ${err}`);
     }
   },
   deleteUser: async (req, res) => {
@@ -105,10 +110,10 @@ export const controller = {
       await Adoption_history.destroy({ where: { adopter_id: user } });
       const deletedUsers = await Users.destroy({ where: { id: user } });
       if (deletedUsers === 0)
-        return res.status(404).send(`User not found to be deleted!`);
-      return res.status(200).send(`User has been deleted!`);
+        return res.status(404).send("Utilizatorul pentru ștergere nu a fost găsit.");
+      return res.status(200).send("Utilizatorul a fost șters.");
     } catch (err) {
-      return res.status(500).send(`Error at deletion: ${err}`);
+      return res.status(500).send(`A apărut o eroare la ștergere: ${err}`);
     }
   },
 };

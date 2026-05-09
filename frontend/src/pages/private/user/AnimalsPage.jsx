@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchAnimals } from "../../../features/animals/animalsSlice";
 import AnimalCard from "../../../components/animals/AnimalCard";
 import { useSearchParams } from "react-router-dom";
+import { formatGender, formatSpecies } from "../../../utils/labels";
 
 const filterFieldSx = {
   "& .MuiOutlinedInput-root": {
@@ -97,7 +98,7 @@ export default function AnimalsPage() {
           Animale disponibile
         </Typography>
         <Typography variant="body2" sx={{ color: "#888", mt: 0.5 }}>
-          Gaseste companionul perfect pentru tine
+          Găsește companionul perfect pentru tine
         </Typography>
       </Box>
       <Box
@@ -125,7 +126,7 @@ export default function AnimalsPage() {
           name="name"
           value={filters.name}
           onChange={handleFilterChange}
-          placeholder="Cauta dupa nume"
+          placeholder="Caută după nume"
           sx={filterFieldSx}
         />
 
@@ -139,8 +140,8 @@ export default function AnimalsPage() {
           sx={filterFieldSx}
         >
           <MenuItem value="">Toate</MenuItem>
-          <MenuItem value="Dog">Caine</MenuItem>
-          <MenuItem value="Cat">Pisica</MenuItem>
+          <MenuItem value="Dog">{formatSpecies("Dog")}</MenuItem>
+          <MenuItem value="Cat">{formatSpecies("Cat")}</MenuItem>
         </TextField>
 
         <TextField
@@ -154,12 +155,12 @@ export default function AnimalsPage() {
         >
           <MenuItem value="">Toate</MenuItem>
           <MenuItem value="Male">Mascul</MenuItem>
-          <MenuItem value="Female">Femela</MenuItem>
+          <MenuItem value="Female">{formatGender("Female")}</MenuItem>
         </TextField>
 
         <TextField
           size="small"
-          label="Varsta min."
+          label="Vârsta min."
           name="minAge"
           type="number"
           value={filters.minAge}
@@ -173,7 +174,7 @@ export default function AnimalsPage() {
 
         <TextField
           size="small"
-          label="Varsta max."
+          label="Vârsta max."
           name="maxAge"
           type="number"
           value={filters.maxAge}
@@ -207,10 +208,10 @@ export default function AnimalsPage() {
         >
           <PetsIcon sx={{ fontSize: 48, color: "#ddd", mb: 2 }} />
           <Typography variant="h6" color="text.secondary" fontWeight={600}>
-            Nu am gasit animale conform filtrelor tale
+            Nu am găsit animale conform filtrelor tale
           </Typography>
           <Typography variant="body2" color="text.disabled" mt={1}>
-            Incearca sa modifici numele, varsta sau specia pentru a vedea mai
+            Încearcă să modifici numele, vârsta sau specia pentru a vedea mai
             multe rezultate.
           </Typography>
         </Box>

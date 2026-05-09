@@ -2,6 +2,7 @@ export const formatAnimalStatus = (status) => {
   const labels = {
     Available: "Disponibil",
     Adopted: "Adoptat",
+    Fostered: "În plasament",
   };
 
   return labels[status] || status || "-";
@@ -9,7 +10,7 @@ export const formatAnimalStatus = (status) => {
 
 export const formatRequestStatus = (status) => {
   const labels = {
-    Pending: "In asteptare",
+    Pending: "În așteptare",
     Approved: "Aprobat",
     Rejected: "Respins",
   };
@@ -22,7 +23,7 @@ export const formatRole = (role) => {
     user: "Utilizator",
     Manager: "Manager",
     Vet: "Veterinar",
-    Caretaker: "Ingrijitor",
+    Caretaker: "Îngrijitor",
   };
 
   return labels[role] || role || "-";
@@ -31,8 +32,27 @@ export const formatRole = (role) => {
 export const formatGender = (gender) => {
   const labels = {
     Male: "Mascul",
-    Female: "Femela",
+    Female: "Femelă",
   };
 
   return labels[gender] || gender || "-";
+};
+
+export const formatAppointmentStatus = (status) => {
+  const labels = {
+    Scheduled: "Programată",
+    Completed: "Finalizată",
+    Cancelled: "Anulată",
+  };
+
+  return labels[status] || status || "-";
+};
+
+export const formatSpecies = (species) => {
+  const labels = {
+    Dog: "Câine",
+    Cat: "Pisică",
+  };
+
+  return labels[species] || species || "-";
 };

@@ -13,6 +13,7 @@ import {
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
+import PhotoCameraOutlinedIcon from "@mui/icons-material/PhotoCameraOutlined";
 import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -21,15 +22,17 @@ import {
 } from "../../features/animals/animalsSlice";
 import { fetchBreedsBySpecies } from "../../features/breedMetadata/breedMetadata";
 import { useNavigate } from "react-router-dom";
+import CameraCaptureDialog from "./CameraCaptureDialog";
+import { formatAnimalStatus, formatGender } from "../../utils/labels";
 
 export default function AnimalManagerActions({ animal }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { breeds, breedsLoading } = useSelector((state) => state.breedMetadata);
   const fileInputRef = useRef(null);
-
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [openCamera, setOpenCamera] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(animal.image_url || null);
   const [formData, setFormData] = useState({
@@ -55,6 +58,11 @@ export default function AnimalManagerActions({ animal }) {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleCameraCapture = (file) => {
     setImageFile(file);
     setImagePreview(URL.createObjectURL(file));
   };
@@ -113,7 +121,7 @@ export default function AnimalManagerActions({ animal }) {
             },
           }}
         >
-          Editeaza animal
+          Editează animal
         </Button>
 
         <Button
@@ -136,7 +144,7 @@ export default function AnimalManagerActions({ animal }) {
             },
           }}
         >
-          Sterge animal
+          Șterge animal
         </Button>
       </Stack>
 
@@ -161,7 +169,7 @@ export default function AnimalManagerActions({ animal }) {
               <EditOutlinedIcon sx={{ color: "#d21919", fontSize: 18 }} />
             </Box>
             <Typography fontWeight={800} fontSize="1rem">
-              Editeaza animal
+              Editează animal
             </Typography>
           </Box>
         </DialogTitle>
@@ -209,7 +217,29 @@ export default function AnimalManagerActions({ animal }) {
                 },
               }}
             >
-              {imageFile ? imageFile.name : "Incarca imagine noua"}
+              {imageFile ? imageFile.name : "Încarcă imagine nouă"}
+            </Button>
+            <Button
+              fullWidth
+              variant="outlined"
+              startIcon={<PhotoCameraOutlinedIcon />}
+              onClick={() => setOpenCamera(true)}
+              sx={{
+                mt: 1,
+                borderColor: "#f0c9c9",
+                color: "#a91111",
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: 700,
+                py: 1,
+                backgroundColor: "#fff8f8",
+                "&:hover": {
+                  borderColor: "#a91111",
+                  backgroundColor: "#fff0f0",
+                },
+              }}
+            >
+              Fă poză pe loc
             </Button>
           </Box>
 
@@ -251,7 +281,7 @@ export default function AnimalManagerActions({ animal }) {
             fullWidth
             margin="dense"
             type="number"
-            label="Varsta"
+            label="Vârstă"
             name="age"
             value={formData.age}
             onChange={handleChange}
@@ -261,7 +291,7 @@ export default function AnimalManagerActions({ animal }) {
             fullWidth
             margin="dense"
             type="date"
-            label="Data adaugarii"
+            label="Data adăugării"
             name="date_added"
             value={formData.date_added}
             onChange={handleChange}
@@ -278,8 +308,8 @@ export default function AnimalManagerActions({ animal }) {
             onChange={handleChange}
             sx={inputSx}
           >
-            <MenuItem value="Male">Mascul</MenuItem>
-            <MenuItem value="Female">Femela</MenuItem>
+            <MenuItem value="Male">{formatGender("Male")}</MenuItem>
+            <MenuItem value="Female">{formatGender("Female")}</MenuItem>
           </TextField>
           <TextField
             select
@@ -291,9 +321,9 @@ export default function AnimalManagerActions({ animal }) {
             onChange={handleChange}
             sx={inputSx}
           >
-            <MenuItem value="Available">Disponibil</MenuItem>
-            <MenuItem value="Adopted">Adoptat</MenuItem>
-            <MenuItem value="Fostered">In foster</MenuItem>
+            <MenuItem value="Available">{formatAnimalStatus("Available")}</MenuItem>
+            <MenuItem value="Adopted">{formatAnimalStatus("Adopted")}</MenuItem>
+            <MenuItem value="Fostered">{formatAnimalStatus("Fostered")}</MenuItem>
           </TextField>
         </DialogContent>
 
@@ -307,7 +337,7 @@ export default function AnimalManagerActions({ animal }) {
               borderRadius: "10px",
             }}
           >
-            Anuleaza
+            Anulează
           </Button>
           <Button
             variant="contained"
@@ -321,7 +351,7 @@ export default function AnimalManagerActions({ animal }) {
               "&:hover": { backgroundColor: "#1565c0" },
             }}
           >
-            Salveaza
+            Salvează
           </Button>
         </DialogActions>
       </Dialog>
@@ -347,14 +377,14 @@ export default function AnimalManagerActions({ animal }) {
               <DeleteOutlineIcon sx={{ color: "#d32f2f", fontSize: 18 }} />
             </Box>
             <Typography fontWeight={800} fontSize="1rem">
-              Confirma stergerea
+              Confirmă ștergerea
             </Typography>
           </Box>
         </DialogTitle>
         <DialogContent sx={{ pt: "1rem !important" }}>
           <Typography fontSize="0.9rem" color="#555">
-            Esti sigur ca vrei sa stergi <strong>{animal.name}</strong>? Aceasta
-            actiune nu poate fi anulata.
+            Ești sigur că vrei să ștergi <strong>{animal.name}</strong>? Această
+            acțiune nu poate fi anulată.
           </Typography>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
@@ -367,7 +397,7 @@ export default function AnimalManagerActions({ animal }) {
               borderRadius: "10px",
             }}
           >
-            Anuleaza
+            Anulează
           </Button>
           <Button
             variant="contained"
@@ -381,10 +411,16 @@ export default function AnimalManagerActions({ animal }) {
               "&:hover": { backgroundColor: "#b71c1c" },
             }}
           >
-            Sterge
+            Șterge
           </Button>
         </DialogActions>
       </Dialog>
+
+      <CameraCaptureDialog
+        open={openCamera}
+        onClose={() => setOpenCamera(false)}
+        onCapture={handleCameraCapture}
+      />
     </Box>
   );
 }

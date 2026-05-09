@@ -141,11 +141,15 @@ export default function DashboardPage() {
     dispatch(fetchAllMedicalFiles());
   }, [dispatch]);
 
-  const today = new Date();
   const oneMonthAgo = new Date();
   oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-  const sevenDaysFromNow = new Date();
-  sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+
+  const tomorrowStart = new Date();
+  tomorrowStart.setHours(0, 0, 0, 0);
+  tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+
+  const tomorrowEnd = new Date(tomorrowStart);
+  tomorrowEnd.setHours(23, 59, 59, 999);
 
   const animalsNeedingCheckup = useMemo(
     () =>
@@ -196,20 +200,17 @@ export default function DashboardPage() {
           if (!medication.end_date) {
             return false;
           }
+
           const endDate = new Date(medication.end_date);
-          return endDate >= today && endDate <= sevenDaysFromNow;
+          return endDate >= tomorrowStart && endDate <= tomorrowEnd;
         })
         .sort((a, b) => new Date(a.end_date) - new Date(b.end_date)),
-    [files, sevenDaysFromNow, today],
+    [files, tomorrowEnd, tomorrowStart],
   );
 
   const handleOpenMedicalFile = (animalId, medicalFileId) => {
     navigate(`/vet/animals/${animalId}/medical/${medicalFileId}`);
   };
-
-//   const handleOpenAnimal = (animalId) => {
-//     navigate(`/vet/animals/${animalId}`);
-//   };
 
   const isLoading = medicalLoading;
 
@@ -236,8 +237,7 @@ export default function DashboardPage() {
           Panou veterinar
         </Typography>
         <Typography sx={{ opacity: 0.86, mt: 0.6, fontSize: "0.9rem" }}>
-          Urmareste animalele care au nevoie de control, tratamentele recente si
-          programarile tale.
+          Urmărește animalele care au nevoie de control și tratamentele recente.
         </Typography>
       </Box>
 
@@ -245,7 +245,7 @@ export default function DashboardPage() {
         <Alert severity="error" sx={{ mb: 3, borderRadius: "14px" }}>
           {typeof medicalError === "string"
             ? medicalError
-            : "Nu am putut incarca datele pentru panou."}
+            : "Nu am putut încărca datele pentru panou."}
         </Alert>
       ) : null}
 
@@ -269,7 +269,7 @@ export default function DashboardPage() {
             <StatCard
               title="Controale necesare"
               value={animalsNeedingCheckup.length}
-              subtitle="peste 30 zile de la ultimul checkup"
+              subtitle="peste 30 de zile de la ultimul control"
               color="#d32f2f"
               icon={<WarningAmberRoundedIcon />}
             />
@@ -283,7 +283,7 @@ export default function DashboardPage() {
             <StatCard
               title="Se încheie curând"
               value={medicationsEndingSoon.length}
-              subtitle="medicații cu final în 7 zile"
+              subtitle="medicații cu final mâine"
               color="#ef6c00"
               icon={<MonitorHeartOutlinedIcon />}
             />
@@ -299,7 +299,7 @@ export default function DashboardPage() {
           >
             <SectionCard
               title="Animale care trebuie verificate"
-              subtitle="fișe fără checkup recent sau fără checkup înregistrat"
+              subtitle="fișe fără control recent sau fără control înregistrat"
               action={
                 <Button
                   size="small"
@@ -435,11 +435,11 @@ export default function DashboardPage() {
 
             <SectionCard
               title="Medicații care se încheie curând"
-              subtitle="utile pentru reevaluare sau continuare tratament"
+              subtitle="medicații care se termină în următoarea zi"
             >
               {medicationsEndingSoon.length === 0 ? (
                 <Typography sx={{ fontSize: "0.86rem", color: "#999" }}>
-                  Nicio medicație nu se încheie în următoarele 7 zile.
+                  Nicio medicație nu se termină mâine.
                 </Typography>
               ) : (
                 <Stack spacing={1.2}>

@@ -22,12 +22,16 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { endOfMonth, format, startOfMonth } from "date-fns";
+import { formatAppointmentStatus } from "../../../utils/labels";
 import {
   deleteAppointment,
   fetchAllAppointments,
   updateAppointmentStatus,
 } from "../../../features/appointments/appointmentsSlice";
 import { fetchRooms } from "../../../features/rooms/roomsSlice";
+import { fetchStaff } from "../../../features/staff/staffSlice";
+import ScheduleCalendar from "../../../components/appointments/ScheduleCalendar";
 
 const RED = "#a91111";
 const RED_DARK = "#8a0d0d";
@@ -130,7 +134,7 @@ function AppointmentCard({ appointment, onStatusChange, onDelete }) {
           <Typography
             sx={{ fontSize: "0.68rem", fontWeight: 700, color: statusStyle.color }}
           >
-            {appointment.status}
+            {formatAppointmentStatus(appointment.status)}
           </Typography>
         </Box>
       </Box>
@@ -180,7 +184,7 @@ function AppointmentCard({ appointment, onStatusChange, onDelete }) {
               "&:hover": { backgroundColor: "#dcfce7" },
             }}
           >
-            Completeaza
+            Finalizează
           </Button>
         )}
 
@@ -198,7 +202,7 @@ function AppointmentCard({ appointment, onStatusChange, onDelete }) {
               "&:hover": { backgroundColor: "#fee2e2" },
             }}
           >
-            Anuleaza
+            Anulează
           </Button>
         )}
 
@@ -215,7 +219,7 @@ function AppointmentCard({ appointment, onStatusChange, onDelete }) {
             "&:hover": { backgroundColor: "#ffebee" },
           }}
         >
-          Sterge
+          Șterge
         </Button>
       </Box>
     </Box>
@@ -226,18 +230,31 @@ export default function AppointmentsPage() {
   const dispatch = useDispatch();
   const { appointments, loading } = useSelector((s) => s.appointments);
   const { rooms } = useSelector((s) => s.rooms);
+  const { staff } = useSelector((s) => s.staff);
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterRoom, setFilterRoom] = useState("all");
+  const [calendarStatus, setCalendarStatus] = useState("all");
+  const [calendarStaffId, setCalendarStaffId] = useState("all");
+  const [calendarMonthStart, setCalendarMonthStart] = useState(() =>
+    startOfMonth(new Date()),
+  );
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [openDelete, setOpenDelete] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchAllAppointments());
     dispatch(fetchRooms());
+    dispatch(fetchStaff());
   }, [dispatch]);
+
+  useEffect(() => {
+    const startDate = format(calendarMonthStart, "yyyy-MM-dd");
+    const endDate = format(endOfMonth(calendarMonthStart), "yyyy-MM-dd");
+
+    dispatch(fetchAllAppointments({ startDate, endDate }));
+  }, [calendarMonthStart, dispatch]);
 
   const normalizedAppointments = useMemo(
     () =>
@@ -274,6 +291,9 @@ export default function AppointmentsPage() {
   const handleStatusChange = async (id, status) => {
     setActionLoading(true);
     await dispatch(updateAppointmentStatus({ id, status }));
+    const startDate = format(calendarMonthStart, "yyyy-MM-dd");
+    const endDate = format(endOfMonth(calendarMonthStart), "yyyy-MM-dd");
+    await dispatch(fetchAllAppointments({ startDate, endDate }));
     setActionLoading(false);
   };
 
@@ -339,13 +359,31 @@ export default function AppointmentsPage() {
                 letterSpacing: "-0.5px",
               }}
             >
-              Programari
+              Programări
             </Typography>
           </Box>
           <Typography sx={{ fontSize: "0.85rem", color: "#aaa", ml: "52px" }}>
-            {appointments.length} programari in sistem
+            {appointments.length} programări în sistem
           </Typography>
         </Box>
+      </Box>
+
+      <Box sx={{ mb: { xs: 2.5, md: 3 } }}>
+        <ScheduleCalendar
+          appointments={normalizedAppointments}
+          title="Calendar lunar programări"
+          subtitle="Vizualizare pe toată luna, cu filtre rapide și detalii la clic."
+          monthStart={calendarMonthStart}
+          onMonthStartChange={setCalendarMonthStart}
+          statusFilter={calendarStatus}
+          onStatusFilterChange={setCalendarStatus}
+          staffFilter={calendarStaffId}
+          onStaffFilterChange={setCalendarStaffId}
+          staffOptions={staff}
+          allowStaffFilter
+          onStatusChange={handleStatusChange}
+          actionLoading={actionLoading}
+        />
       </Box>
 
       <Box
@@ -362,7 +400,7 @@ export default function AppointmentsPage() {
         }}
       >
         <TextField
-          placeholder="Cauta dupa utilizator, animal sau personal..."
+          placeholder="Caută după utilizator, animal sau personal..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           sx={fieldSx}
@@ -382,9 +420,9 @@ export default function AppointmentsPage() {
           sx={fieldSx}
         >
           <MenuItem value="all">Toate statusurile</MenuItem>
-          <MenuItem value="Scheduled">Scheduled</MenuItem>
-          <MenuItem value="Completed">Completed</MenuItem>
-          <MenuItem value="Cancelled">Cancelled</MenuItem>
+          <MenuItem value="Scheduled">Programată</MenuItem>
+          <MenuItem value="Completed">Finalizată</MenuItem>
+          <MenuItem value="Cancelled">Anulată</MenuItem>
         </TextField>
 
         <TextField
@@ -417,10 +455,10 @@ export default function AppointmentsPage() {
           }}
         >
           <Typography sx={{ fontSize: "0.95rem", fontWeight: 700, color: "#bbb" }}>
-            Nicio programare gasita
+            Nicio programare găsită
           </Typography>
           <Typography sx={{ fontSize: "0.82rem", color: "#ccc", mt: 0.5 }}>
-            Incearca sa schimbi filtrele sau termenul de cautare
+            Încearcă să schimbi filtrele sau termenul de căutare
           </Typography>
         </Box>
       ) : (
@@ -476,13 +514,13 @@ export default function AppointmentsPage() {
               <DeleteOutlineIcon sx={{ color: "#d32f2f", fontSize: 18 }} />
             </Box>
             <Typography fontWeight={800} fontSize="1rem">
-              Confirma stergerea
+              Confirmă ștergerea
             </Typography>
           </Box>
         </DialogTitle>
         <DialogContent sx={{ pt: "1rem !important" }}>
           <Typography fontSize="0.9rem" color="#555">
-            Esti sigur ca vrei sa stergi aceasta programare pentru{" "}
+            Ești sigur că vrei să ștergi această programare pentru{" "}
             <strong>{selectedAppointment?.User?.username}</strong>?
           </Typography>
         </DialogContent>
@@ -497,7 +535,7 @@ export default function AppointmentsPage() {
               borderRadius: "10px",
             }}
           >
-            Anuleaza
+            Anulează
           </Button>
           <Button
             variant="contained"
@@ -515,7 +553,7 @@ export default function AppointmentsPage() {
             {actionLoading ? (
               <CircularProgress size={18} sx={{ color: "white" }} />
             ) : (
-              "Sterge"
+              "Șterge"
             )}
           </Button>
         </DialogActions>

@@ -15,7 +15,9 @@ export const fetchAnimals = createAsyncThunk(
       const response = await axiosInstance.get(`/animals?${query}`);
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || "Eroare");
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "A apărut o eroare la încărcarea animalelor.",
+      );
     }
   },
 );
@@ -27,7 +29,9 @@ export const fetchAnimalById = createAsyncThunk(
       const response = await axiosInstance.get(`/animals/${id}`);
       return response.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response?.data || "Eroare animal");
+      return thunkAPI.rejectWithValue(
+        error.response?.data || "Eroare la încărcarea animalului.",
+      );
     }
   },
 );
@@ -46,7 +50,7 @@ export const createAnimal = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare creare animal",
+        error.response?.data || "Eroare la crearea animalului.",
       );
     }
   },
@@ -56,7 +60,7 @@ export const updateAnimal = createAsyncThunk(
   "animals/updateAnimal",
   async ({ id, data }, thunkAPI) => {
     try {
-    const isFormData = data instanceof FormData;
+      const isFormData = data instanceof FormData;
 
       const response = await axiosInstance.put(`/animals/${id}`, data, {
         headers: isFormData
@@ -67,7 +71,7 @@ export const updateAnimal = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la actualizarea animalului",
+        error.response?.data || "Eroare la actualizarea animalului.",
       );
     }
   },
@@ -81,7 +85,7 @@ export const deleteAnimal = createAsyncThunk(
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare ștergere animal",
+        error.response?.data || "Eroare la ștergerea animalului.",
       );
     }
   },

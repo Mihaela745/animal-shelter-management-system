@@ -1,15 +1,14 @@
 import {
+  Avatar,
   Box,
+  Drawer,
+  IconButton,
   List,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  IconButton,
-  Avatar,
   Typography,
-  Drawer,
 } from "@mui/material";
-
 import MenuIcon from "@mui/icons-material/Menu";
 import PetsIcon from "@mui/icons-material/Pets";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
@@ -17,7 +16,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import LogoutIcon from "@mui/icons-material/Logout";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import EventIcon from "@mui/icons-material/Event";
-
+import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,6 +35,7 @@ export default function CaretakerSidebar({ mobile = false, open, onClose }) {
     { text: "Animale", icon: <PetsIcon />, path: "/staff/animals" },
     { text: "Boxe", icon: <Inventory2Icon />, path: "/staff/boxes" },
     { text: "Programări", icon: <EventIcon />, path: "/staff/appointments" },
+    { text: "Rapoarte", icon: <AssessmentOutlinedIcon />, path: "/staff/reports" },
     { text: "Profil", icon: <PersonIcon />, path: "/staff/profile" },
   ];
 
@@ -114,7 +114,9 @@ export default function CaretakerSidebar({ mobile = false, open, onClose }) {
               selected={location.pathname === item.path}
               onClick={() => {
                 navigate(item.path);
-                if (mobile) onClose();
+                if (mobile) {
+                  onClose();
+                }
               }}
               sx={{
                 px: 2,

@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { registerUser } from "../../../features/auth/authSlice";
 import {
   Box,
-  Typography,
-  TextField,
   Button,
   CircularProgress,
+  TextField,
+  Typography,
 } from "@mui/material";
+import { registerUser } from "../../../features/auth/authSlice";
+import { isValidFullName, normalizeFullName } from "../../../utils/nameValidation";
 
 const RED = "#a91111";
 const DARK = "#0f0f0f";
@@ -41,20 +42,22 @@ export default function RegisterPage() {
   const [localError, setLocalError] = useState(null);
 
   const validations = () => {
-    if (!form.username) return "Numele de utilizator este obligatoriu";
-    if (!/^[a-zA-Z0-9_]{3,}$/.test(form.username))
-      return "Nume de utilizator invalid (minim 3 caractere, litere, cifre, _)";
-    if (!form.email) return "Email este obligatoriu";
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) return "Email invalid";
-    if (!form.password) return "Parola este obligatorie";
+    if (!form.username) return "Numele utilizatorului este obligatoriu.";
+    if (!isValidFullName(form.username)) {
+      return "Numele trebuie să fie de forma Nume Prenume.";
+    }
+    if (!form.email) return "Emailul este obligatoriu.";
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) return "Email invalid.";
+    if (!form.password) return "Parola este obligatorie.";
     if (
       form.password.length < 8 ||
       !/[A-Z]/.test(form.password) ||
       !/\d/.test(form.password) ||
       !/[^a-zA-Z0-9]/.test(form.password)
-    )
-      return "Parola: minim 8 caractere, o majusculă, o cifră, un caracter special";
-    if (form.password !== confirmPassword) return "Parolele nu coincid";
+    ) {
+      return "Parola: minim 8 caractere, o majusculă, o cifră, un caracter special.";
+    }
+    if (form.password !== confirmPassword) return "Parolele nu coincid.";
     return null;
   };
 
@@ -66,8 +69,17 @@ export default function RegisterPage() {
     setLocalError(null);
     const validationError = validations();
     if (validationError) return setLocalError(validationError);
-    const result = await dispatch(registerUser(form));
-    if (result.meta.requestStatus === "fulfilled") navigate("/login");
+
+    const result = await dispatch(
+      registerUser({
+        ...form,
+        username: normalizeFullName(form.username),
+      }),
+    );
+
+    if (result.meta.requestStatus === "fulfilled") {
+      navigate("/login");
+    }
   };
 
   return (
@@ -98,7 +110,7 @@ export default function RegisterPage() {
             width: 280,
             height: 280,
             borderRadius: "50%",
-            border: `1px solid rgba(169,17,17,0.18)`,
+            border: "1px solid rgba(169,17,17,0.18)",
           }}
         />
         <Box
@@ -109,7 +121,7 @@ export default function RegisterPage() {
             width: 400,
             height: 400,
             borderRadius: "50%",
-            border: `1px solid rgba(255,255,255,0.03)`,
+            border: "1px solid rgba(255,255,255,0.03)",
           }}
         />
         <Box
@@ -120,7 +132,7 @@ export default function RegisterPage() {
             width: 160,
             height: 160,
             borderRadius: "50%",
-            border: `1px solid rgba(169,17,17,0.1)`,
+            border: "1px solid rgba(169,17,17,0.1)",
           }}
         />
 
@@ -136,11 +148,11 @@ export default function RegisterPage() {
               justifyContent: "center",
             }}
           >
-            <Typography sx={{ fontSize: "1.1rem" }}>🐾</Typography>
+            <Typography sx={{ fontSize: "1rem", color: "white", fontWeight: 800 }}>
+              P
+            </Typography>
           </Box>
-          <Typography
-            sx={{ color: "white", fontWeight: 700, fontSize: "1rem" }}
-          >
+          <Typography sx={{ color: "white", fontWeight: 700, fontSize: "1rem" }}>
             Paws & Hearts
           </Typography>
         </Box>
@@ -172,8 +184,7 @@ export default function RegisterPage() {
               maxWidth: 260,
             }}
           >
-            Creează-ți un cont și începe să ajuți animalele care au nevoie de o
-            casă.
+            Creează-ți un cont și începe să ajuți animalele care au nevoie de o casă.
           </Typography>
         </Box>
 
@@ -221,7 +232,9 @@ export default function RegisterPage() {
                 justifyContent: "center",
               }}
             >
-              <Typography sx={{ fontSize: "1rem" }}>🐾</Typography>
+              <Typography sx={{ fontSize: "0.9rem", color: "white", fontWeight: 800 }}>
+                P
+              </Typography>
             </Box>
             <Typography sx={{ fontWeight: 700, fontSize: "0.95rem" }}>
               Paws & Hearts
@@ -260,7 +273,7 @@ export default function RegisterPage() {
               sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 1.8 }}
             >
               <TextField
-                label="Nume utilizator"
+                label="Nume complet"
                 name="username"
                 value={form.username}
                 onChange={handleChange}

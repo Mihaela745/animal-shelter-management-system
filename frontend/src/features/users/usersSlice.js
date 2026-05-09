@@ -9,7 +9,7 @@ export const fetchUsers = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la incarcarea utilizatorilor",
+        error.response?.data || "Eroare la încărcarea utilizatorilor.",
       );
     }
   },
@@ -23,7 +23,7 @@ export const fetchUserById = createAsyncThunk(
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la incarcarea utilizatorului",
+        error.response?.data || "Eroare la încărcarea utilizatorului.",
       );
     }
   },
@@ -37,7 +37,7 @@ export const deleteUser = createAsyncThunk(
       return id;
     } catch (error) {
       return thunkAPI.rejectWithValue(
-        error.response?.data || "Eroare la stergerea utilizatorului",
+        error.response?.data || "Eroare la ștergerea utilizatorului.",
       );
     }
   },
