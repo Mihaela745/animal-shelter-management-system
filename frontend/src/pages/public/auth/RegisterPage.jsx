@@ -9,7 +9,10 @@ import {
   Typography,
 } from "@mui/material";
 import { registerUser } from "../../../features/auth/authSlice";
-import { isValidFullName, normalizeFullName } from "../../../utils/nameValidation";
+import {
+  isValidFullName,
+  normalizeFullName,
+} from "../../../utils/nameValidation";
 
 const RED = "#a91111";
 const DARK = "#0f0f0f";
@@ -148,11 +151,11 @@ export default function RegisterPage() {
               justifyContent: "center",
             }}
           >
-            <Typography sx={{ fontSize: "1rem", color: "white", fontWeight: 800 }}>
-              P
-            </Typography>
+            <Typography sx={{ fontSize: "1.1rem" }}>🐾</Typography>
           </Box>
-          <Typography sx={{ color: "white", fontWeight: 700, fontSize: "1rem" }}>
+          <Typography
+            sx={{ color: "white", fontWeight: 700, fontSize: "1rem" }}
+          >
             Paws & Hearts
           </Typography>
         </Box>
@@ -184,7 +187,8 @@ export default function RegisterPage() {
               maxWidth: 260,
             }}
           >
-            Creează-ți un cont și începe să ajuți animalele care au nevoie de o casă.
+            Creează-ți un cont și începe să ajuți animalele care au nevoie de o
+            casă.
           </Typography>
         </Box>
 
@@ -232,9 +236,7 @@ export default function RegisterPage() {
                 justifyContent: "center",
               }}
             >
-              <Typography sx={{ fontSize: "0.9rem", color: "white", fontWeight: 800 }}>
-                P
-              </Typography>
+              <Typography sx={{ fontSize: "1rem" }}>🐾</Typography>
             </Box>
             <Typography sx={{ fontWeight: 700, fontSize: "0.95rem" }}>
               Paws & Hearts

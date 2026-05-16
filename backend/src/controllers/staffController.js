@@ -34,7 +34,7 @@ export const controller = {
         await t.rollback();
         return res
           .status(409)
-          .send("This mail is already associated with another account!");
+          .send("Acest email are deja un cont asociat!");
       }
 
       const tempPassword = crypto.randomBytes(4).toString("hex");
@@ -77,11 +77,12 @@ export const controller = {
         });
       } catch (mailError) {
         console.error(
-          "Email failed to send, but staff was created:",
+          "Eroarea în transmiterea emailului, dar personalul a fost creat!",
           mailError,
         );
         return res.status(201).json({
-          message: "Staff created, but welcome email could not be sent.",
+          message:
+            "Eroarea în transmiterea emailului, dar personalul a fost creat!",
           staff: newStaff,
           temporaryPassword: tempPassword,
         });

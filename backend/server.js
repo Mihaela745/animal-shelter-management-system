@@ -5,7 +5,7 @@ const app = express();
 const port = 3000;
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://192.168.100.142:5173"],
+    origin: "http://localhost:5173",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
   }),

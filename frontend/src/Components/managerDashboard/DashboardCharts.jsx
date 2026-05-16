@@ -36,6 +36,19 @@ const months = [
   "Dec",
 ];
 
+function parseDateValue(dateValue) {
+  if (!dateValue) {
+    return null;
+  }
+
+  if (typeof dateValue === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+    return new Date(`${dateValue}T00:00:00`);
+  }
+
+  const parsed = new Date(dateValue);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -115,14 +128,18 @@ export default function DashboardCharts({
 }) {
   const monthlyData = months.map((m, i) => ({
     month: m,
-    adoptions: adoptions.filter(
-      (a) => new Date(a.adoption_date).getMonth() === i,
-    ).length,
-    requests: requests.filter(
-      (r) => new Date(r.createdAt || r.request_date).getMonth() === i,
-    ).length,
-    appointments: appointments.filter((a) => new Date(a.date).getMonth() === i)
-      .length,
+    adoptions: adoptions.filter((a) => {
+      const date = parseDateValue(a.adoption_date);
+      return date && date.getMonth() === i;
+    }).length,
+    requests: requests.filter((r) => {
+      const date = parseDateValue(r.createdAt || r.created_at || r.request_date);
+      return date && date.getMonth() === i;
+    }).length,
+    appointments: appointments.filter((a) => {
+      const date = parseDateValue(a.date);
+      return date && date.getMonth() === i;
+    }).length,
   }));
 
   const speciesCount = {};

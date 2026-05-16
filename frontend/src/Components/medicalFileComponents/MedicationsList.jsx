@@ -8,8 +8,27 @@ import ScaleOutlinedIcon from "@mui/icons-material/ScaleOutlined";
 const RED = "#a91111";
 const RED_LIGHT = "#fff0f0";
 
+function parseDateValue(dateValue) {
+  if (!dateValue) {
+    return null;
+  }
+
+  if (typeof dateValue === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+    return new Date(`${dateValue}T00:00:00`);
+  }
+
+  const parsed = new Date(dateValue);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function formatDate(dateValue) {
+  const parsed = parseDateValue(dateValue);
+  return parsed ? parsed.toLocaleDateString("ro-RO") : "-";
+}
+
 function MedCard({ med }) {
-  const isActive = !med.end_date || new Date(med.end_date) >= new Date();
+  const endDate = parseDateValue(med.end_date);
+  const isActive = !endDate || endDate >= new Date();
 
   return (
     <Box
@@ -138,9 +157,8 @@ function MedCard({ med }) {
             <Typography
               sx={{ fontSize: "0.75rem", color: "#888", fontWeight: 600 }}
             >
-              {new Date(med.start_date).toLocaleDateString("ro-RO")}
-              {med.end_date &&
-                ` → ${new Date(med.end_date).toLocaleDateString("ro-RO")}`}
+              {formatDate(med.start_date)}
+              {med.end_date && ` → ${formatDate(med.end_date)}`}
             </Typography>
           </Box>
 
@@ -162,9 +180,11 @@ export default function MedicationsList() {
   const { medications, loading } = useSelector((state) => state.medications);
   const medsArray = Array.isArray(medications) ? medications : [];
 
-  const sorted = [...medsArray].sort(
-    (a, b) => new Date(b.start_date) - new Date(a.start_date),
-  );
+  const sorted = [...medsArray].sort((a, b) => {
+    const firstDate = parseDateValue(a.start_date);
+    const secondDate = parseDateValue(b.start_date);
+    return (secondDate?.getTime() || 0) - (firstDate?.getTime() || 0);
+  });
 
   return (
     <Box>

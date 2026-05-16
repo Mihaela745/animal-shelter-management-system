@@ -25,6 +25,7 @@ import {
   fetchResponsiblesByBoxId,
 } from "../../../features/responsibleBoxes/responsibleBoxesSlice";
 import { fetchMyStaffProfile } from "../../../features/staff/staffSlice";
+import { formatGender, formatSpecies } from "../../../utils/labels";
 
 const RED = "#a91111";
 
@@ -366,11 +367,11 @@ export default function DashboardPage() {
             fontSize: { xs: "1.2rem", md: "1.5rem" },
           }}
         >
-          Dashboard caretaker
+          Panou îngrijitor
         </Typography>
         <Typography sx={{ opacity: 0.86, mt: 0.6, fontSize: "0.9rem" }}>
-          Urmareste rapid boxele tale, animalele aflate in grija ta si
-          programarile planificate pentru astazi si luna curenta.
+          Urmărește rapid boxele tale, animalele aflate în grija ta și
+          programările planificate pentru astăzi și luna curentă.
         </Typography>
       </Box>
 
@@ -378,7 +379,7 @@ export default function DashboardPage() {
         <Alert severity="error" sx={{ mb: 3, borderRadius: "14px" }}>
           {typeof error === "string"
             ? error
-            : "Nu am putut incarca datele pentru panou."}
+            : "Nu am putut încărca datele pentru panou."}
         </Alert>
       ) : null}
 
@@ -402,28 +403,28 @@ export default function DashboardPage() {
             <StatCard
               title="Boxe atribuite"
               value={staffBoxes.length}
-              subtitle="zone aflate in grija ta"
+              subtitle="zone aflate în grija ta"
               color="#a91111"
               icon={<Inventory2OutlinedIcon />}
             />
             <StatCard
-              title="Animale in boxe"
+              title="Animale în boxe"
               value={animalsInMyBoxes.length}
-              subtitle={`ocupare totala ${occupancyRate}`}
+              subtitle={`ocupare totală ${occupancyRate}`}
               color="#1565c0"
               icon={<PetsOutlinedIcon />}
             />
             <StatCard
-              title="Programari azi"
+              title="Programări azi"
               value={todayAppointments.length}
-              subtitle={`${scheduledTodayCount} inca programate`}
+              subtitle={`${scheduledTodayCount} încă programate`}
               color="#2e7d32"
               icon={<EventAvailableOutlinedIcon />}
             />
             <StatCard
-              title="Programari luna"
+              title="Programări lună"
               value={thisMonthAppointments.length}
-              subtitle="toate programarile din luna curenta"
+              subtitle="toate programările din luna curentă"
               color="#ef6c00"
               icon={<CalendarMonthOutlinedIcon />}
             />
@@ -438,8 +439,8 @@ export default function DashboardPage() {
             }}
           >
             <SectionCard
-              title="Programarile de azi"
-              subtitle="ordinea zilei pentru activitatea curenta"
+              title="Programările de azi"
+              subtitle="ordinea zilei pentru activitatea curentă"
               action={
                 <Button
                   size="small"
@@ -457,7 +458,7 @@ export default function DashboardPage() {
             >
               {todayAppointments.length === 0 ? (
                 <Typography sx={{ fontSize: "0.86rem", color: "#999" }}>
-                  Nu ai programari setate pentru azi.
+                  Nu ai programări setate pentru azi.
                 </Typography>
               ) : (
                 <Stack spacing={1.2}>
@@ -528,8 +529,8 @@ export default function DashboardPage() {
             </SectionCard>
 
             <SectionCard
-              title="Boxe cu incarcare mai mare"
-              subtitle="utile pentru prioritizarea activitatii"
+              title="Boxe cu încărcare mai mare"
+              subtitle="utile pentru prioritizarea activității"
               action={
                 <Button
                   size="small"
@@ -600,7 +601,7 @@ export default function DashboardPage() {
                                 mt: 0.5,
                               }}
                             >
-                              {responsibles.length} responsabili asignati
+                              {responsibles.length} responsabili asignați
                             </Typography>
                           </Box>
 
@@ -631,12 +632,12 @@ export default function DashboardPage() {
           >
             <SectionCard
               title="Animale din boxele tale"
-              subtitle="primele animale gasite in zonele atribuite"
+              subtitle="primele animale găsite în zonele atribuite"
             >
               {recentAnimals.length === 0 ? (
                 <Typography sx={{ fontSize: "0.86rem", color: "#999" }}>
-                  Nu exista animale in boxele tale sau datele nu sunt
-                  disponibile inca.
+                  Nu există animale în boxele tale sau datele nu sunt
+                  disponibile încă.
                 </Typography>
               ) : (
                 <Stack spacing={1.2}>
@@ -667,8 +668,8 @@ export default function DashboardPage() {
                           <Typography
                             sx={{ fontSize: "0.78rem", color: "#666", mt: 0.4 }}
                           >
-                            {animal.Species?.name || "-"} •{" "}
-                            {animal.gender || "-"} • {animal.age ?? "-"} ani
+                            {formatSpecies(animal.Species?.name) || "-"} •{" "}
+                            {formatGender(animal.gender) || "-"} • {animal.age ?? "-"} ani
                           </Typography>
                           <Typography
                             sx={{ fontSize: "0.76rem", color: "#999", mt: 0.5 }}
@@ -682,9 +683,7 @@ export default function DashboardPage() {
 
                         <Button
                           size="small"
-                          onClick={() =>
-                            navigate(`/staff/animals/${animal.id}`)
-                          }
+                          onClick={() => navigate(`/staff/animals/${animal.id}`)}
                           sx={{
                             textTransform: "none",
                             color: RED,
@@ -703,7 +702,7 @@ export default function DashboardPage() {
 
             <SectionCard
               title="Rezumat rapid"
-              subtitle="ce merita urmarit in tura curenta"
+              subtitle="ce merită urmărit în tura curentă"
             >
               <Stack spacing={1.2}>
                 <Box
@@ -720,8 +719,8 @@ export default function DashboardPage() {
                   <Typography
                     sx={{ fontSize: "0.8rem", color: "#666", mt: 0.5 }}
                   >
-                    Ai {todayAppointments.length} programari astazi si{" "}
-                    {scheduledTodayCount} sunt inca planificate.
+                    Ai {todayAppointments.length} programări astăzi și{" "}
+                    {scheduledTodayCount} sunt încă planificate.
                   </Typography>
                 </Box>
 
@@ -734,14 +733,13 @@ export default function DashboardPage() {
                   }}
                 >
                   <Typography sx={{ fontWeight: 800, fontSize: "0.9rem" }}>
-                    Boxe in grija ta
+                    Boxe în grija ta
                   </Typography>
                   <Typography
                     sx={{ fontSize: "0.8rem", color: "#666", mt: 0.5 }}
                   >
-                    Ai in responsabilitate {staffBoxes.length} boxe cu o ocupare
-                    cumulata de {totalOccupancy} din {totalCapacity || 0}{" "}
-                    locuri.
+                    Ai în responsabilitate {staffBoxes.length} boxe cu o ocupare
+                    cumulată de {totalOccupancy} din {totalCapacity || 0} locuri.
                   </Typography>
                 </Box>
 
@@ -765,12 +763,12 @@ export default function DashboardPage() {
                       sx={{ fontSize: 18, color: "#ef6c00" }}
                     />
                     <Typography sx={{ fontWeight: 800, fontSize: "0.9rem" }}>
-                      Luna curenta
+                      Luna curentă
                     </Typography>
                   </Box>
                   <Typography sx={{ fontSize: "0.8rem", color: "#666" }}>
-                    Sunt {thisMonthAppointments.length} programari alocate tie
-                    in luna aceasta.
+                    Sunt {thisMonthAppointments.length} programări alocate ție
+                    în luna aceasta.
                   </Typography>
                 </Box>
               </Stack>

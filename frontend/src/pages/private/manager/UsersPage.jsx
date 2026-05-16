@@ -169,7 +169,7 @@ function UserCard({ user, onDelete }) {
             <Typography
               sx={{ fontSize: "0.68rem", fontWeight: 700, color: RED }}
             >
-              Utilizator platforma
+              Utilizator platformă
             </Typography>
           </Box>
         </Box>
@@ -340,7 +340,7 @@ export default function UsersPage() {
             </Typography>
           </Box>
           <Typography sx={{ fontSize: "0.85rem", color: "#aaa", ml: "52px" }}>
-            {users.length} utilizatori in platforma
+            {users.length} utilizatori în platformă
           </Typography>
         </Box>
       </Box>
@@ -354,7 +354,7 @@ export default function UsersPage() {
         }}
       >
         <TextField
-          placeholder="Cauta dupa nume sau email..."
+          placeholder="Caută după nume sau email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           sx={fieldSx}
@@ -406,7 +406,7 @@ export default function UsersPage() {
             Niciun utilizator gasit
           </Typography>
           <Typography sx={{ fontSize: "0.82rem", color: "#ccc", mt: 0.5 }}>
-            Incearca sa schimbi filtrele sau termenul de cautare
+            Incearcă să schimbi filtrele sau termenul de căutare
           </Typography>
         </Box>
       ) : (
@@ -472,14 +472,14 @@ export default function UsersPage() {
               <DeleteOutlineIcon sx={{ color: "#d32f2f", fontSize: 18 }} />
             </Box>
             <Typography fontWeight={800} fontSize="1rem">
-              Confirma stergerea
+              Confirmă ștergerea
             </Typography>
           </Box>
         </DialogTitle>
         <DialogContent sx={{ pt: "1rem !important" }}>
           <Typography fontSize="0.9rem" color="#555">
-            Esti sigur ca vrei sa stergi pe <strong>{selectedUser?.username}</strong>
-            ? Aceasta actiune nu poate fi anulata.
+            Ești sigur că vrei să ștergi pe <strong>{selectedUser?.username}</strong>
+            ? Această acțiune nu poate fi anulata.
           </Typography>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>

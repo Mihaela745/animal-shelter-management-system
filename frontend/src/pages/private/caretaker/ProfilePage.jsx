@@ -369,7 +369,7 @@ export default function ManagerProfilePage() {
                       "&:hover": { backgroundColor: "#8a0d0d" },
                     }}
                   >
-                    {saveLoading ? "Se salveaza..." : "Salveaza modificarile"}
+                    {saveLoading ? "Se salveaza..." : "Salvează modificarile"}
                   </Button>
 
                   <Button

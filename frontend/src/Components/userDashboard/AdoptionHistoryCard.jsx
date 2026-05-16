@@ -28,7 +28,7 @@ export default function AdoptionHistoryCard({ adoptions = [] }) {
         </Box>
         <Box>
           <Typography fontWeight={700} fontSize="1rem" color="#1a1a1a">
-            Istoricul adoptiilor
+            Istoricul adopțiilor
           </Typography>
           <Typography fontSize="0.75rem" color="#999">
             {adoptions.length} animale adoptate

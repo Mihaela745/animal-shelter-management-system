@@ -64,10 +64,26 @@ const fieldSx = {
   "& .MuiInputBase-input": { py: "10px", px: "14px" },
 };
 
+function parseDateValue(dateValue) {
+  if (!dateValue) {
+    return null;
+  }
+
+  if (typeof dateValue === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+    return new Date(`${dateValue}T00:00:00`);
+  }
+
+  const parsed = new Date(dateValue);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
 function RequestCard({ request, onAction }) {
   const animal = request.Animal;
   const user = request.User;
   const cfg = statusConfig[request.status] || statusConfig.Pending;
+  const createdDate = parseDateValue(
+    request.createdAt || request.created_at || request.request_date,
+  );
 
   return (
     <Box
@@ -197,11 +213,13 @@ function RequestCard({ request, onAction }) {
         )}
 
         <Typography sx={{ fontSize: "0.72rem", color: "#bbb", mb: 1.5 }}>
-          {new Date(request.createdAt).toLocaleDateString("ro-RO", {
-            day: "2-digit",
-            month: "long",
-            year: "numeric",
-          })}
+          {createdDate
+            ? createdDate.toLocaleDateString("ro-RO", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })
+            : "-"}
         </Typography>
 
         {request.status === "Pending" && (

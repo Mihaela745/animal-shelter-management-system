@@ -83,7 +83,7 @@ export default function AddMedicationPage() {
       } catch (loadError) {
         setError(
           loadError.response?.data ||
-            "Nu am putut incarca boxele si animalele.",
+            "Nu am putut încărca boxele și animalele.",
         );
       } finally {
         setSelectionLoading(false);
@@ -125,7 +125,7 @@ export default function AddMedicationPage() {
       );
     } catch (loadError) {
       setError(
-        loadError.response?.data || "Nu am putut incarca animalele din boxa.",
+        loadError.response?.data || "Nu am putut încărca animalele din boxă.",
       );
       setBoxAnimals([]);
     } finally {
@@ -162,7 +162,7 @@ export default function AddMedicationPage() {
 
     if (targetMedicalFileIds.length === 0) {
       setSubmitting(false);
-      setError("Alege o boxa sau cel putin un animal.");
+      setError("Alege o boxă sau cel puțin un animal.");
       return;
     }
 
@@ -187,13 +187,13 @@ export default function AddMedicationPage() {
       setError(
         typeof failedResult.payload === "string"
           ? failedResult.payload
-          : "Nu am putut salva medicatia pentru toate animalele selectate.",
+          : "Nu am putut salva medicația pentru toate animalele selectate.",
       );
       return;
     }
 
     setSuccessMessage(
-      `Medicamentatia a fost adaugata pentru ${targetMedicalFileIds.length} animale.`,
+      `Medicația a fost adăugată pentru ${targetMedicalFileIds.length} animale.`,
     );
     resetForm();
   };
@@ -232,10 +232,10 @@ export default function AddMedicationPage() {
               letterSpacing: "-0.5px",
             }}
           >
-            Adauga medicament
+            Adaugă medicament
           </Typography>
           <Typography sx={{ fontSize: "0.82rem", color: "#999" }}>
-            Prescriere individuala sau simultana pe boxa / selectie manuala
+            Prescriere individuală sau simultană pe boxă / selecție manuală
           </Typography>
         </Box>
       </Box>
@@ -279,7 +279,7 @@ export default function AddMedicationPage() {
               <FormControlLabel
                 value="box"
                 control={<Radio sx={{ color: RED, "&.Mui-checked": { color: RED } }} />}
-                label="Toate animalele dintr-o boxa"
+                label="Toate animalele dintr-o boxă"
               />
               <FormControlLabel
                 value="custom"
@@ -292,7 +292,7 @@ export default function AddMedicationPage() {
           {targetMode === "box" ? (
             <TextField
               select
-              label="Boxa"
+              label="Boxă"
               value={selectedBoxId}
               onChange={handleBoxChange}
               fullWidth
@@ -303,7 +303,7 @@ export default function AddMedicationPage() {
               helperText={
                 selectedBoxId && !selectionLoading
                   ? `${boxAnimals.length} animale selectate automat`
-                  : "Alege boxa pe care vrei sa prescrii"
+                  : "Alege boxa pe care vrei să prescrii"
               }
             >
               {boxes.map((box) => (
@@ -331,7 +331,7 @@ export default function AddMedicationPage() {
                     .map((animal) => animal.name)
                     .join(", "),
               }}
-              helperText="Selecteaza unul sau mai multe animale"
+              helperText="Selectează unul sau mai multe animale"
             >
               {allAnimals.map((animal) => (
                 <MenuItem key={animal.id} value={String(animal.id)}>
@@ -378,7 +378,7 @@ export default function AddMedicationPage() {
           />
 
           <TextField
-            label="Frecventa"
+            label="Frecvență"
             name="frequency"
             value={formData.frequency}
             onChange={handleChange}
@@ -394,7 +394,7 @@ export default function AddMedicationPage() {
             }}
           >
             <TextField
-              label="Data inceput"
+              label="Data început"
               name="start_date"
               type="date"
               value={formData.start_date}
@@ -405,7 +405,7 @@ export default function AddMedicationPage() {
             />
 
             <TextField
-              label="Data sfarsit"
+              label="Data sfârșit"
               name="end_date"
               type="date"
               value={formData.end_date}
@@ -435,7 +435,7 @@ export default function AddMedicationPage() {
               </Box>
             ) : selectedAnimalsPreview.length === 0 ? (
               <Typography sx={{ fontSize: "0.82rem", color: "#999" }}>
-                Nu exista animale selectate inca.
+                Nu există animale selectate încă.
               </Typography>
             ) : (
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
@@ -494,7 +494,7 @@ export default function AddMedicationPage() {
             {submitting ? (
               <CircularProgress size={18} sx={{ color: "white" }} />
             ) : (
-              "Adauga medicatia"
+              "Adaugă medicația"
             )}
           </Button>
         </Stack>

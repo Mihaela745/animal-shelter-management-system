@@ -8,19 +8,23 @@ import { seedBreddMetadata } from "./breedMetadataController.js";
 export const controller = {
   resetDb: async (req, res) => {
     try {
-      await sequelize.query("SET FOREIGN_KEY_CHECKS=0", { raw: true });
+      await sequelize.query("SET FOREIGN_KEY_CHECKS=0");
+
       await sequelize.sync({ force: true });
+
       await seedPositions();
       await seedSpecies();
       await seedBoxes();
       await seedRoom();
       await seedManager();
       await seedBreddMetadata();
-      await sequelize.query("SET FOREIGN_KEY_CHECKS=1", { raw: true });
-      res.status(200).send({ message: "Data base has been reseted!" });
+
+      res.status(200).send({ message: "Database has been reset!" });
     } catch (err) {
       console.log(err);
-      res.status(500).send({ message: `Error on reseting:${err}` });
+      res.status(500).send({ message: `Error on resetting: ${err.message}` });
+    } finally {
+      await sequelize.query("SET FOREIGN_KEY_CHECKS=1");
     }
   },
 };

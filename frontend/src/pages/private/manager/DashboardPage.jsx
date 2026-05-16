@@ -163,11 +163,11 @@ export default function DashboardPage() {
 
   const stats = [
     { title: "Total animale", value: totalAnimals, color: "#a91111" },
-    { title: "Total intrari", value: totalEntries, color: "#5d4037" },
+    { title: "Total intrări", value: totalEntries, color: "#5d4037" },
     { title: "Disponibile", value: availableAnimals, color: "#2e7d32" },
     { title: "Adoptate", value: adoptedAnimals, color: "#1565c0" },
     {
-      title: "Rata adoptie",
+      title: "Rata de adopție",
       value: formatPercent(adoptionRate),
       color: "#00897b",
     },
@@ -176,10 +176,10 @@ export default function DashboardPage() {
       value: `${averageLos.toFixed(1)} zile`,
       color: "#6a1b9a",
     },
-    { title: "Cereri in asteptare", value: pendingRequests, color: "#e65100" },
-    { title: "Programari azi", value: appointmentsToday, color: "#a91111" },
+    { title: "Cereri în așteptare", value: pendingRequests, color: "#e65100" },
+    { title: "Programări azi", value: appointmentsToday, color: "#a91111" },
     { title: "Membri personal", value: staff.length, color: "#3949ab" },
-    { title: "Capacitate adapost", value: totalCapacity, color: "#00695c" },
+    { title: "Capacitate adăpost", value: totalCapacity, color: "#00695c" },
     {
       title: "Ocupare %",
       value: isOverCapacity
@@ -223,11 +223,11 @@ export default function DashboardPage() {
           Panou manager
         </Typography>
         <Typography variant="body2" sx={{ opacity: 0.8, mt: 0.5 }}>
-          Statistici si activitate in timp real.
+          Statistici și activitate în timp real.
         </Typography>
         <Typography variant="body2" sx={{ opacity: 0.9, mt: 1.25 }}>
-          Indicatori integrati: total intrari, rata de adoptie si durata medie a
-          sederii pentru animalele rezolvate prin adoptie.
+          Indicatori integrați: total intrări, rata de adopție și durata medie a
+          șederii pentru animalele rezolvate prin adopție.
         </Typography>
       </Box>
 
@@ -254,8 +254,8 @@ export default function DashboardPage() {
         >
           <WarningAmberIcon sx={{ color: "#e65100" }} />
           <Typography fontSize="0.88rem" fontWeight={600} color="#bf360c">
-            Adapostul este supraincarcat! Capacitate totala: {totalCapacity},
-            ocupate: {totalOccupied}. Verifica distributia animalelor pe boxe.
+            Adăpostul este supraîncărcat! Capacitate totala: {totalCapacity},
+            ocupate: {totalOccupied}. Verifică distribuția animalelor pe boxe.
           </Typography>
         </Box>
       )}

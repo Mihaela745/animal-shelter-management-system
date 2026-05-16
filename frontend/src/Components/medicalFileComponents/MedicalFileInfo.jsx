@@ -5,6 +5,24 @@ import PetsOutlinedIcon from "@mui/icons-material/PetsOutlined";
 import NotesOutlinedIcon from "@mui/icons-material/NotesOutlined";
 import { formatAnimalStatus } from "../../utils/labels";
 
+function parseDateValue(dateValue) {
+  if (!dateValue) {
+    return null;
+  }
+
+  if (typeof dateValue === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+    return new Date(`${dateValue}T00:00:00`);
+  }
+
+  const parsed = new Date(dateValue);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function formatDate(dateValue) {
+  const parsed = parseDateValue(dateValue);
+  return parsed ? parsed.toLocaleDateString("ro-RO") : "N/A";
+}
+
 function InfoCard({ icon, label, value }) {
   return (
     <Box
@@ -100,11 +118,7 @@ export default function MedicalFileInfo({ file }) {
         <InfoCard
           icon={<CalendarTodayOutlinedIcon sx={{ fontSize: "1rem" }} />}
           label="Ultimul control"
-          value={
-            file.last_checkup_date
-              ? new Date(file.last_checkup_date).toLocaleDateString("ro-RO")
-              : "N/A"
-          }
+          value={formatDate(file.last_checkup_date)}
         />
       </Box>
       {file.general_observations && (

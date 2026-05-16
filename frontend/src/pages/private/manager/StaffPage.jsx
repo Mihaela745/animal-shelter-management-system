@@ -447,11 +447,11 @@ export default function StaffPage() {
                 letterSpacing: "-0.5px",
               }}
             >
-              Echipa
+              Echipă
             </Typography>
           </Box>
           <Typography sx={{ fontSize: "0.85rem", color: "#aaa", ml: "52px" }}>
-            {staff.length} membri in echipa
+            {staff.length} membri în echipă
           </Typography>
         </Box>
 
@@ -478,7 +478,7 @@ export default function StaffPage() {
             },
           }}
         >
-          Adauga membru
+          Adaugă membru
         </Button>
       </Box>
 
@@ -491,7 +491,7 @@ export default function StaffPage() {
         }}
       >
         <TextField
-          placeholder="Cauta dupa nume..."
+          placeholder="Caută după nume..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           sx={fieldSx}
@@ -517,7 +517,7 @@ export default function StaffPage() {
             ),
           }}
         >
-          <MenuItem value="all">Toate pozitiile</MenuItem>
+          <MenuItem value="all">Toate pozițiile</MenuItem>
           {positions.map((position) => (
             <MenuItem key={position.id} value={String(position.id)}>
               {position.title}
@@ -540,11 +540,13 @@ export default function StaffPage() {
             border: "1.5px dashed #e0e0e0",
           }}
         >
-          <Typography sx={{ fontSize: "0.95rem", fontWeight: 700, color: "#bbb" }}>
-            Niciun membru gasit
+          <Typography
+            sx={{ fontSize: "0.95rem", fontWeight: 700, color: "#bbb" }}
+          >
+            Niciun membru găsit
           </Typography>
           <Typography sx={{ fontSize: "0.82rem", color: "#ccc", mt: 0.5 }}>
-            Incearca sa schimbi filtrele sau adauga un membru nou
+            Încearcă să schimbi filtrele sau adaugă un membru nou
           </Typography>
         </Box>
       ) : (
@@ -876,7 +878,7 @@ export default function StaffPage() {
             {editLoading ? (
               <CircularProgress size={18} sx={{ color: "white" }} />
             ) : (
-              "Salveaza"
+              "Salvează"
             )}
           </Button>
         </DialogActions>
@@ -917,8 +919,9 @@ export default function StaffPage() {
         </DialogTitle>
         <DialogContent sx={{ pt: "1rem !important" }}>
           <Typography fontSize="0.9rem" color="#555">
-            Esti sigur ca vrei sa stergi pe <strong>{selectedMember?.name}</strong>
-            ? Aceasta actiune nu poate fi anulata.
+            Esti sigur ca vrei sa stergi pe{" "}
+            <strong>{selectedMember?.name}</strong>? Aceasta actiune nu poate fi
+            anulata.
           </Typography>
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>

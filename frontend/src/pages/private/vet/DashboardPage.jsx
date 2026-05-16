@@ -113,7 +113,9 @@ function SectionCard({ title, subtitle, action, children }) {
           }}
         >
           <Box>
-            <Typography sx={{ fontWeight: 800, fontSize: "1rem", color: "#1a1a1a" }}>
+            <Typography
+              sx={{ fontWeight: 800, fontSize: "1rem", color: "#1a1a1a" }}
+            >
               {title}
             </Typography>
             {subtitle ? (
@@ -164,8 +166,12 @@ export default function DashboardPage() {
           return new Date(file.last_checkup_date) < oneMonthAgo;
         })
         .sort((a, b) => {
-          const aTime = a.last_checkup_date ? new Date(a.last_checkup_date).getTime() : 0;
-          const bTime = b.last_checkup_date ? new Date(b.last_checkup_date).getTime() : 0;
+          const aTime = a.last_checkup_date
+            ? new Date(a.last_checkup_date).getTime()
+            : 0;
+          const bTime = b.last_checkup_date
+            ? new Date(b.last_checkup_date).getTime()
+            : 0;
           return aTime - bTime;
         }),
     [files, oneMonthAgo],
@@ -260,7 +266,7 @@ export default function DashboardPage() {
               display: "grid",
               gridTemplateColumns: {
                 xs: "1fr 1fr",
-                md: "repeat(4, 1fr)",
+                md: "repeat(3, minmax(0, 1fr))",
               },
               gap: { xs: 1.5, md: 2.5 },
               mb: 4,
@@ -425,7 +431,7 @@ export default function DashboardPage() {
                         {medication.frequency}
                       </Typography>
                       <Typography sx={{ fontSize: "0.76rem", color: "#999", mt: 0.5 }}>
-                        Inceput: {new Date(medication.start_date).toLocaleDateString("ro-RO")}
+                        Început: {new Date(medication.start_date).toLocaleDateString("ro-RO")}
                       </Typography>
                     </Box>
                   ))}

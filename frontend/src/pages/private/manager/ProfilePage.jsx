@@ -302,22 +302,38 @@ export default function ManagerProfilePage() {
               ) : (
                 <>
                   <InfoRow
-                    icon={<PersonOutlineIcon sx={{ color: "#a91111", fontSize: 18 }} />}
+                    icon={
+                      <PersonOutlineIcon
+                        sx={{ color: "#a91111", fontSize: 18 }}
+                      />
+                    }
                     label="Nume"
                     value={myProfile?.name || user?.username}
                   />
                   <InfoRow
-                    icon={<EmailOutlinedIcon sx={{ color: "#a91111", fontSize: 18 }} />}
+                    icon={
+                      <EmailOutlinedIcon
+                        sx={{ color: "#a91111", fontSize: 18 }}
+                      />
+                    }
                     label="Email"
                     value={user?.email}
                   />
                   <InfoRow
-                    icon={<PhoneOutlinedIcon sx={{ color: "#a91111", fontSize: 18 }} />}
+                    icon={
+                      <PhoneOutlinedIcon
+                        sx={{ color: "#a91111", fontSize: 18 }}
+                      />
+                    }
                     label="Telefon"
                     value={myProfile?.phonenumber || user?.phonenumber}
                   />
                   <InfoRow
-                    icon={<WorkOutlineIcon sx={{ color: "#a91111", fontSize: 18 }} />}
+                    icon={
+                      <WorkOutlineIcon
+                        sx={{ color: "#a91111", fontSize: 18 }}
+                      />
+                    }
                     label="Pozitie"
                     value={myProfile?.Position?.title || formatRole(user?.role)}
                   />
@@ -353,7 +369,7 @@ export default function ManagerProfilePage() {
                       "&:hover": { backgroundColor: "#8a0d0d" },
                     }}
                   >
-                    {saveLoading ? "Se salveaza..." : "Salveaza modificarile"}
+                    {saveLoading ? "Se salveaza..." : "Salvează modificarile"}
                   </Button>
 
                   <Button

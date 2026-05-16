@@ -228,8 +228,7 @@ export default function ProfileCard() {
                 mb: 1,
                 fontWeight: 700,
                 fontSize: "0.72rem",
-                backgroundColor:
-                  user.role === "admin" ? "#fff3e0" : "#eff6ff",
+                backgroundColor: user.role === "admin" ? "#fff3e0" : "#eff6ff",
                 color: user.role === "admin" ? "#e65100" : "#1d4ed8",
                 border: "1px solid",
                 borderColor: user.role === "admin" ? "#ffcc80" : "#bfdbfe",
@@ -361,7 +360,7 @@ export default function ProfileCard() {
                     "&:hover": { backgroundColor: RED_DARK },
                   }}
                 >
-                  {loading ? "Se salveaza..." : "Salveaza modificarile"}
+                  {loading ? "Se salveaza..." : "Salvează modificarile"}
                 </Button>
 
                 <Button

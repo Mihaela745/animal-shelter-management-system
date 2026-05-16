@@ -1,4 +1,4 @@
-import { Card, Typography, Box, Button, Chip } from "@mui/material";
+import { Card, Typography, Box, Button } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -24,10 +24,10 @@ export default function AppointmentsCard({ appointments = [] }) {
     >
       <Box
         sx={{
-          display: "grid",
-          gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" },
-          gap: 3,
-          alignItems: "start",
+          display: "flex",
+          alignItems: "center",
+          gap: 1.5,
+          mb: 3,
         }}
       >
         <Box
@@ -39,16 +39,17 @@ export default function AppointmentsCard({ appointments = [] }) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            flexShrink: 0,
           }}
         >
           <CalendarMonthIcon sx={{ color: "#a91111", fontSize: 20 }} />
         </Box>
-        <Box>
+        <Box sx={{ textAlign: "left" }}>
           <Typography fontWeight={700} fontSize="1rem" color="#1a1a1a">
             Programări
           </Typography>
           <Typography fontSize="0.75rem" color="#999">
-            {appointments.length} programari active
+            {appointments.length} programări active
           </Typography>
         </Box>
       </Box>

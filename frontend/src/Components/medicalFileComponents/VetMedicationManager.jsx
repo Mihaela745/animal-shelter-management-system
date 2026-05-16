@@ -63,9 +63,27 @@ const emptyMedication = {
   end_date: "",
 };
 
+function parseDateValue(dateValue) {
+  if (!dateValue) {
+    return null;
+  }
+
+  if (typeof dateValue === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dateValue)) {
+    return new Date(`${dateValue}T00:00:00`);
+  }
+
+  const parsed = new Date(dateValue);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function formatDate(dateValue) {
+  const parsed = parseDateValue(dateValue);
+  return parsed ? parsed.toLocaleDateString("ro-RO") : "-";
+}
+
 function MedicationCard({ medication, onEdit, onDelete }) {
-  const isActive =
-    !medication.end_date || new Date(medication.end_date) >= new Date();
+  const endDate = parseDateValue(medication.end_date);
+  const isActive = !endDate || endDate >= new Date();
 
   return (
     <Box
@@ -114,7 +132,7 @@ function MedicationCard({ medication, onEdit, onDelete }) {
 
           <Box sx={{ display: "flex", gap: 0.8, flexShrink: 0 }}>
             <Chip
-              label={isActive ? "Activ" : "Incheiat"}
+              label={isActive ? "Activ" : "Încheiat"}
               size="small"
               sx={{
                 fontSize: "0.65rem",
@@ -221,10 +239,8 @@ function MedicationCard({ medication, onEdit, onDelete }) {
             <Typography
               sx={{ fontSize: "0.75rem", color: "#888", fontWeight: 600 }}
             >
-              {new Date(medication.start_date).toLocaleDateString("ro-RO")}
-              {medication.end_date
-                ? ` -> ${new Date(medication.end_date).toLocaleDateString("ro-RO")}`
-                : ""}
+              {formatDate(medication.start_date)}
+              {medication.end_date ? ` -> ${formatDate(medication.end_date)}` : ""}
             </Typography>
           </Box>
 
@@ -247,9 +263,11 @@ export default function VetMedicationManager({ medicalFileId }) {
   const { medications, loading, error } = useSelector((state) => state.medications);
   const sortedMedications = useMemo(
     () =>
-      [...(Array.isArray(medications) ? medications : [])].sort(
-        (a, b) => new Date(b.start_date) - new Date(a.start_date),
-      ),
+      [...(Array.isArray(medications) ? medications : [])].sort((a, b) => {
+        const firstDate = parseDateValue(a.start_date);
+        const secondDate = parseDateValue(b.start_date);
+        return (secondDate?.getTime() || 0) - (firstDate?.getTime() || 0);
+      }),
     [medications],
   );
 
@@ -298,7 +316,7 @@ export default function VetMedicationManager({ medicalFileId }) {
       );
     } catch (loadError) {
       setSubmitError(
-        loadError.response?.data || "Nu am putut incarca boxele si animalele.",
+        loadError.response?.data || "Nu am putut încărca boxele și animalele.",
       );
     } finally {
       setSelectionLoading(false);
@@ -340,7 +358,7 @@ export default function VetMedicationManager({ medicalFileId }) {
       );
     } catch (loadError) {
       setSubmitError(
-        loadError.response?.data || "Nu am putut incarca animalele din boxa.",
+        loadError.response?.data || "Nu am putut încărca animalele din boxă.",
       );
       setBoxAnimals([]);
     } finally {
@@ -354,9 +372,7 @@ export default function VetMedicationManager({ medicalFileId }) {
     }
 
     if (targetMode === "box") {
-      return boxAnimals
-        .map((animal) => animal.medical_file_id)
-        .filter(Boolean);
+      return boxAnimals.map((animal) => animal.medical_file_id).filter(Boolean);
     }
 
     if (targetMode === "custom") {
@@ -399,7 +415,7 @@ export default function VetMedicationManager({ medicalFileId }) {
       setSubmitError(
         typeof result.payload === "string"
           ? result.payload
-          : "Nu am putut salva medicatia.",
+          : "Nu am putut salva medicația.",
       );
       return;
     }
@@ -408,7 +424,7 @@ export default function VetMedicationManager({ medicalFileId }) {
 
     if (targetMedicalFileIds.length === 0) {
       setSubmitting(false);
-      setSubmitError("Alege cel putin un animal sau o boxa valida.");
+      setSubmitError("Alege cel puțin un animal sau o boxă validă.");
       return;
     }
 
@@ -439,7 +455,7 @@ export default function VetMedicationManager({ medicalFileId }) {
     setSubmitError(
       typeof failedResult.payload === "string"
         ? failedResult.payload
-        : "Nu am putut salva medicatia pentru toate animalele selectate.",
+        : "Nu am putut salva medicația pentru toate animalele selectate.",
     );
   };
 
@@ -476,12 +492,12 @@ export default function VetMedicationManager({ medicalFileId }) {
         }}
       >
         <Typography sx={{ fontWeight: 800, fontSize: "1rem", color: "#1a1a1a" }}>
-          Medicatie
+          Medicație
         </Typography>
 
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Chip
-            label={`${sortedMedications.length} inregistrari`}
+            label={`${sortedMedications.length} înregistrări`}
             size="small"
             sx={{
               fontSize: "0.7rem",
@@ -503,14 +519,14 @@ export default function VetMedicationManager({ medicalFileId }) {
               "&:hover": { backgroundColor: RED_DARK },
             }}
           >
-            Adauga medicatie
+            Adaugă medicație
           </Button>
         </Box>
       </Box>
 
       {error ? (
         <Alert severity="error" sx={{ mb: 2, borderRadius: "12px" }}>
-          {typeof error === "string" ? error : "Nu am putut incarca medicatia."}
+          {typeof error === "string" ? error : "Nu am putut încărca medicația."}
         </Alert>
       ) : null}
 
@@ -529,7 +545,7 @@ export default function VetMedicationManager({ medicalFileId }) {
           }}
         >
           <Typography sx={{ fontSize: "0.85rem", color: "#bbb", fontWeight: 600 }}>
-            Nu exista medicatii inregistrate
+            Nu există medicații înregistrate
           </Typography>
         </Box>
       ) : (
@@ -560,7 +576,7 @@ export default function VetMedicationManager({ medicalFileId }) {
       >
         <DialogTitle sx={{ pb: 0 }}>
           <Typography fontWeight={800} fontSize="1rem">
-            {editingMedication ? "Editeaza medicatia" : "Adauga medicatie"}
+            {editingMedication ? "Editează medicația" : "Adaugă medicație"}
           </Typography>
         </DialogTitle>
         <DialogContent sx={{ pt: "1.2rem !important" }}>
@@ -588,7 +604,7 @@ export default function VetMedicationManager({ medicalFileId }) {
                   <FormControlLabel
                     value="box"
                     control={<Radio sx={{ color: RED, "&.Mui-checked": { color: RED } }} />}
-                    label="Toate animalele dintr-o boxa"
+                    label="Toate animalele dintr-o boxă"
                   />
                   <FormControlLabel
                     value="custom"
@@ -602,15 +618,15 @@ export default function VetMedicationManager({ medicalFileId }) {
             {!editingMedication && targetMode === "box" ? (
               <TextField
                 select
-                label="Boxa"
+                label="Boxă"
                 value={selectedBoxId}
                 onChange={handleBoxChange}
                 fullWidth
                 sx={fieldSx}
                 helperText={
                   selectedBoxId && !selectionLoading
-                    ? `${boxAnimals.length} animale vor primi aceasta medicatie`
-                    : "Alege o boxa pentru prescriere simultana"
+                    ? `${boxAnimals.length} animale vor primi această medicație`
+                    : "Alege o boxă pentru prescriere simultană"
                 }
               >
                 {boxes.map((box) => (
@@ -629,7 +645,7 @@ export default function VetMedicationManager({ medicalFileId }) {
                 onChange={(event) => setSelectedAnimalIds(event.target.value)}
                 fullWidth
                 sx={fieldSx}
-                helperText="Poti selecta mai multe animale simultan"
+                helperText="Poți selecta mai multe animale simultan"
                 SelectProps={{
                   multiple: true,
                   renderValue: (selected) =>
@@ -678,7 +694,7 @@ export default function VetMedicationManager({ medicalFileId }) {
               sx={fieldSx}
             />
             <TextField
-              label="Frecventa"
+              label="Frecvență"
               name="frequency"
               value={formData.frequency}
               onChange={handleChange}
@@ -686,7 +702,7 @@ export default function VetMedicationManager({ medicalFileId }) {
               sx={fieldSx}
             />
             <TextField
-              label="Data inceput"
+              label="Data început"
               name="start_date"
               type="date"
               value={formData.start_date}
@@ -696,7 +712,7 @@ export default function VetMedicationManager({ medicalFileId }) {
               sx={fieldSx}
             />
             <TextField
-              label="Data sfarsit"
+              label="Data sfârșit"
               name="end_date"
               type="date"
               value={formData.end_date}
@@ -721,7 +737,7 @@ export default function VetMedicationManager({ medicalFileId }) {
               borderRadius: "10px",
             }}
           >
-            Anuleaza
+            Anulează
           </Button>
           <Button
             variant="contained"
@@ -750,9 +766,9 @@ export default function VetMedicationManager({ medicalFileId }) {
             {submitting ? (
               <CircularProgress size={18} sx={{ color: "white" }} />
             ) : editingMedication ? (
-              "Salveaza"
+              "Salvează"
             ) : (
-              "Adauga"
+              "Adaugă"
             )}
           </Button>
         </DialogActions>
@@ -773,12 +789,12 @@ export default function VetMedicationManager({ medicalFileId }) {
       >
         <DialogTitle sx={{ pb: 0 }}>
           <Typography fontWeight={800} fontSize="1rem">
-            Confirma stergerea
+            Confirmă ștergerea
           </Typography>
         </DialogTitle>
         <DialogContent sx={{ pt: "1rem !important" }}>
           <Typography fontSize="0.9rem" color="#555">
-            Esti sigur ca vrei sa stergi medicatia{" "}
+            Ești sigur că vrei să ștergi medicația{" "}
             <strong>{deleteState.medication?.name}</strong>?
           </Typography>
         </DialogContent>
@@ -793,7 +809,7 @@ export default function VetMedicationManager({ medicalFileId }) {
               borderRadius: "10px",
             }}
           >
-            Anuleaza
+            Anulează
           </Button>
           <Button
             variant="contained"
@@ -811,7 +827,7 @@ export default function VetMedicationManager({ medicalFileId }) {
             {submitting ? (
               <CircularProgress size={18} sx={{ color: "white" }} />
             ) : (
-              "Sterge"
+              "Șterge"
             )}
           </Button>
         </DialogActions>

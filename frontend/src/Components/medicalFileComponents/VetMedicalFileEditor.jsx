@@ -26,12 +26,7 @@ const fieldSx = {
   "& label.Mui-focused": { color: RED },
 };
 
-export default function VetMedicalFileEditor({
-  file,
-  saving,
-  error,
-  onSave,
-}) {
+export default function VetMedicalFileEditor({ file, saving, error, onSave }) {
   const [formData, setFormData] = useState({
     weight: "",
     general_observations: "",
@@ -68,14 +63,20 @@ export default function VetMedicalFileEditor({
           flexWrap: "wrap",
         }}
       >
-        <Typography sx={{ fontWeight: 800, fontSize: "1rem", color: "#1a1a1a" }}>
-          Actualizare fisa medicala
+        <Typography
+          sx={{ fontWeight: 800, fontSize: "1rem", color: "#1a1a1a" }}
+        >
+          Actualizare fișa medicală
         </Typography>
 
         <Button
           variant="contained"
           startIcon={
-            saving ? <CircularProgress size={16} sx={{ color: "white" }} /> : <SaveOutlinedIcon />
+            saving ? (
+              <CircularProgress size={16} sx={{ color: "white" }} />
+            ) : (
+              <SaveOutlinedIcon />
+            )
           }
           onClick={handleSubmit}
           disabled={saving}
@@ -89,13 +90,15 @@ export default function VetMedicalFileEditor({
             "&.Mui-disabled": { backgroundColor: "#f5f5f5", color: "#ccc" },
           }}
         >
-          Salveaza
+          Salvează
         </Button>
       </Box>
 
       {error ? (
         <Alert severity="error" sx={{ mb: 2, borderRadius: "12px" }}>
-          {typeof error === "string" ? error : "Nu am putut actualiza fisa medicala."}
+          {typeof error === "string"
+            ? error
+            : "Nu am putut actualiza fisa medicala."}
         </Alert>
       ) : null}
 
@@ -112,7 +115,7 @@ export default function VetMedicalFileEditor({
         />
 
         <TextField
-          label="Observatii generale"
+          label="Observații generale"
           name="general_observations"
           value={formData.general_observations}
           onChange={handleChange}

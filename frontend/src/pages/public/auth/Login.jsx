@@ -198,9 +198,9 @@ export default function LoginPage() {
             Fiecare animal
             <br />
             <Box component="span" sx={{ color: RED }}>
-              merita
+              merită
             </Box>{" "}
-            o casa.
+            o casă.
           </Typography>
           <Typography
             sx={{
@@ -210,7 +210,7 @@ export default function LoginPage() {
               maxWidth: 280,
             }}
           >
-            Gestioneaza adoptiile, ingrijirile medicale si echipa adapostului
+            Gestionează adopțiile, îngrijirile medicale și echipa adăpostului
             dintr-un singur loc.
           </Typography>
         </Box>
@@ -295,7 +295,7 @@ export default function LoginPage() {
               fontFamily: "sans-serif",
             }}
           >
-            Intra in contul tau pentru a continua
+            Intră în contul tău pentru a continua
           </Typography>
 
           <Box
@@ -401,7 +401,7 @@ export default function LoginPage() {
                   },
                 }}
               >
-                Inregistreaza-te
+                Inregistrează-te
               </Button>
             </Box>
             <Button
@@ -450,7 +450,7 @@ export default function LoginPage() {
               fontFamily: "sans-serif",
             }}
           >
-            Introdu adresa de email si iti trimitem un link de resetare.
+            Introdu adresa de email și îți trimitem un link de resetare.
           </Typography>
           <TextField
             fullWidth
@@ -473,7 +473,7 @@ export default function LoginPage() {
               <Typography
                 sx={{ fontSize: "0.82rem", color: "#166534", fontWeight: 600 }}
               >
-                Email trimis! Verifica inbox-ul.
+                Email trimis! Verifică inbox-ul.
               </Typography>
             </Box>
           )}
@@ -511,7 +511,7 @@ export default function LoginPage() {
               "&:hover": { backgroundColor: "#f5f5f5" },
             }}
           >
-            Anuleaza
+            Anulează
           </Button>
           <Button
             variant="contained"

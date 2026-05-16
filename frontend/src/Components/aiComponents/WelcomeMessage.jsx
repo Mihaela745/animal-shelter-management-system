@@ -3,7 +3,6 @@ import { Box, Typography } from "@mui/material";
 const WelcomeMessage = () => {
   return (
     <Box sx={{ display: "flex", gap: 1.5, alignItems: "flex-start" }}>
-   
       <Box
         sx={{
           width: 36,
@@ -46,38 +45,6 @@ const WelcomeMessage = () => {
           Spune-mi ce preferințe ai — specie, temperament, vârstă, stilul tău de
           viață — și eu mă ocup de rest!
         </Typography>
-        <Box
-          sx={{
-            mt: 1.5,
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 0.8,
-          }}
-        >
-          {[
-            "🐱 Vreau o pisică liniștită",
-            "🐶 Câine energic pentru alergat",
-            "🏠 Potrivit pentru apartament",
-            "👶 Bun cu copiii",
-          ].map((suggestion) => (
-            <Box
-              key={suggestion}
-              sx={{
-                fontSize: "0.78rem",
-                px: 1.2,
-                py: 0.5,
-                borderRadius: "20px",
-                border: "1px solid #e8d0d0",
-                color: "#a91111",
-                backgroundColor: "#fff5f5",
-                cursor: "default",
-                fontWeight: 500,
-              }}
-            >
-              {suggestion}
-            </Box>
-          ))}
-        </Box>
       </Box>
     </Box>
   );
