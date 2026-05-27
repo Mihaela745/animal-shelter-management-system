@@ -180,7 +180,6 @@ Aplicația folosește MySQL, iar modelele sunt gestionate prin Sequelize. Printr
 - `ResetTokens`
 - `Breed_Metadata`
 
-Descrierea detaliată a tabelelor și a relațiilor este disponibilă în [DATABASE_SCHEMA.md](/C:/Users/Mihaela/Desktop/licenta/animal-shelter-management-system/DATABASE_SCHEMA.md).
 
 ## Cerințe pentru rulare
 
