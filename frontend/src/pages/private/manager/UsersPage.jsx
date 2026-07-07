@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteUser, fetchUsers } from "../../../features/users/usersSlice";
 import { formatRole } from "../../../utils/labels";
+import { useNotification } from "../../../context/NotificationContext";
 
 const RED = "#a91111";
 const RED_LIGHT = "#fff0f0";
@@ -254,12 +255,14 @@ function UserCard({ user, onDelete }) {
 export default function UsersPage() {
   const dispatch = useDispatch();
   const { users, loading } = useSelector((s) => s.users);
+  const { notifySuccess } = useNotification();
 
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("all");
   const [openDelete, setOpenDelete] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
 
   useEffect(() => {
     dispatch(fetchUsers());
@@ -267,6 +270,7 @@ export default function UsersPage() {
 
   const handleDeleteClick = (user) => {
     setSelectedUser(user);
+    setDeleteError(null);
     setOpenDelete(true);
   };
 
@@ -276,10 +280,19 @@ export default function UsersPage() {
     }
 
     setDeleteLoading(true);
-    await dispatch(deleteUser(selectedUser.id));
-    setDeleteLoading(false);
-    setOpenDelete(false);
-    setSelectedUser(null);
+    setDeleteError(null);
+    try {
+      await dispatch(deleteUser(selectedUser.id)).unwrap();
+      setOpenDelete(false);
+      setSelectedUser(null);
+      notifySuccess("Utilizatorul a fost șters cu succes.");
+    } catch (err) {
+      setDeleteError(
+        typeof err === "string" ? err : "Nu s-a putut șterge utilizatorul.",
+      );
+    } finally {
+      setDeleteLoading(false);
+    }
   };
 
   const filtered = users.filter((user) => {
@@ -481,10 +494,18 @@ export default function UsersPage() {
             Ești sigur că vrei să ștergi pe <strong>{selectedUser?.username}</strong>
             ? Această acțiune nu poate fi anulata.
           </Typography>
+          {deleteError && (
+            <Typography fontSize="0.82rem" color="#d32f2f" sx={{ mt: 1.5 }}>
+              {deleteError}
+            </Typography>
+          )}
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
           <Button
-            onClick={() => setOpenDelete(false)}
+            onClick={() => {
+              setOpenDelete(false);
+              setDeleteError(null);
+            }}
             disabled={deleteLoading}
             sx={{
               color: "#999",

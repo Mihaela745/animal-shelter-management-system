@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { resetPassword } from "../../../features/auth/authSlice";
+import { useNotification } from "../../../context/NotificationContext";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -31,6 +32,7 @@ export default function ResetPasswordPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
+  const { notifySuccess, notifyError } = useNotification();
 
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -62,7 +64,10 @@ export default function ResetPasswordPage() {
     const result = await dispatch(resetPassword({ id, token, newPassword }));
     if (result.meta.requestStatus === "fulfilled") {
       setDone(true);
+      notifySuccess("Parola a fost resetată cu succes.");
       setTimeout(() => navigate("/login"), 2000);
+    } else {
+      notifyError(result.payload || "Eroare la resetarea parolei.");
     }
   };
 

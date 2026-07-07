@@ -20,7 +20,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { fetchBoxes } from "../../../features/boxes/boxesSlice";
 import {
   createResponsibleBox,
@@ -29,6 +29,8 @@ import {
 } from "../../../features/responsibleBoxes/responsibleBoxesSlice";
 import { fetchSpecies } from "../../../features/species/speciesSlice";
 import { fetchStaff } from "../../../features/staff/staffSlice";
+import { formatSpecies } from "../../../utils/labels";
+import { useNotification } from "../../../context/NotificationContext";
 
 const RED = "#a91111";
 const RED_LIGHT = "#fff0f0";
@@ -212,6 +214,7 @@ function BoxCard({
 export default function BoxesPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { notifySuccess, notifyError } = useNotification();
   const { boxes, loading: boxesLoading } = useSelector((s) => s.boxes);
   const { responsibleBoxes, loading: responsibilitiesLoading } = useSelector(
     (s) => s.responsibleBoxes,
@@ -219,8 +222,9 @@ export default function BoxesPage() {
   const { species } = useSelector((s) => s.species);
   const { staff } = useSelector((s) => s.staff);
 
-  const [search, setSearch] = useState("");
-  const [filterSpecies, setFilterSpecies] = useState("all");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get("search") || "";
+  const filterSpecies = searchParams.get("species") || "all";
   const [openAssign, setOpenAssign] = useState(false);
   const [selectedBox, setSelectedBox] = useState(null);
   const [selectedResponsible, setSelectedResponsible] = useState("");
@@ -272,7 +276,27 @@ export default function BoxesPage() {
 
   const getSpeciesName = (speciesId) => {
     const matchedSpecies = species.find((item) => item.id === speciesId);
-    return matchedSpecies?.name || "Specie necunoscuta";
+    return matchedSpecies ? formatSpecies(matchedSpecies.name) : "Specie necunoscuta";
+  };
+
+  const handleSearchChange = (value) => {
+    const params = Object.fromEntries(searchParams);
+    if (value) {
+      params.search = value;
+    } else {
+      delete params.search;
+    }
+    setSearchParams(params);
+  };
+
+  const handleSpeciesFilterChange = (value) => {
+    const params = Object.fromEntries(searchParams);
+    if (value && value !== "all") {
+      params.species = value;
+    } else {
+      delete params.species;
+    }
+    setSearchParams(params);
   };
 
   const handleOpenAnimals = (boxItem) => {
@@ -306,21 +330,34 @@ export default function BoxesPage() {
       setOpenAssign(false);
       setSelectedBox(null);
       setSelectedResponsible("");
+      notifySuccess("Responsabilul a fost asignat cu succes.");
       return;
     }
 
-    setError(
+    const message =
       typeof result.payload === "string"
         ? result.payload
-        : "A aparut o eroare la asignare. Incearca din nou.",
-    );
+        : "A aparut o eroare la asignare. Incearca din nou.";
+    setError(message);
+    notifyError(message);
   };
 
   const handleRemoveResponsible = async (responsibleRelation) => {
     setDeleteLoadingId(responsibleRelation.id);
-    await dispatch(deleteResponsibleBox(responsibleRelation.id));
+    const result = await dispatch(deleteResponsibleBox(responsibleRelation.id));
     await dispatch(fetchResponsibleBoxes());
     setDeleteLoadingId(null);
+
+    if (result.meta?.requestStatus === "fulfilled") {
+      notifySuccess("Responsabilul a fost eliminat cu succes.");
+      return;
+    }
+
+    notifyError(
+      typeof result.payload === "string"
+        ? result.payload
+        : "Nu am putut elimina responsabilul.",
+    );
   };
 
   const isLoading = boxesLoading || responsibilitiesLoading;
@@ -390,7 +427,7 @@ export default function BoxesPage() {
         <TextField
           placeholder="Cauta dupa numarul boxei..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => handleSearchChange(e.target.value)}
           sx={fieldSx}
           InputProps={{
             startAdornment: (
@@ -404,7 +441,7 @@ export default function BoxesPage() {
         <TextField
           select
           value={filterSpecies}
-          onChange={(e) => setFilterSpecies(e.target.value)}
+          onChange={(e) => handleSpeciesFilterChange(e.target.value)}
           sx={fieldSx}
           InputProps={{
             startAdornment: (
@@ -417,7 +454,7 @@ export default function BoxesPage() {
           <MenuItem value="all">Toate speciile</MenuItem>
           {species.map((item) => (
             <MenuItem key={item.id} value={String(item.id)}>
-              {item.name}
+              {formatSpecies(item.name)}
             </MenuItem>
           ))}
         </TextField>

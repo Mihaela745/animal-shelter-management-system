@@ -7,6 +7,7 @@ import {
   CardContent,
   Chip,
   CircularProgress,
+  IconButton,
   MenuItem,
   Paper,
   Stack,
@@ -114,12 +115,21 @@ const statusOptions = {
   boxOccupancy: [],
 };
 
+function parseDateValue(value) {
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+
+  return new Date(value);
+}
+
 function formatDate(value) {
   if (!value) {
     return "-";
   }
 
-  const date = new Date(value);
+  const date = parseDateValue(value);
   if (Number.isNaN(date.getTime())) {
     return value;
   }
@@ -162,7 +172,7 @@ function createRows(reportId, data) {
         Vârstă: animal.age ?? "-",
         Gen: formatGender(animal.gender),
         Status: formatAnimalStatus(animal.status),
-        Boxa: animal.Boxes?.box_number || "-",
+        Boxa: animal.Box?.box_number || animal.Boxes?.box_number || "-",
         "Data intrării": formatDate(animal.date_added),
       }));
     case "adoptionRequests":
@@ -441,6 +451,7 @@ export default function ReportsPage() {
                 borderRadius: "18px",
                 border: active ? `1.5px solid ${RED}` : "1.5px solid #efefef",
                 boxShadow: active ? "0 18px 40px rgba(169,17,17,0.12)" : "none",
+                overflow: "visible",
               }}
             >
               <CardActionArea onClick={() => setSelectedReportId(report.id)} sx={{ p: 0 }}>
@@ -598,7 +609,20 @@ export default function ReportsPage() {
               {rows.length} rezultate
             </Typography>
           </Box>
-          <DownloadOutlinedIcon sx={{ color: "#c2c2c2" }} />
+          <IconButton
+            size="small"
+            disabled={!rows.length}
+            title="Descarcă CSV"
+            onClick={() =>
+              exportToCSV(rows, `${selectedReport.title.toLowerCase().replaceAll(" ", "-")}.csv`)
+            }
+            sx={{
+              color: "#c2c2c2",
+              "&:hover": { color: RED, backgroundColor: "#fff1f1" },
+            }}
+          >
+            <DownloadOutlinedIcon />
+          </IconButton>
         </Box>
 
         {loading ? (

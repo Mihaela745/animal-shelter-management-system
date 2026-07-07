@@ -18,7 +18,7 @@ export const controller = {
       return res.status(200).json(species);
     } catch (error) {
       console.error("Error fetching species:", error);
-      return res.status(500).send(`Failed to get species: ${error}`);
+      return res.status(500).send(`Nu am putut încărca speciile: ${error}`);
     }
   },
 };

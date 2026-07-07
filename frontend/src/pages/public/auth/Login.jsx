@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loginUser, forgotPassword } from "../../../features/auth/authSlice";
+import { useNotification } from "../../../context/NotificationContext";
 import {
   Typography,
   Box,
@@ -34,6 +35,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { loading } = useSelector((state) => state.auth);
+  const { notifySuccess, notifyError } = useNotification();
 
   const [form, setForm] = useState({ email: "", password: "" });
   const [loginError, setLoginError] = useState(null);
@@ -66,13 +68,16 @@ export default function LoginPage() {
     const result = await dispatch(forgotPassword(email));
     if (result.meta.requestStatus === "fulfilled") {
       setSuccess(true);
+      notifySuccess("Emailul de resetare a parolei a fost trimis cu succes.");
       setTimeout(() => {
         setOpen(false);
         setEmail("");
         setSuccess(false);
       }, 2000);
     } else {
-      setForgotError(result.payload || "Eroare trimitere email");
+      const message = result.payload || "Eroare trimitere email";
+      setForgotError(message);
+      notifyError(message);
     }
   };
 

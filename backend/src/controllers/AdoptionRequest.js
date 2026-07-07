@@ -1,4 +1,4 @@
-import { Animals, Appointments, Users, Species } from "../models/index.js";
+import { Animals, Appointments, Users, Species, Boxes } from "../models/index.js";
 import { Adoption_requests } from "../models/index.js";
 import { Adoption_history } from "../models/index.js";
 import { sequelize } from "../config/db.js";
@@ -12,15 +12,15 @@ export const controller = {
       const user_id = req.user.id;
 
       if (!animal_id) {
-        return res.status(400).send("Animal ID is required!");
+        return res.status(400).send("ID-ul animalului este obligatoriu!");
       }
 
       const animal = await Animals.findByPk(animal_id);
-      if (!animal) return res.status(404).send("Animal not found!");
+      if (!animal) return res.status(404).send("Animalul nu a fost găsit!");
       if (animal.status !== "Available") {
         return res
           .status(400)
-          .send("This animal is not available for adoption.");
+          .send("Acest animal nu este disponibil pentru adopție.");
       }
 
       const existingRequest = await Adoption_requests.findOne({
@@ -30,7 +30,7 @@ export const controller = {
       if (existingRequest) {
         return res
           .status(409)
-          .send("You have already sent a request for this animal.");
+          .send("Ai trimis deja o cerere pentru acest animal.");
       }
 
       const request = await Adoption_requests.create({
@@ -41,7 +41,7 @@ export const controller = {
 
       return res.status(201).json(request);
     } catch (err) {
-      return res.status(500).send(`Error creating request: ${err.message}`);
+      return res.status(500).send(`Eroare la crearea cererii: ${err.message}`);
     }
   },
 
@@ -55,7 +55,7 @@ export const controller = {
       });
       return res.status(200).json(requests);
     } catch (err) {
-      return res.status(500).send(`Error fetching requests: ${err.message}`);
+      return res.status(500).send(`Eroare la încărcarea cererilor: ${err.message}`);
     }
   },
 
@@ -68,17 +68,17 @@ export const controller = {
       const request = await Adoption_requests.findByPk(id, { transaction: t });
       if (!request) {
         await t.rollback();
-        return res.status(404).send("Request not found!");
+        return res.status(404).send("Cererea nu a fost găsită!");
       }
 
       if (request.status !== "Pending") {
         await t.rollback();
-        return res.status(400).json({ message: "Request already processed." });
+        return res.status(400).json({ message: "Cererea a fost deja procesată." });
       }
 
       if (!["Approved", "Rejected"].includes(status)) {
         await t.rollback();
-        return res.status(400).json({ message: "Invalid status value." });
+        return res.status(400).json({ message: "Valoare invalidă pentru status." });
       }
 
       const animal = await Animals.findByPk(request.animal_id, {
@@ -88,11 +88,18 @@ export const controller = {
       if (status === "Approved") {
         if (animal.status !== "Available") {
           await t.rollback();
-          return res.status(400).json({ message: "Animal already adopted." });
+          return res.status(400).json({ message: "Animalul a fost deja adoptat." });
+        }
+
+        if (animal.box_id) {
+          await Boxes.decrement(
+            { current_occupancy: 1 },
+            { where: { id: animal.box_id }, transaction: t },
+          );
         }
 
         await Animals.update(
-          { status: "Adopted" },
+          { status: "Adopted", box_id: null },
           { where: { id: request.animal_id }, transaction: t },
         );
 
@@ -206,7 +213,7 @@ export const controller = {
         await t.rollback();
       }
       console.error("updateRequestStatus error:", err.message);
-      return res.status(500).send(`Error updating request: ${err.message}`);
+      return res.status(500).send(`Eroare la actualizarea cererii: ${err.message}`);
     }
   },
 
@@ -226,7 +233,7 @@ export const controller = {
     } catch (err) {
       return res
         .status(500)
-        .send(`Error fetching your requests: ${err.message}`);
+        .send(`Eroare la încărcarea cererilor tale: ${err.message}`);
     }
   },
 };

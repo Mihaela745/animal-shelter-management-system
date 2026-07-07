@@ -53,9 +53,9 @@ export default function AnimalInfo({ animal }) {
         />
       </Box>
 
-      <Divider sx={{ mb: 2 }} />
+      <Divider sx={{ mb: 1 }} />
 
-      <Stack spacing={0.1}>
+      <Stack spacing={0.05}>
         <InfoRow
           label="Varsta"
           value={animal.age != null ? `${animal.age} ani` : "-"}

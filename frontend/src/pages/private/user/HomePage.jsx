@@ -15,17 +15,23 @@ const RED = "#a91111";
 const RED_DARK = "#7d0d0d";
 
 const cardSx = {
+  height: "100%",
   borderRadius: "22px",
   border: "1px solid rgba(169,17,17,0.08)",
   boxShadow: "0 16px 40px rgba(169,17,17,0.08)",
   background:
     "linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,246,246,0.98) 100%)",
   transition: "transform 0.25s ease, box-shadow 0.25s ease",
-  overflow: "hidden",
   "&:hover": {
     transform: "translateY(-6px)",
     boxShadow: "0 24px 48px rgba(169,17,17,0.12)",
   },
+};
+
+const cardActionWrapSx = {
+  borderRadius: "22px",
+  overflow: "hidden",
+  height: "100%",
 };
 
 const iconWrapSx = {
@@ -116,67 +122,77 @@ export default function HomePage() {
           }}
         >
           <Card sx={cardSx}>
-            <CardActionArea onClick={() => navigate("/user/animals")}>
-              <CardContent sx={{ p: { xs: 2.5, md: 3.5 }, textAlign: "center" }}>
-                <Box sx={iconWrapSx}>
-                  <PetsIcon sx={{ fontSize: 40, color: RED }} />
-                </Box>
-                <Typography
-                  sx={{
-                    fontSize: "1.15rem",
-                    fontWeight: 800,
-                    color: "#1a1a1a",
-                    mb: 1,
-                  }}
-                >
-                  Cauta animale
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: "0.92rem",
-                    color: "#6b7280",
-                    maxWidth: 320,
-                    mx: "auto",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  Exploreaza toate animalele disponibile si descopera companionul
-                  potrivit pentru tine.
-                </Typography>
-              </CardContent>
-            </CardActionArea>
+            <Box sx={cardActionWrapSx}>
+              <CardActionArea
+                onClick={() => navigate("/user/animals")}
+                sx={{ height: "100%" }}
+              >
+                <CardContent sx={{ p: { xs: 2.5, md: 3.5 }, textAlign: "center" }}>
+                  <Box sx={iconWrapSx}>
+                    <PetsIcon sx={{ fontSize: 40, color: RED }} />
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontSize: "1.15rem",
+                      fontWeight: 800,
+                      color: "#1a1a1a",
+                      mb: 1,
+                    }}
+                  >
+                    Cauta animale
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "0.92rem",
+                      color: "#6b7280",
+                      maxWidth: 320,
+                      mx: "auto",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Exploreaza toate animalele disponibile si descopera companionul
+                    potrivit pentru tine.
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Box>
           </Card>
 
           <Card sx={cardSx}>
-            <CardActionArea onClick={() => navigate("/user/match")}>
-              <CardContent sx={{ p: { xs: 2.5, md: 3.5 }, textAlign: "center" }}>
-                <Box sx={iconWrapSx}>
-                  <PsychologyIcon sx={{ fontSize: 40, color: RED }} />
-                </Box>
-                <Typography
-                  sx={{
-                    fontSize: "1.15rem",
-                    fontWeight: 800,
-                    color: "#1a1a1a",
-                    mb: 1,
-                  }}
-                >
-                  Gaseste-mi potrivirea
-                </Typography>
-                <Typography
-                  sx={{
-                    fontSize: "0.92rem",
-                    color: "#6b7280",
-                    maxWidth: 340,
-                    mx: "auto",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  Spune-ne ce cauti, iar sistemul iti propune animalele care se
-                  potrivesc cel mai bine cu stilul tau.
-                </Typography>
-              </CardContent>
-            </CardActionArea>
+            <Box sx={cardActionWrapSx}>
+              <CardActionArea
+                onClick={() => navigate("/user/match")}
+                sx={{ height: "100%" }}
+              >
+                <CardContent sx={{ p: { xs: 2.5, md: 3.5 }, textAlign: "center" }}>
+                  <Box sx={iconWrapSx}>
+                    <PsychologyIcon sx={{ fontSize: 40, color: RED }} />
+                  </Box>
+                  <Typography
+                    sx={{
+                      fontSize: "1.15rem",
+                      fontWeight: 800,
+                      color: "#1a1a1a",
+                      mb: 1,
+                    }}
+                  >
+                    Gaseste-mi potrivirea
+                  </Typography>
+                  <Typography
+                    sx={{
+                      fontSize: "0.92rem",
+                      color: "#6b7280",
+                      maxWidth: 340,
+                      mx: "auto",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    Spune-ne ce cauti, iar sistemul iti propune animalele care se
+                    potrivesc cel mai bine cu stilul tau.
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Box>
           </Card>
         </Box>
 

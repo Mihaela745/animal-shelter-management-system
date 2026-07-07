@@ -36,6 +36,7 @@ import {
   fetchMedicationsByFile,
   updateMedication,
 } from "../../features/medications/medicationsSlice";
+import { useNotification } from "../../context/NotificationContext";
 
 const RED = "#a91111";
 const RED_LIGHT = "#fff0f0";
@@ -62,6 +63,14 @@ const emptyMedication = {
   start_date: "",
   end_date: "",
 };
+
+function getTodayDateString() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
 function parseDateValue(dateValue) {
   if (!dateValue) {
@@ -260,6 +269,7 @@ function MedicationCard({ medication, onEdit, onDelete }) {
 
 export default function VetMedicationManager({ medicalFileId }) {
   const dispatch = useDispatch();
+  const { notifySuccess, notifyError } = useNotification();
   const { medications, loading, error } = useSelector((state) => state.medications);
   const sortedMedications = useMemo(
     () =>
@@ -386,6 +396,11 @@ export default function VetMedicationManager({ medicalFileId }) {
   };
 
   const handleSubmit = async () => {
+    if (formData.start_date < getTodayDateString()) {
+      setSubmitError("Data de început nu poate fi în trecut.");
+      return;
+    }
+
     setSubmitting(true);
     setSubmitError(null);
 
@@ -409,14 +424,16 @@ export default function VetMedicationManager({ medicalFileId }) {
         setOpenForm(false);
         resetForm();
         await dispatch(fetchMedicationsByFile(medicalFileId));
+        notifySuccess("Medicația a fost actualizată cu succes.");
         return;
       }
 
-      setSubmitError(
+      const message =
         typeof result.payload === "string"
           ? result.payload
-          : "Nu am putut salva medicația.",
-      );
+          : "Nu am putut salva medicația.";
+      setSubmitError(message);
+      notifyError(message);
       return;
     }
 
@@ -449,14 +466,16 @@ export default function VetMedicationManager({ medicalFileId }) {
       setOpenForm(false);
       resetForm();
       await dispatch(fetchMedicationsByFile(medicalFileId));
+      notifySuccess("Medicația a fost adăugată cu succes.");
       return;
     }
 
-    setSubmitError(
+    const message =
       typeof failedResult.payload === "string"
         ? failedResult.payload
-        : "Nu am putut salva medicația pentru toate animalele selectate.",
-    );
+        : "Nu am putut salva medicația pentru toate animalele selectate.";
+    setSubmitError(message);
+    notifyError(message);
   };
 
   const handleConfirmDelete = async () => {
@@ -476,7 +495,15 @@ export default function VetMedicationManager({ medicalFileId }) {
     if (result.meta?.requestStatus === "fulfilled") {
       setDeleteState({ open: false, medication: null });
       await dispatch(fetchMedicationsByFile(medicalFileId));
+      notifySuccess("Medicația a fost ștearsă cu succes.");
+      return;
     }
+
+    notifyError(
+      typeof result.payload === "string"
+        ? result.payload
+        : "Nu am putut șterge medicația.",
+    );
   };
 
   return (
@@ -709,6 +736,13 @@ export default function VetMedicationManager({ medicalFileId }) {
               onChange={handleChange}
               fullWidth
               InputLabelProps={{ shrink: true }}
+              inputProps={{ min: getTodayDateString() }}
+              error={Boolean(formData.start_date) && formData.start_date < getTodayDateString()}
+              helperText={
+                formData.start_date && formData.start_date < getTodayDateString()
+                  ? "Data de început nu poate fi în trecut."
+                  : ""
+              }
               sx={fieldSx}
             />
             <TextField
@@ -719,6 +753,7 @@ export default function VetMedicationManager({ medicalFileId }) {
               onChange={handleChange}
               fullWidth
               InputLabelProps={{ shrink: true }}
+              inputProps={{ min: formData.start_date || getTodayDateString() }}
               sx={fieldSx}
             />
           </Stack>
@@ -749,6 +784,7 @@ export default function VetMedicationManager({ medicalFileId }) {
               !formData.dosage ||
               !formData.frequency ||
               !formData.start_date ||
+              formData.start_date < getTodayDateString() ||
               (!editingMedication &&
                 ((targetMode === "box" && !selectedBoxId) ||
                   (targetMode === "custom" && selectedAnimalIds.length === 0)))

@@ -35,7 +35,7 @@ export const controller = {
         .status(200)
         .send(positions);
     } catch (error) {
-      return res.status(500).send(`Error while fetching positions:${error}`);
+      return res.status(500).send(`Eroare la preluarea pozițiilor: ${error}`);
     }
   },
 };

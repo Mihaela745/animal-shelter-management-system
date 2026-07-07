@@ -12,7 +12,6 @@ export default function MiniAnimalCard({ animal }) {
       sx={{
         cursor: "pointer",
         borderRadius: "16px",
-        overflow: "hidden",
         border: "1px solid #f0f0f0",
         transition: "all 0.2s ease",
         "&:hover": {
@@ -22,30 +21,32 @@ export default function MiniAnimalCard({ animal }) {
         },
       }}
     >
-      <Box
-        component="img"
-        src={animal.image_url}
-        alt={animal.name}
-        sx={{
-          width: "100%",
-          height: 110,
-          objectFit: "cover",
-          display: "block",
-        }}
-        onError={(e) => {
-          e.target.style.display = "none";
-        }}
-      />
-      <Box sx={{ p: 1, backgroundColor: "#fff" }}>
-        <Typography
-          fontWeight={700}
-          fontSize="0.8rem"
-          noWrap
-          color="#1a1a1a"
-          textAlign="center"
-        >
-          {animal.name}
-        </Typography>
+      <Box sx={{ borderRadius: "16px", overflow: "hidden" }}>
+        <Box
+          component="img"
+          src={animal.image_url}
+          alt={animal.name}
+          sx={{
+            width: "100%",
+            height: 110,
+            objectFit: "cover",
+            display: "block",
+          }}
+          onError={(e) => {
+            e.target.style.display = "none";
+          }}
+        />
+        <Box sx={{ p: 1, backgroundColor: "#fff" }}>
+          <Typography
+            fontWeight={700}
+            fontSize="0.8rem"
+            noWrap
+            color="#1a1a1a"
+            textAlign="center"
+          >
+            {animal.name}
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

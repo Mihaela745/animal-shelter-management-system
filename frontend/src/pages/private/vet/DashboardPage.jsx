@@ -31,6 +31,7 @@ function StatCard({ title, value, subtitle, color, icon }) {
         border: "1px solid #f1f1f1",
         boxShadow: "0 6px 24px rgba(0,0,0,0.05)",
         height: "100%",
+        overflow: "visible",
       }}
     >
       <CardContent sx={{ p: 2.5 }}>
@@ -100,6 +101,7 @@ function SectionCard({ title, subtitle, action, children }) {
         border: "1px solid #f0f0f0",
         boxShadow: "0 8px 28px rgba(0,0,0,0.05)",
         height: "100%",
+        overflow: "visible",
       }}
     >
       <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
@@ -326,8 +328,26 @@ export default function DashboardPage() {
                   Nu există animale care să depășească pragul de o lună.
                 </Typography>
               ) : (
-                <Stack spacing={1.2}>
-                  {animalsNeedingCheckup.slice(0, 6).map((file) => (
+                <Stack
+                  spacing={1.2}
+                  sx={{
+                    maxHeight: 380,
+                    overflowY: "auto",
+                    pr: 0.5,
+                    "&::-webkit-scrollbar": { width: "4px" },
+                    "&::-webkit-scrollbar-track": {
+                      backgroundColor: "transparent",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: "4px",
+                    },
+                    "&::-webkit-scrollbar-thumb:hover": {
+                      backgroundColor: "#bbb",
+                    },
+                  }}
+                >
+                  {animalsNeedingCheckup.map((file) => (
                     <Box
                       key={file.id}
                       sx={{
@@ -412,15 +432,42 @@ export default function DashboardPage() {
                   Nu există medicații prescrise în ultima lună.
                 </Typography>
               ) : (
-                <Stack spacing={1.2}>
-                  {recentPrescriptions.slice(0, 6).map((medication) => (
+                <Stack
+                  spacing={1.2}
+                  sx={{
+                    maxHeight: 380,
+                    overflowY: "auto",
+                    pr: 0.5,
+                    "&::-webkit-scrollbar": { width: "4px" },
+                    "&::-webkit-scrollbar-track": {
+                      backgroundColor: "transparent",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: "4px",
+                    },
+                    "&::-webkit-scrollbar-thumb:hover": {
+                      backgroundColor: "#bbb",
+                    },
+                  }}
+                >
+                  {recentPrescriptions.map((medication) => (
                     <Box
                       key={`${medication.medicalFileId}-${medication.id}`}
+                      onClick={() =>
+                        handleOpenMedicalFile(medication.animal?.id, medication.medicalFileId)
+                      }
                       sx={{
                         p: 1.5,
                         borderRadius: "14px",
                         backgroundColor: "#fffafa",
                         border: "1px solid #f6e4e4",
+                        cursor: "pointer",
+                        transition: "background-color 0.15s, border-color 0.15s",
+                        "&:hover": {
+                          backgroundColor: "#fff0f0",
+                          borderColor: "#f0c0c0",
+                        },
                       }}
                     >
                       <Typography sx={{ fontWeight: 800, fontSize: "0.9rem" }}>
@@ -448,15 +495,42 @@ export default function DashboardPage() {
                   Nicio medicație nu se termină mâine.
                 </Typography>
               ) : (
-                <Stack spacing={1.2}>
-                  {medicationsEndingSoon.slice(0, 6).map((medication) => (
+                <Stack
+                  spacing={1.2}
+                  sx={{
+                    maxHeight: 380,
+                    overflowY: "auto",
+                    pr: 0.5,
+                    "&::-webkit-scrollbar": { width: "4px" },
+                    "&::-webkit-scrollbar-track": {
+                      backgroundColor: "transparent",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: "4px",
+                    },
+                    "&::-webkit-scrollbar-thumb:hover": {
+                      backgroundColor: "#bbb",
+                    },
+                  }}
+                >
+                  {medicationsEndingSoon.map((medication) => (
                     <Box
                       key={`${medication.medicalFileId}-${medication.id}`}
+                      onClick={() =>
+                        handleOpenMedicalFile(medication.animal?.id, medication.medicalFileId)
+                      }
                       sx={{
                         p: 1.5,
                         borderRadius: "14px",
                         backgroundColor: "#fffaf2",
                         border: "1px solid #ffe6bf",
+                        cursor: "pointer",
+                        transition: "background-color 0.15s, border-color 0.15s",
+                        "&:hover": {
+                          backgroundColor: "#fff4e0",
+                          borderColor: "#f0c988",
+                        },
                       }}
                     >
                       <Box

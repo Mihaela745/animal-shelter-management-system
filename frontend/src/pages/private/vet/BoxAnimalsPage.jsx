@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { fetchAnimals } from "../../../features/animals/animalsSlice";
 import { fetchBoxById } from "../../../features/boxes/boxesSlice";
-import { formatAnimalStatus, formatGender } from "../../../utils/labels";
+import { formatAnimalStatus, formatGender, formatSpecies } from "../../../utils/labels";
 
 const RED = "#a91111";
 const RED_DARK = "#8a0d0d";
@@ -50,7 +50,7 @@ function AnimalViewCard({ animal, currentBoxNumber, onOpen }) {
             {animal.name}
           </Typography>
           <Typography sx={{ fontSize: "0.78rem", color: "#888", mt: 0.5 }}>
-            {animal.Species?.name || "-"} • {formatGender(animal.gender)} • {animal.age ?? "-"} ani
+            {formatSpecies(animal.Species?.name)} • {formatGender(animal.gender)} • {animal.age ?? "-"} ani
           </Typography>
         </Box>
 

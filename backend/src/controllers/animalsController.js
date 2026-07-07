@@ -156,7 +156,18 @@ export const controller = {
         return res.status(404).send("Animalul nu a fost găsit.");
       }
 
-      if (updateData.box_id && updateData.box_id !== animal.box_id) {
+      const becomingAdopted =
+        updateData.status === "Adopted" && animal.status !== "Adopted";
+
+      if (becomingAdopted) {
+        updateData.box_id = null;
+        if (animal.box_id) {
+          await Boxes.decrement(
+            { current_occupancy: 1 },
+            { where: { id: animal.box_id }, transaction: t },
+          );
+        }
+      } else if (updateData.box_id && updateData.box_id !== animal.box_id) {
         const newBox = await Boxes.findByPk(updateData.box_id, {
           transaction: t,
         });

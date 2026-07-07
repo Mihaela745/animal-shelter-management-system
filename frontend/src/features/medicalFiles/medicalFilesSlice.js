@@ -69,12 +69,30 @@ const medicalFilesSlice = createSlice({
         state.error = action.payload;
       })
 
+      .addCase(fetchMedicalFileById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(fetchMedicalFileById.fulfilled, (state, action) => {
+        state.loading = false;
         state.selectedFile = action.payload;
       })
+      .addCase(fetchMedicalFileById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
 
+      .addCase(updateMedicalFile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(updateMedicalFile.fulfilled, (state, action) => {
+        state.loading = false;
         state.selectedFile = action.payload;
+      })
+      .addCase(updateMedicalFile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });

@@ -29,6 +29,7 @@ import {
 } from "../../../features/staff/staffSlice";
 import { formatRole } from "../../../utils/labels";
 import { fetchPositions } from "../../../features/positions/positionsSlice";
+import { useNotification } from "../../../context/NotificationContext";
 
 const RED = "#a91111";
 const RED_LIGHT = "#fff0f0";
@@ -265,6 +266,7 @@ function StaffCard({ member, positionTitle, onEdit, onDelete }) {
 
 export default function StaffPage() {
   const dispatch = useDispatch();
+  const { notifySuccess, notifyError } = useNotification();
   const { staff, loading } = useSelector((s) => s.staff);
   const { positions, loading: positionsLoading } = useSelector(
     (s) => s.positions,
@@ -323,14 +325,16 @@ export default function StaffPage() {
       dispatch(fetchStaff());
       setOpenAdd(false);
       setFormData(emptyForm);
+      notifySuccess("Membrul a fost adăugat cu succes.");
       return;
     }
 
-    setError(
+    const message =
       typeof result.payload === "string"
         ? result.payload
-        : "A aparut o eroare. Incearca din nou.",
-    );
+        : "A aparut o eroare. Incearca din nou.";
+    setError(message);
+    notifyError(message);
   };
 
   const handleEditClick = (member) => {
@@ -364,14 +368,16 @@ export default function StaffPage() {
       setOpenEdit(false);
       setSelectedMember(null);
       setEditFormData(emptyForm);
+      notifySuccess("Membrul a fost actualizat cu succes.");
       return;
     }
 
-    setEditError(
+    const message =
       typeof result.payload === "string"
         ? result.payload
-        : "A aparut o eroare la actualizare. Incearca din nou.",
-    );
+        : "A aparut o eroare la actualizare. Incearca din nou.";
+    setEditError(message);
+    notifyError(message);
   };
 
   const handleDeleteClick = (member) => {
@@ -385,10 +391,21 @@ export default function StaffPage() {
     }
 
     setDeleteLoading(true);
-    await dispatch(deleteStaff(selectedMember.id));
+    const result = await dispatch(deleteStaff(selectedMember.id));
     setDeleteLoading(false);
-    setOpenDelete(false);
-    setSelectedMember(null);
+
+    if (result.meta?.requestStatus === "fulfilled") {
+      setOpenDelete(false);
+      setSelectedMember(null);
+      notifySuccess("Membrul a fost șters cu succes.");
+      return;
+    }
+
+    notifyError(
+      typeof result.payload === "string"
+        ? result.payload
+        : "Nu am putut șterge membrul. Încearcă din nou.",
+    );
   };
 
   const filtered = staff.filter((member) => {

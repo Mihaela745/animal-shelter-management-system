@@ -10,6 +10,7 @@ export default function AdoptionHistoryCard({ adoptions = [] }) {
         p: 3,
         boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
         border: "1px solid #f5f5f5",
+        overflow: "visible",
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}>

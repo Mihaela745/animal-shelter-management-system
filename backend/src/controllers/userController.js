@@ -108,6 +108,7 @@ export const controller = {
       const user = req.params.id;
       await Appointments.destroy({ where: { user_id: user } });
       await Adoption_history.destroy({ where: { adopter_id: user } });
+      await Staff.destroy({ where: { user_id: user } });
       const deletedUsers = await Users.destroy({ where: { id: user } });
       if (deletedUsers === 0)
         return res.status(404).send("Utilizatorul pentru ștergere nu a fost găsit.");

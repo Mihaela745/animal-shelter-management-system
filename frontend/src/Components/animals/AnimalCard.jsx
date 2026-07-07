@@ -7,12 +7,15 @@ import {
   Chip,
   Typography,
 } from "@mui/material";
+import PetsIcon from "@mui/icons-material/Pets";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { formatAnimalStatus, formatGender } from "../../utils/labels";
 
 export default function AnimalCard({ animal }) {
   const { name, age, gender, image_url, status } = animal;
+  const [imageFailed, setImageFailed] = useState(false);
   const navigate = useNavigate();
   const role = useSelector((state) => state.auth?.user?.role);
   const handleNavigation = () => {
@@ -33,25 +36,42 @@ export default function AnimalCard({ animal }) {
     }
   };
   return (
+    <Box
+      sx={{
+        height: "100%",
+        borderRadius: "12px",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+      }}
+    >
     <Card
       sx={{
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
         borderRadius: "12px",
       }}
     >
-      <Box sx={{ height: 180, width: "100%", backgroundColor: "#f5f5f5" }}>
-        <CardMedia
-          component="img"
-          image={image_url}
-          alt={name}
-          sx={{ height: "100%", width: "100%", objectFit: "cover" }}
-          onError={(e) => {
-            e.target.style.display = "none";
-          }}
-        />
+      <Box
+        sx={{
+          height: 180,
+          width: "100%",
+          backgroundColor: "#f5f5f5",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {image_url && !imageFailed ? (
+          <CardMedia
+            component="img"
+            image={image_url}
+            alt={name}
+            sx={{ height: "100%", width: "100%", objectFit: "cover" }}
+            onError={() => setImageFailed(true)}
+          />
+        ) : (
+          <PetsIcon sx={{ fontSize: 48, color: "#ddd" }} />
+        )}
       </Box>
 
       <CardContent
@@ -131,5 +151,6 @@ export default function AnimalCard({ animal }) {
         </Box>
       </CardContent>
     </Card>
+    </Box>
   );
 }

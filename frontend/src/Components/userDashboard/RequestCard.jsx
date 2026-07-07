@@ -1,6 +1,7 @@
 import { Card, Typography, Box, Button, Chip } from "@mui/material";
 import PetsIcon from "@mui/icons-material/Pets";
 import { useNavigate } from "react-router-dom";
+import { formatSpecies } from "../../utils/labels";
 
 const statusConfig = {
   Pending: { label: "În așteptare", bg: "#fff8e1", color: "#f59f00" },
@@ -19,6 +20,7 @@ export default function RequestsCard({ requests = [] }) {
         height: "100%",
         boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
         border: "1px solid #f5f5f5",
+        overflow: "visible",
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}>
@@ -40,7 +42,7 @@ export default function RequestsCard({ requests = [] }) {
             Cereri de adopție
           </Typography>
           <Typography fontSize="0.75rem" color="#999">
-            {requests.length} trimise
+            {requests.length} în așteptare
           </Typography>
         </Box>
       </Box>
@@ -48,11 +50,27 @@ export default function RequestsCard({ requests = [] }) {
       {requests.length === 0 ? (
         <Box sx={{ textAlign: "center", py: 4, color: "#bbb" }}>
           <PetsIcon sx={{ fontSize: 40, mb: 1, opacity: 0.4 }} />
-          <Typography fontSize="0.875rem">Nu ai cereri trimise încă</Typography>
+          <Typography fontSize="0.875rem">Nu ai cereri în așteptare</Typography>
         </Box>
       ) : (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-          {requests.slice(0, 5).map((request) => {
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 1.5,
+            maxHeight: 340,
+            overflowY: "auto",
+            pr: 0.5,
+            "&::-webkit-scrollbar": { width: "4px" },
+            "&::-webkit-scrollbar-track": { backgroundColor: "transparent" },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#e0e0e0",
+              borderRadius: "4px",
+            },
+            "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#bbb" },
+          }}
+        >
+          {requests.map((request) => {
             const cfg = statusConfig[request.status] || statusConfig.Pending;
             return (
               <Box
@@ -78,9 +96,9 @@ export default function RequestsCard({ requests = [] }) {
                     {request.Animal?.name || "Necunoscut"}
                   </Typography>
                   <Typography fontSize="0.75rem" color="#888" noWrap>
-                    {request.Animal?.Species?.name ||
-                      request.Animal?.species ||
-                      "—"}
+                    {formatSpecies(
+                      request.Animal?.Species?.name || request.Animal?.species,
+                    )}
                   </Typography>
                 </Box>
 

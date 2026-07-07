@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   CircularProgress,
@@ -26,6 +27,7 @@ import {
 import { fetchRooms } from "../../../features/rooms/roomsSlice";
 import { fetchMyStaffProfile } from "../../../features/staff/staffSlice";
 import { formatAppointmentStatus } from "../../../utils/labels";
+import { useNotification } from "../../../context/NotificationContext";
 
 const RED = "#a91111";
 
@@ -208,6 +210,7 @@ export default function AppointmentsPage() {
   const { appointments, loading } = useSelector((s) => s.appointments);
   const { rooms } = useSelector((s) => s.rooms);
   const { myProfile } = useSelector((s) => s.staff);
+  const { notifySuccess, notifyError } = useNotification();
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -217,6 +220,7 @@ export default function AppointmentsPage() {
     startOfMonth(new Date()),
   );
   const [actionLoading, setActionLoading] = useState(false);
+  const [statusError, setStatusError] = useState(null);
 
   useEffect(() => {
     dispatch(fetchMyStaffProfile());
@@ -274,7 +278,24 @@ export default function AppointmentsPage() {
 
   const handleStatusChange = async (id, status) => {
     setActionLoading(true);
-    await dispatch(updateAppointmentStatus({ id, status }));
+    setStatusError(null);
+    const result = await dispatch(updateAppointmentStatus({ id, status }));
+
+    if (updateAppointmentStatus.rejected.match(result)) {
+      const message =
+        typeof result.payload === "string"
+          ? result.payload
+          : "Nu am putut actualiza programarea. Încearcă din nou.";
+      setStatusError(message);
+      notifyError(message);
+      setActionLoading(false);
+      return;
+    }
+
+    notifySuccess(
+      `Programarea a fost marcată ca „${formatAppointmentStatus(status)}”.`,
+    );
+
     if (myProfile?.id) {
       const startDate = format(calendarMonthStart, "yyyy-MM-dd");
       const endDate = format(endOfMonth(calendarMonthStart), "yyyy-MM-dd");
@@ -341,6 +362,16 @@ export default function AppointmentsPage() {
           </Typography>
         </Box>
       </Box>
+
+      {statusError && (
+        <Alert
+          severity="error"
+          onClose={() => setStatusError(null)}
+          sx={{ borderRadius: "12px", mb: { xs: 2, md: 3 } }}
+        >
+          {statusError}
+        </Alert>
+      )}
 
       <Box sx={{ mb: { xs: 2.5, md: 3 } }}>
         <ScheduleCalendar

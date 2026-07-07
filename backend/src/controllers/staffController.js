@@ -14,7 +14,7 @@ export const controller = {
 
       if (!name || !email || !position_id || !phonenumber) {
         await t.rollback();
-        return res.status(400).send(`All fields must be completed`);
+        return res.status(400).send(`Toate câmpurile sunt obligatorii`);
       }
 
       if (!isValidFullName(name)) {
@@ -25,10 +25,10 @@ export const controller = {
       const positionExists = await Position.findByPk(position_id);
       if (!positionExists) {
         await t.rollback();
-        return res.status(404).send(`Position doesn't exist!`);
+        return res.status(404).send(`Poziția nu există!`);
       }
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
-        return res.status(400).send("Invalid email");
+        return res.status(400).send("Email invalid");
       const existingUser = await Users.findOne({ where: { email } });
       if (existingUser) {
         await t.rollback();
@@ -89,7 +89,7 @@ export const controller = {
       }
 
       return res.status(201).json({
-        message: "Staff and account created with success!",
+        message: "Angajatul și contul au fost create cu succes!",
         staff: newStaff,
       });
     } catch (error) {
@@ -99,7 +99,7 @@ export const controller = {
       console.error("Error creating staff:", error);
       return res
         .status(500)
-        .send(`Failed while creating staff: ${error.message}`);
+        .send(`Crearea angajatului a eșuat: ${error.message}`);
     }
   },
   getAllStaff: async (req, res) => {
@@ -114,17 +114,17 @@ export const controller = {
       });
       return res.status(200).send(staffMembers);
     } catch (error) {
-      return res.status(500).send(`Failed to fetch staff : ${error}`);
+      return res.status(500).send(`Nu am putut încărca angajații : ${error}`);
     }
   },
   getStaffById: async (req, res) => {
     try {
       const staff = await Staff.findByPk(req.params.id);
       if (!staff) {
-        return res.status(404).send("Staff doesnt exist");
+        return res.status(404).send("Angajatul nu există");
       } else return res.status(200).send(staff);
     } catch (error) {
-      return res.status(500).send(`Failed to fetch staff : ${error}`);
+      return res.status(500).send(`Nu am putut încărca angajatul : ${error}`);
     }
   },
   updateStaff: async (req, res) => {
@@ -137,17 +137,17 @@ export const controller = {
       const staff = await Staff.findByPk(staffId);
       if (!staff) {
         await t.rollback();
-        return res.status(404).send("Staff not found!");
+        return res.status(404).send("Angajatul nu a fost găsit!");
       }
       const user = await Users.findByPk(staff.user_id);
       if (!user) {
         await t.rollback();
-        return res.status(404).send("Associated user not found!");
+        return res.status(404).send("Utilizatorul asociat nu a fost găsit!");
       }
       if (updateData.email) {
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(updateData.email)) {
           await t.rollback();
-          return res.status(400).send("Invalid email format!");
+          return res.status(400).send("Format de email invalid!");
         }
 
         const existingUser = await Users.findOne({
@@ -156,7 +156,7 @@ export const controller = {
 
         if (existingUser && existingUser.id !== user.id) {
           await t.rollback();
-          return res.status(409).send("Email already used by another account!");
+          return res.status(409).send("Emailul este deja folosit de alt cont!");
         }
 
         userUpdateData.email = updateData.email;
@@ -166,7 +166,7 @@ export const controller = {
         const position = await Position.findByPk(updateData.position_id);
         if (!position) {
           await t.rollback();
-          return res.status(404).send("Position not found!");
+          return res.status(404).send("Poziția nu a fost găsită!");
         }
 
         userUpdateData.role = position.title;
@@ -201,7 +201,7 @@ export const controller = {
       return res.status(200).json(updatedStaff);
     } catch (error) {
       if (t) await t.rollback();
-      return res.status(500).send(`Couldn't update staff: ${error.message}`);
+      return res.status(500).send(`Nu am putut actualiza angajatul: ${error.message}`);
     }
   },
 
@@ -213,7 +213,7 @@ export const controller = {
       const staff = await Staff.findByPk(staffId);
       if (!staff) {
         await t.rollback();
-        return res.status(404).send("Staff member not found.");
+        return res.status(404).send("Angajatul nu a fost găsit.");
       }
 
       await Staff.destroy({
@@ -227,10 +227,10 @@ export const controller = {
       });
 
       await t.commit();
-      return res.status(200).send("Staff and user deleted successfully!");
+      return res.status(200).send("Angajatul și utilizatorul au fost șterși cu succes!");
     } catch (error) {
       if (t) await t.rollback();
-      return res.status(500).send(`Couldn't delete staff: ${error.message}`);
+      return res.status(500).send(`Nu am putut șterge angajatul: ${error.message}`);
     }
   },
   updateMyProfile: async (req, res) => {
@@ -241,7 +241,7 @@ export const controller = {
         where: { user_id: userId },
       });
       if (!staff) {
-        return res.status(404).send("Staff profile not found!");
+        return res.status(404).send("Profilul angajatului nu a fost găsit!");
       }
 
       if (name && !isValidFullName(name)) {
@@ -264,7 +264,7 @@ export const controller = {
       );
       return res.status(200).json(staff);
     } catch (err) {
-      return res.status(500).send(`Error while updating:${err.message}`);
+      return res.status(500).send(`Eroare la actualizare:${err.message}`);
     }
   },
   getMyProfile: async (req, res) => {
@@ -282,12 +282,12 @@ export const controller = {
       });
 
       if (!staff) {
-        return res.status(404).send("Staff profile not found!");
+        return res.status(404).send("Profilul angajatului nu a fost găsit!");
       }
 
       return res.status(200).json(staff);
     } catch (error) {
-      return res.status(500).send(`Error fetching profile: ${error.message}`);
+      return res.status(500).send(`Eroare la încărcarea profilului: ${error.message}`);
     }
   },
 };

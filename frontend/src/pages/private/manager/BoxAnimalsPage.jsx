@@ -22,7 +22,8 @@ import {
   updateAnimal,
 } from "../../../features/animals/animalsSlice";
 import { fetchBoxes, fetchBoxById } from "../../../features/boxes/boxesSlice";
-import { formatAnimalStatus, formatGender } from "../../../utils/labels";
+import { formatAnimalStatus, formatGender, formatSpecies } from "../../../utils/labels";
+import { useNotification } from "../../../context/NotificationContext";
 
 const RED = "#a91111";
 const RED_DARK = "#8a0d0d";
@@ -78,7 +79,7 @@ function AnimalMoveCard({ animal, currentBoxNumber, onMove }) {
             {animal.name}
           </Typography>
           <Typography sx={{ fontSize: "0.78rem", color: "#888", mt: 0.5 }}>
-            {animal.Species?.name || "-"} • {formatGender(animal.gender)} •{" "}
+            {formatSpecies(animal.Species?.name)} • {formatGender(animal.gender)} •{" "}
             {animal.age ?? "-"} ani
           </Typography>
         </Box>
@@ -121,6 +122,7 @@ export default function BoxAnimalsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { notifySuccess, notifyError } = useNotification();
 
   const { animals, loading } = useSelector((state) => state.animals);
   const { boxes, selectedBox, loading: boxesLoading } = useSelector(
@@ -182,14 +184,16 @@ export default function BoxAnimalsPage() {
       setOpenMove(false);
       setSelectedAnimal(null);
       setDestinationBoxId("");
+      notifySuccess("Animalul a fost mutat cu succes.");
       return;
     }
 
-    setError(
+    const message =
       typeof result.payload === "string"
         ? result.payload
-        : "A aparut o eroare la mutarea animalului. Incearca din nou.",
-    );
+        : "A aparut o eroare la mutarea animalului. Incearca din nou.";
+    setError(message);
+    notifyError(message);
   };
 
   const currentBoxNumber = selectedBox?.box_number || `Boxa #${id}`;

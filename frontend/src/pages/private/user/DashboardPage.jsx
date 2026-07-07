@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { fetchUserAppointments } from "../../../features/appointments/appointmentsSlice";
@@ -26,6 +26,20 @@ export default function DashboardPage() {
     dispatch(fetchUserAdoptions());
   }, [dispatch]);
 
+  const pendingRequests = useMemo(
+    () => (requests || []).filter((request) => request.status === "Pending"),
+    [requests],
+  );
+
+  const upcomingAppointments = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return (appointments || []).filter(
+      (appointment) => new Date(appointment.date) >= today,
+    );
+  }, [appointments]);
+
   return (
     <Box
       sx={{
@@ -39,13 +53,18 @@ export default function DashboardPage() {
       <Box
         sx={{
           mb: 5,
+          borderRadius: "24px",
+          boxShadow: "0 12px 30px rgba(169, 17, 17, 0.25)",
+        }}
+      >
+      <Box
+        sx={{
           p: { xs: 3, md: 4 },
           borderRadius: "24px",
           background: "linear-gradient(135deg, #a91111 0%, #6d0a0a 100%)",
           color: "white",
           position: "relative",
           overflow: "hidden",
-          boxShadow: "0 12px 30px rgba(169, 17, 17, 0.25)",
           "&::after": {
             content: '""',
             position: "absolute",
@@ -85,8 +104,8 @@ export default function DashboardPage() {
 
         <Box sx={{ display: "flex", gap: { xs: 3, md: 6 }, flexWrap: "wrap" }}>
           {[
-            { label: "Programări active", value: appointments?.length ?? 0 },
-            { label: "Cereri trimise", value: requests?.length ?? 0 },
+            { label: "Programări active", value: upcomingAppointments.length },
+            { label: "Cereri în așteptare", value: pendingRequests.length },
             { label: "Animale adoptate", value: adoptionHistory?.length ?? 0 },
           ].map((stat) => (
             <Box key={stat.label}>
@@ -103,6 +122,7 @@ export default function DashboardPage() {
           ))}
         </Box>
       </Box>
+      </Box>
 
       <Box
         sx={{
@@ -113,11 +133,11 @@ export default function DashboardPage() {
         }}
       >
         <Box>
-          <AppointmentsCard appointments={appointments} />
+          <AppointmentsCard appointments={upcomingAppointments} />
         </Box>
 
         <Box>
-          <RequestsCard requests={requests} />
+          <RequestsCard requests={pendingRequests} />
         </Box>
 
         <Box

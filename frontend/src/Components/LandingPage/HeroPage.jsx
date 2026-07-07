@@ -1,8 +1,42 @@
 import { Box, Typography, Button } from "@mui/material";
+import { useEffect, useState } from "react";
 import heroImg from "../../assets/cats-dogs-curiously-peeking-over-white-web-banner-playful-moment-companionship-where-group-clean-423319524.webp";
 import { Link } from "react-router-dom";
+import axiosInstance from "../../sercives/axiosInstance";
 
 export default function HeroPage() {
+  const [stats, setStats] = useState({ adopted: null, available: null });
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function loadStats() {
+      try {
+        const [adoptedRes, availableRes] = await Promise.all([
+          axiosInstance.get("/animals", { params: { status: "Adopted", limit: 1 } }),
+          axiosInstance.get("/animals", { params: { status: "Available", limit: 1 } }),
+        ]);
+
+        if (!ignore) {
+          setStats({
+            adopted: adoptedRes.data.total,
+            available: availableRes.data.total,
+          });
+        }
+      } catch {
+        if (!ignore) {
+          setStats({ adopted: null, available: null });
+        }
+      }
+    }
+
+    loadStats();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
   return (
     <Box
       id="home"
@@ -236,8 +270,14 @@ export default function HeroPage() {
           }}
         >
           {[
-            { num: "200+", label: "Animale adoptate" },
-            { num: "50+", label: "Animale disponibile" },
+            {
+              num: stats.adopted !== null ? String(stats.adopted) : "…",
+              label: "Animale adoptate",
+            },
+            {
+              num: stats.available !== null ? String(stats.available) : "…",
+              label: "Animale disponibile",
+            },
             { num: "5★", label: "Rating platformă" },
           ].map((s) => (
             <Box key={s.label}>

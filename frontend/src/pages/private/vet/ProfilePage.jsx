@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import ProfileCard from "../../../components/profile/ProfileCard";
+import StaffProfileCard from "../../../components/profile/StaffProfileCard";
 
 export default function ProfilePage() {
   return (
@@ -13,7 +13,7 @@ export default function ProfilePage() {
         overflowX: "hidden",
       }}
     >
-      <ProfileCard />
+      <StaffProfileCard />
     </Box>
   );
 }

@@ -84,7 +84,7 @@ export const controller = {
       });
 
       if (!metadata) {
-        return res.status(404).send("Breed metadata not found");
+        return res.status(404).send("Datele despre rasă nu au fost găsite");
       }
 
       return res.status(200).json(metadata);
@@ -94,7 +94,7 @@ export const controller = {
   },
   getBreedsBySpecies: async (req, res) => {
     try {
-      const species = req.params.species; // "Dog" sau "Cat"
+      const species = req.params.species;
       const breeds = await Breed_Metadata.findAll({
         where: { species },
         attributes: ["breed_name"],

@@ -11,7 +11,7 @@ import ChatWindow from "../../../components/aiComponents/ChatWindow";
 
 const AiMatchPage = () => {
   const dispatch = useDispatch();
-  const { messages } = useSelector((state) => state.aiMatch);
+  const { messages, loading } = useSelector((state) => state.aiMatch);
   const [prompt, setPrompt] = useState("");
   const bottomRef = useRef(null);
 
@@ -20,7 +20,7 @@ const AiMatchPage = () => {
   }, [messages]);
 
   const handleSend = () => {
-    if (!prompt.trim()) return;
+    if (!prompt.trim() || loading) return;
     dispatch(addUserMessage(prompt));
     dispatch(addAiLoading());
     dispatch(searchAnimalAI(prompt));
@@ -140,16 +140,16 @@ const AiMatchPage = () => {
         />
         <IconButton
           onClick={handleSend}
-          disabled={!prompt.trim()}
+          disabled={!prompt.trim() || loading}
           sx={{
-            backgroundColor: prompt.trim() ? "#a91111" : "#f0f0f0",
-            color: prompt.trim() ? "white" : "#bbb",
+            backgroundColor: prompt.trim() && !loading ? "#a91111" : "#f0f0f0",
+            color: prompt.trim() && !loading ? "white" : "#bbb",
             width: 42,
             height: 42,
             flexShrink: 0,
             transition: "all 0.2s ease",
             "&:hover": {
-              backgroundColor: prompt.trim() ? "#8a0d0d" : "#f0f0f0",
+              backgroundColor: prompt.trim() && !loading ? "#8a0d0d" : "#f0f0f0",
             },
           }}
         >

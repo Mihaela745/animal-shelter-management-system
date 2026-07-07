@@ -19,10 +19,10 @@ export const controller = {
       await seedManager();
       await seedBreddMetadata();
 
-      res.status(200).send({ message: "Database has been reset!" });
+      res.status(200).send({ message: "Baza de date a fost resetată!" });
     } catch (err) {
       console.log(err);
-      res.status(500).send({ message: `Error on resetting: ${err.message}` });
+      res.status(500).send({ message: `Eroare la resetare: ${err.message}` });
     } finally {
       await sequelize.query("SET FOREIGN_KEY_CHECKS=1");
     }

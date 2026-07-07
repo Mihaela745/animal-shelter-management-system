@@ -22,6 +22,7 @@ import { fetchBoxes } from "../../../features/boxes/boxesSlice";
 import { fetchSpecies } from "../../../features/species/speciesSlice";
 import CameraCaptureDialog from "../../../components/animals/CameraCaptureDialog";
 import { formatGender, formatSpecies } from "../../../utils/labels";
+import { useNotification } from "../../../context/NotificationContext";
 
 const RED = "#a91111";
 const RED_DARK = "#8a0d0d";
@@ -61,6 +62,7 @@ const fieldSx = {
 export default function AddAnimalPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { notifySuccess, notifyError } = useNotification();
 
   const { breeds, breedsLoading } = useSelector((s) => s.breedMetadata);
   const { boxes } = useSelector((s) => s.boxes);
@@ -132,13 +134,15 @@ export default function AddAnimalPage() {
     const result = await dispatch(createAnimal(formData));
 
     if (result.payload?.id) {
+      notifySuccess("Animalul a fost creat cu succes.");
       navigate(`/manager/animals/${result.payload.id}`);
     } else {
-      setError(
+      const message =
         typeof result.payload === "string"
           ? result.payload
-          : "A apărut o eroare la crearea animalului. Încearcă din nou.",
-      );
+          : "A apărut o eroare la crearea animalului. Încearcă din nou.";
+      setError(message);
+      notifyError(message);
     }
   };
 

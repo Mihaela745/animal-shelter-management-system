@@ -14,12 +14,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { createAdoptionRequest } from "../../features/adoptionRequests/adoptionRequestsSlice";
+import {
+  createAdoptionRequest,
+  fetchUserAdoptionRequests,
+} from "../../features/adoptionRequests/adoptionRequestsSlice";
 import {
   createAppointment,
   fetchAvailableSlots,
   fetchCalendarAvailability,
 } from "../../features/appointments/appointmentsSlice";
+import { useNotification } from "../../context/NotificationContext";
 
 function normalizeErrorMessage(error) {
   if (!error) {
@@ -39,6 +43,7 @@ function normalizeErrorMessage(error) {
 
 export default function AnimalActions({ animal }) {
   const dispatch = useDispatch();
+  const { notifySuccess, notifyError } = useNotification();
 
   const { requests } = useSelector((state) => state.adoptionRequests);
   const { availableSlots, availableDates, creating } = useSelector(
@@ -49,8 +54,14 @@ export default function AnimalActions({ animal }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState("");
   const [appointmentError, setAppointmentError] = useState("");
+  const [adoptionError, setAdoptionError] = useState("");
+  const [adoptionSubmitting, setAdoptionSubmitting] = useState(false);
 
   const alreadyRequested = requests.some((request) => request.animal_id === animal.id);
+
+  useEffect(() => {
+    dispatch(fetchUserAdoptionRequests());
+  }, [dispatch]);
 
   useEffect(() => {
     if (open) {
@@ -72,7 +83,21 @@ export default function AnimalActions({ animal }) {
   }, [selectedDate, dispatch, animal.id]);
 
   const handleAdoption = async () => {
-    await dispatch(createAdoptionRequest({ animal_id: animal.id }));
+    setAdoptionSubmitting(true);
+    setAdoptionError("");
+
+    const result = await dispatch(createAdoptionRequest({ animal_id: animal.id }));
+
+    setAdoptionSubmitting(false);
+
+    if (!createAdoptionRequest.fulfilled.match(result)) {
+      const message = normalizeErrorMessage(result.payload);
+      setAdoptionError(message);
+      notifyError(message);
+      return;
+    }
+
+    notifySuccess("Cererea de adopție a fost trimisă cu succes.");
   };
 
   const handleCreateAppointment = async () => {
@@ -90,10 +115,13 @@ export default function AnimalActions({ animal }) {
       setOpen(false);
       setSelectedDate(null);
       setSelectedTime("");
+      notifySuccess("Vizita a fost programată cu succes.");
       return;
     }
 
-    setAppointmentError(normalizeErrorMessage(result.payload));
+    const message = normalizeErrorMessage(result.payload);
+    setAppointmentError(message);
+    notifyError(message);
   };
 
   const handleCloseDialog = () => {
@@ -113,7 +141,9 @@ export default function AnimalActions({ animal }) {
         <Button
           variant="contained"
           fullWidth
-          disabled={animal.status !== "Available" || alreadyRequested}
+          disabled={
+            animal.status !== "Available" || alreadyRequested || adoptionSubmitting
+          }
           onClick={handleAdoption}
           sx={{
             backgroundColor: "#a91111",
@@ -137,6 +167,12 @@ export default function AnimalActions({ animal }) {
         >
           {alreadyRequested ? "Cerere trimisă" : "Trimite cerere adopție"}
         </Button>
+
+        {adoptionError ? (
+          <Alert severity="error" sx={{ borderRadius: "12px", width: "100%" }}>
+            {adoptionError}
+          </Alert>
+        ) : null}
 
         <Button
           variant="outlined"

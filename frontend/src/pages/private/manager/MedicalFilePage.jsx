@@ -1,4 +1,4 @@
-import { Box, Typography, Divider, Skeleton } from "@mui/material";
+import { Alert, Box, Typography, Divider, Skeleton } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,12 +16,26 @@ export default function AnimalMedicalPage() {
   const { fileId, animalId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { selectedFile, loading } = useSelector((state) => state.medicalFiles);
+  const { selectedFile, loading, error } = useSelector(
+    (state) => state.medicalFiles,
+  );
 
   useEffect(() => {
     dispatch(fetchMedicalFileById(fileId));
     dispatch(fetchMedicationsByFile(fileId));
   }, [dispatch, fileId]);
+
+  if (!loading && error && !selectedFile) {
+    return (
+      <Box sx={{ p: 4, maxWidth: 800, mx: "auto" }}>
+        <Alert severity="error" sx={{ borderRadius: "12px" }}>
+          {typeof error === "string"
+            ? error
+            : "Nu am putut încărca fișa medicală."}
+        </Alert>
+      </Box>
+    );
+  }
 
   if (loading || !selectedFile) {
     return (

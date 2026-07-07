@@ -23,6 +23,7 @@ import ChangePasswordDialog from "./ChangePasswordDialog";
 import { formatRole } from "../../utils/labels";
 import { setAuthUser, updateMyProfile } from "../../features/auth/authSlice";
 import { isValidFullName, normalizeFullName } from "../../utils/nameValidation";
+import { useNotification } from "../../context/NotificationContext";
 
 const RED = "#a91111";
 const RED_LIGHT = "#fff0f0";
@@ -90,6 +91,7 @@ const InfoRow = ({ icon, label, value }) => (
 export default function ProfileCard() {
   const dispatch = useDispatch();
   const { user, loading } = useSelector((state) => state.auth);
+  const { notifySuccess, notifyError } = useNotification();
   const [openPassword, setOpenPassword] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [saveError, setSaveError] = useState(null);
@@ -141,23 +143,25 @@ export default function ProfileCard() {
         }),
       );
       setIsEditing(false);
+      notifySuccess("Profilul a fost actualizat cu succes.");
       return;
     }
 
-    setSaveError(
+    const message =
       typeof result.payload === "string"
         ? result.payload
-        : "A aparut o eroare la actualizarea profilului.",
-    );
+        : "A aparut o eroare la actualizarea profilului.";
+    setSaveError(message);
+    notifyError(message);
   };
 
   return (
     <>
+      <Box sx={{ borderRadius: "24px", boxShadow: "0 8px 40px rgba(0,0,0,0.08)" }}>
       <Card
         sx={{
           borderRadius: "24px",
           overflow: "hidden",
-          boxShadow: "0 8px 40px rgba(0,0,0,0.08)",
           border: "1px solid #f0f0f0",
           p: 0,
         }}
@@ -427,6 +431,7 @@ export default function ProfileCard() {
           </Stack>
         </Box>
       </Card>
+      </Box>
 
       <ChangePasswordDialog
         open={openPassword}

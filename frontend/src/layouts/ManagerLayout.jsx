@@ -52,6 +52,8 @@ export default function ManagerLayout() {
               width: "100%",
               maxWidth: "100%",
               minWidth: 0,
+              height: "100%",
+              boxSizing: "border-box",
               overflowX: "hidden",
               pb: { xs: 8, md: 4 },
             }}

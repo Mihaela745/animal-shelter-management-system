@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import { registerUser } from "../../../features/auth/authSlice";
+import { useNotification } from "../../../context/NotificationContext";
 import {
   isValidFullName,
   normalizeFullName,
@@ -33,6 +34,7 @@ export default function RegisterPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
+  const { notifySuccess, notifyError } = useNotification();
 
   const [form, setForm] = useState({
     username: "",
@@ -81,7 +83,10 @@ export default function RegisterPage() {
     );
 
     if (result.meta.requestStatus === "fulfilled") {
+      notifySuccess("Contul a fost creat cu succes.");
       navigate("/login");
+    } else {
+      notifyError(result.payload || "Eroare la crearea contului.");
     }
   };
 

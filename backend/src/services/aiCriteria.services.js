@@ -14,10 +14,6 @@ function createError(code, message = code) {
   return err;
 }
 
-function isAllowedValue(value, allowedValues) {
-  return value == null || allowedValues.includes(value);
-}
-
 function sanitizeCriteria(criteria = {}) {
   const sanitized = {
     species: null,
@@ -71,24 +67,14 @@ function validateExtractedCriteria(criteria) {
   if (!criteria || typeof criteria !== "object" || Array.isArray(criteria)) {
     throw createError("INVALID_PROMPT");
   }
-
-  if (
-    !isAllowedValue(criteria.species, ALLOWED_VALUES.species) ||
-    !isAllowedValue(criteria.age_preference, ALLOWED_VALUES.age_preference) ||
-    !isAllowedValue(
-      criteria.gender_preference,
-      ALLOWED_VALUES.gender_preference,
-    ) ||
-    !isAllowedValue(criteria.activity_level, ALLOWED_VALUES.activity_level) ||
-    !isAllowedValue(criteria.housing, ALLOWED_VALUES.housing)
-  ) {
-    throw createError("INVALID_PROMPT");
-  }
 }
 
 function extractJsonPayload(rawText) {
   if (!rawText || typeof rawText !== "string") {
-    throw new Error("Gemini returned empty response.");
+    throw createError(
+      "AI_TEMPORARILY_UNAVAILABLE",
+      "Gemini a returnat un răspuns gol.",
+    );
   }
 
   const cleaned = rawText
@@ -99,34 +85,68 @@ function extractJsonPayload(rawText) {
   const lastBrace = cleaned.lastIndexOf("}");
 
   if (firstBrace === -1 || lastBrace === -1 || lastBrace < firstBrace) {
-    throw new Error("Gemini returned invalid JSON");
+    throw createError("AI_TEMPORARILY_UNAVAILABLE", "Gemini a returnat un JSON invalid");
   }
 
   return cleaned.slice(firstBrace, lastBrace + 1);
 }
 
-async function callGemini(prompt, errorPrefix) {
-  const resp = await fetch(GEMINI_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-    }),
-  });
+const RETRYABLE_STATUS_CODES = new Set([429, 503]);
+const MAX_GEMINI_ATTEMPTS = 3;
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function callGemini(prompt, errorPrefix, attempt = 1) {
+  let resp;
+  try {
+    resp = await fetch(GEMINI_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+      }),
+    });
+  } catch (networkError) {
+    if (attempt < MAX_GEMINI_ATTEMPTS) {
+      await sleep(400 * attempt);
+      return callGemini(prompt, errorPrefix, attempt + 1);
+    }
+    throw createError(
+      "AI_TEMPORARILY_UNAVAILABLE",
+      `${errorPrefix}: ${networkError.message}`,
+    );
+  }
 
   if (!resp.ok) {
     const errText = await resp.text();
-    throw new Error(`${errorPrefix}: ${errText}`);
+
+    if (RETRYABLE_STATUS_CODES.has(resp.status) && attempt < MAX_GEMINI_ATTEMPTS) {
+      await sleep(400 * attempt);
+      return callGemini(prompt, errorPrefix, attempt + 1);
+    }
+
+    throw createError("AI_TEMPORARILY_UNAVAILABLE", `${errorPrefix}: ${errText}`);
   }
 
   const data = await resp.json();
   const raw = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-  return JSON.parse(extractJsonPayload(raw));
+
+  try {
+    return JSON.parse(extractJsonPayload(raw));
+  } catch (parseError) {
+    if (parseError.code) {
+      throw parseError;
+    }
+    throw createError(
+      "AI_TEMPORARILY_UNAVAILABLE",
+      `Nu am putut interpreta răspunsul de la Gemini: ${parseError.message}`,
+    );
+  }
 }
 
 export async function extractCriteriaFromDescription(description) {
   if (!description || typeof description !== "string") {
-    throw new Error("Description is required and must be a string.");
+    throw new Error("Descrierea este obligatorie și trebuie să fie un text.");
   }
 
   const prompt = `
@@ -159,7 +179,7 @@ Descriere utilizator: "${description}"
     parsed = await callGemini(prompt, "Gemini API error");
   } catch (error) {
     console.error("AI criteria extraction failed:", error.message);
-    throw createError("INVALID_PROMPT", error.message);
+    throw error.code ? error : createError("AI_TEMPORARILY_UNAVAILABLE", error.message);
   }
 
   if (parsed?.error === "NOT_ADOPTION_RELATED") {
@@ -176,20 +196,25 @@ function validateRankedResultsPayload(payload) {
     typeof payload !== "object" ||
     !Array.isArray(payload.ranked_results)
   ) {
-    throw new Error("Gemini ranking returned invalid JSON");
+    throw new Error("Clasificarea Gemini a returnat un JSON invalid");
   }
 
   return payload;
 }
 
-export async function rankAnimalsWithAI(criteria, animals) {
+export async function rankAnimalsWithAI(criteria, animals, description) {
   const prompt = `
 Esti un consilier de adoptie animale.
 
-Criteriile utilizatorului:
+Descrierea originala a utilizatorului (foloseste-o ca sursa principala de adevar):
+"${description || ""}"
+
+Criteriile structurate extrase din descriere (pot fi incomplete - unele trasaturi mentionate
+de utilizator, cum ar fi "inteligent", "loial", "curajos" etc., nu se incadreaza in schema fixa
+de mai jos si NU apar aici, desi utilizatorul le-a cerut explicit):
 ${JSON.stringify(criteria)}
 
-Animale candidate:
+Animale candidate (fiecare are campul "temperament" cu descrierea libera a rasei):
 ${JSON.stringify(animals, null, 2)}
 
 Reguli:
@@ -197,11 +222,15 @@ Reguli:
 - Fiecare rank trebuie sa fie unic.
 - Nu atribui acelasi rank la mai multe animale.
 - Ia in considerare activity_level, housing, good_with_kids si temperament.
+- IMPORTANT: compara si cuvintele/trasaturile EXACTE din descrierea originala a utilizatorului
+  (ex: inteligent, loial, curajos, bland) cu campul "temperament" al fiecarui animal, chiar daca
+  acele trasaturi nu apar in criteriile structurate de mai sus.
 - Foloseste EXACT obiectele din lista de candidate.
 - Nu modifica structura lor.
 - Returneaza DOAR JSON valid.
 - Nu folosi markdown.
-- Explicatiile trebuie scrise in limba romana.
+- Explicatiile trebuie sa mentioneze concret trasaturile din descrierea utilizatorului care se
+  regasesc (sau nu) in temperamentul animalului, scrise in limba romana.
 
 Returneaza in acest format:
 {

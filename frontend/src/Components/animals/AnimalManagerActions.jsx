@@ -9,6 +9,7 @@ import {
   MenuItem,
   Stack,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -21,14 +22,18 @@ import {
   deleteAnimal,
 } from "../../features/animals/animalsSlice";
 import { fetchBreedsBySpecies } from "../../features/breedMetadata/breedMetadata";
+import { fetchBoxes } from "../../features/boxes/boxesSlice";
 import { useNavigate } from "react-router-dom";
 import CameraCaptureDialog from "./CameraCaptureDialog";
 import { formatAnimalStatus, formatGender } from "../../utils/labels";
+import { useNotification } from "../../context/NotificationContext";
 
 export default function AnimalManagerActions({ animal }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { notifySuccess, notifyError } = useNotification();
   const { breeds, breedsLoading } = useSelector((state) => state.breedMetadata);
+  const { boxes } = useSelector((state) => state.boxes);
   const fileInputRef = useRef(null);
   const [openEdit, setOpenEdit] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
@@ -44,7 +49,11 @@ export default function AnimalManagerActions({ animal }) {
       : "",
     gender: animal.gender || "",
     status: animal.status || "",
+    box_id: animal.box_id || "",
   });
+  const [saving, setSaving] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [formError, setFormError] = useState(null);
 
   useEffect(() => {
     if (openEdit && animal?.Species?.name) {
@@ -52,8 +61,44 @@ export default function AnimalManagerActions({ animal }) {
     }
   }, [openEdit, dispatch, animal?.Species?.name]);
 
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  useEffect(() => {
+    if (openEdit) {
+      dispatch(fetchBoxes());
+    }
+  }, [openEdit, dispatch]);
+
+  useEffect(() => {
+    if (!openEdit) {
+      return;
+    }
+
+    setFormError(null);
+    setImageFile(null);
+    setImagePreview(animal.image_url || null);
+    setFormData({
+      name: animal.name,
+      breed: animal.breed || "",
+      age: animal.age || "",
+      date_added: animal.date_added
+        ? String(animal.date_added).split("T")[0]
+        : "",
+      gender: animal.gender || "",
+      status: animal.status || "",
+      box_id: animal.box_id || "",
+    });
+  }, [openEdit, animal]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: name === "box_id" ? Number(value) : value,
+    });
+  };
+
+  const filteredBoxes = boxes.filter(
+    (box) => Number(box.species_id) === Number(animal.species_id),
+  );
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -68,19 +113,52 @@ export default function AnimalManagerActions({ animal }) {
   };
 
   const handleUpdate = async () => {
+    setSaving(true);
+    setFormError(null);
+
+    let result;
     if (imageFile) {
       const fd = new FormData();
       Object.entries(formData).forEach(([key, val]) => fd.append(key, val));
       fd.append("image", imageFile);
-      await dispatch(updateAnimal({ id: animal.id, data: fd }));
+      result = await dispatch(updateAnimal({ id: animal.id, data: fd }));
     } else {
-      await dispatch(updateAnimal({ id: animal.id, data: formData }));
+      result = await dispatch(updateAnimal({ id: animal.id, data: formData }));
     }
+
+    setSaving(false);
+
+    if (result.meta?.requestStatus !== "fulfilled") {
+      const message =
+        typeof result.payload === "string"
+          ? result.payload
+          : "Nu am putut salva modificările. Încearcă din nou.";
+      setFormError(message);
+      notifyError(message);
+      return;
+    }
+
     setOpenEdit(false);
+    notifySuccess("Animalul a fost actualizat cu succes.");
   };
 
   const handleDelete = async () => {
-    await dispatch(deleteAnimal(animal.id));
+    setDeleting(true);
+    const result = await dispatch(deleteAnimal(animal.id));
+    setDeleting(false);
+
+    if (result.meta?.requestStatus !== "fulfilled") {
+      const message =
+        typeof result.payload === "string"
+          ? result.payload
+          : "Nu am putut șterge animalul. Încearcă din nou.";
+      setFormError(message);
+      notifyError(message);
+      return;
+    }
+
+    setOpenDelete(false);
+    notifySuccess("Animalul a fost șters cu succes.");
     navigate("/manager/animals");
   };
 
@@ -88,6 +166,12 @@ export default function AnimalManagerActions({ animal }) {
     setOpenEdit(false);
     setImageFile(null);
     setImagePreview(animal.image_url || null);
+    setFormError(null);
+  };
+
+  const handleCloseDelete = () => {
+    setOpenDelete(false);
+    setFormError(null);
   };
 
   const inputSx = {
@@ -175,6 +259,21 @@ export default function AnimalManagerActions({ animal }) {
         </DialogTitle>
 
         <DialogContent sx={{ pt: "1.2rem !important" }}>
+          {formError && (
+            <Box
+              sx={{
+                mb: 2,
+                p: 1.5,
+                borderRadius: "10px",
+                backgroundColor: "#fff1f2",
+                border: "1px solid #fecdd3",
+              }}
+            >
+              <Typography sx={{ fontSize: "0.82rem", color: "#991b1b" }}>
+                {formError}
+              </Typography>
+            </Box>
+          )}
           <Box sx={{ mb: 1 }}>
             {imagePreview && (
               <Box
@@ -325,11 +424,42 @@ export default function AnimalManagerActions({ animal }) {
             <MenuItem value="Adopted">{formatAnimalStatus("Adopted")}</MenuItem>
             <MenuItem value="Fostered">{formatAnimalStatus("Fostered")}</MenuItem>
           </TextField>
+          <TextField
+            select
+            fullWidth
+            margin="dense"
+            label="Boxă"
+            name="box_id"
+            value={formData.box_id}
+            onChange={handleChange}
+            sx={inputSx}
+          >
+            {filteredBoxes.length === 0 ? (
+              <MenuItem value={formData.box_id} disabled>
+                Nu există boxe pentru această specie.
+              </MenuItem>
+            ) : (
+              filteredBoxes.map((box) => (
+                <MenuItem
+                  key={box.id}
+                  value={box.id}
+                  disabled={
+                    box.id !== animal.box_id &&
+                    box.current_occupancy >= box.capacity
+                  }
+                >
+                  {box.box_number} ({box.current_occupancy}/{box.capacity}
+                  {box.current_occupancy >= box.capacity ? " - plină" : ""})
+                </MenuItem>
+              ))
+            )}
+          </TextField>
         </DialogContent>
 
         <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
           <Button
             onClick={handleCloseEdit}
+            disabled={saving}
             sx={{
               color: "#999",
               textTransform: "none",
@@ -342,6 +472,7 @@ export default function AnimalManagerActions({ animal }) {
           <Button
             variant="contained"
             onClick={handleUpdate}
+            disabled={saving}
             sx={{
               backgroundColor: "#1976d2",
               borderRadius: "10px",
@@ -351,14 +482,18 @@ export default function AnimalManagerActions({ animal }) {
               "&:hover": { backgroundColor: "#1565c0" },
             }}
           >
-            Salvează
+            {saving ? (
+              <CircularProgress size={18} sx={{ color: "white" }} />
+            ) : (
+              "Salvează"
+            )}
           </Button>
         </DialogActions>
       </Dialog>
 
       <Dialog
         open={openDelete}
-        onClose={() => setOpenDelete(false)}
+        onClose={handleCloseDelete}
         PaperProps={{ sx: { borderRadius: "20px", p: 1 } }}
       >
         <DialogTitle sx={{ pb: 0 }}>
@@ -382,6 +517,21 @@ export default function AnimalManagerActions({ animal }) {
           </Box>
         </DialogTitle>
         <DialogContent sx={{ pt: "1rem !important" }}>
+          {formError && (
+            <Box
+              sx={{
+                mb: 2,
+                p: 1.5,
+                borderRadius: "10px",
+                backgroundColor: "#fff1f2",
+                border: "1px solid #fecdd3",
+              }}
+            >
+              <Typography sx={{ fontSize: "0.82rem", color: "#991b1b" }}>
+                {formError}
+              </Typography>
+            </Box>
+          )}
           <Typography fontSize="0.9rem" color="#555">
             Ești sigur că vrei să ștergi <strong>{animal.name}</strong>? Această
             acțiune nu poate fi anulată.
@@ -389,7 +539,8 @@ export default function AnimalManagerActions({ animal }) {
         </DialogContent>
         <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
           <Button
-            onClick={() => setOpenDelete(false)}
+            onClick={handleCloseDelete}
+            disabled={deleting}
             sx={{
               color: "#999",
               textTransform: "none",
@@ -402,6 +553,7 @@ export default function AnimalManagerActions({ animal }) {
           <Button
             variant="contained"
             onClick={handleDelete}
+            disabled={deleting}
             sx={{
               backgroundColor: "#d32f2f",
               borderRadius: "10px",
@@ -411,7 +563,11 @@ export default function AnimalManagerActions({ animal }) {
               "&:hover": { backgroundColor: "#b71c1c" },
             }}
           >
-            Șterge
+            {deleting ? (
+              <CircularProgress size={18} sx={{ color: "white" }} />
+            ) : (
+              "Șterge"
+            )}
           </Button>
         </DialogActions>
       </Dialog>

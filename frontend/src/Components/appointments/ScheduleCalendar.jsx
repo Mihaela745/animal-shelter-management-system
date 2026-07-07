@@ -211,12 +211,12 @@ export default function ScheduleCalendar({
 
   return (
     <>
+      <Box sx={{ borderRadius: "20px", boxShadow: "0 10px 32px rgba(0,0,0,0.04)" }}>
       <Paper
         sx={{
           borderRadius: "20px",
           border: "1px solid #efefef",
           overflow: "hidden",
-          boxShadow: "0 10px 32px rgba(0,0,0,0.04)",
         }}
       >
         <Box
@@ -416,6 +416,7 @@ export default function ScheduleCalendar({
           </Box>
         </Box>
       </Paper>
+      </Box>
 
       <Dialog
         open={Boolean(selectedDayDate)}

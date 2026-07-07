@@ -56,6 +56,14 @@ function calculateAnimalScore(criteria, animal, breedMap) {
     ) {
       score += 2;
     }
+
+    if (criteria.temperament?.length && breedData.temperament) {
+      const breedTemperament = breedData.temperament.toLowerCase();
+      const matchedTraits = criteria.temperament.filter((trait) =>
+        breedTemperament.includes(trait.toLowerCase()),
+      );
+      score += matchedTraits.length * 2;
+    }
   }
 
   if (
@@ -83,6 +91,7 @@ function buildAiInput(animal, score, breedMap) {
     age: animal.age,
     gender: animal.gender,
     energy_level: breedData?.energy_level || null,
+    temperament: breedData?.temperament || null,
     good_with_kids: breedData?.good_with_kids || null,
     good_with_other_pets: breedData?.good_with_other_pets || null,
     apartment_friendly: breedData?.apartment_friendly || null,
@@ -105,12 +114,95 @@ function buildResultPayload(animal, rank, explanation) {
   };
 }
 
-function buildFallbackRanking(topResults) {
+const SPECIES_LABELS = { Dog: "câine", Cat: "pisică" };
+const AGE_LABELS = {
+  "Puppy/Kitten": "vârsta de pui",
+  Young: "vârsta tânără",
+  Adult: "vârsta adultă",
+  Senior: "vârsta senior",
+};
+
+function buildFallbackExplanation(criteria, animal, breedMap) {
+  const reasons = [];
+
+  if (criteria.species && animal.Species?.name === criteria.species) {
+    reasons.push(
+      `este din specia dorită (${SPECIES_LABELS[criteria.species] || criteria.species})`,
+    );
+  }
+
+  if (criteria.age_preference && animal.age != null) {
+    const matchesAge =
+      (criteria.age_preference === "Puppy/Kitten" && animal.age <= 1) ||
+      (criteria.age_preference === "Young" && animal.age > 1 && animal.age <= 3) ||
+      (criteria.age_preference === "Adult" && animal.age > 3 && animal.age <= 8) ||
+      (criteria.age_preference === "Senior" && animal.age > 8);
+    if (matchesAge) {
+      reasons.push(`corespunde ${AGE_LABELS[criteria.age_preference]} căutate`);
+    }
+  }
+
+  if (criteria.gender_preference && animal.gender === criteria.gender_preference) {
+    reasons.push(
+      `este de genul preferat (${animal.gender === "Male" ? "mascul" : "femelă"})`,
+    );
+  }
+
+  const breedData =
+    animal.breed && animal.breed.toLowerCase() !== "maidanez"
+      ? breedMap[animal.breed]
+      : null;
+
+  if (breedData) {
+    if (criteria.activity_level && breedData.energy_level === criteria.activity_level) {
+      reasons.push(`are nivelul de energie potrivit (${criteria.activity_level})`);
+    }
+    if (criteria.good_with_kids === true && breedData.good_with_kids === true) {
+      reasons.push("se înțelege bine cu copiii");
+    }
+    if (
+      criteria.good_with_other_pets === true &&
+      breedData.good_with_other_pets === true
+    ) {
+      reasons.push("se înțelege bine cu alte animale");
+    }
+    if (criteria.housing === "Apartment" && breedData.apartment_friendly === true) {
+      reasons.push("este potrivit pentru apartament");
+    }
+    if (criteria.temperament?.length && breedData.temperament) {
+      const breedTemperament = breedData.temperament.toLowerCase();
+      const matchedTraits = criteria.temperament.filter((trait) =>
+        breedTemperament.includes(trait.toLowerCase()),
+      );
+      if (matchedTraits.length) {
+        reasons.push(
+          `are temperamentul căutat (${matchedTraits.join(", ").toLowerCase()})`,
+        );
+      }
+    }
+  }
+
+  if (
+    criteria.breed_preference &&
+    animal.breed &&
+    animal.breed.toLowerCase().includes(criteria.breed_preference.toLowerCase())
+  ) {
+    reasons.push(`este din rasa dorită (${animal.breed})`);
+  }
+
+  if (!reasons.length) {
+    return `${animal.name} este disponibil și a fost inclus pe baza compatibilității generale cu criteriile căutate.`;
+  }
+
+  return `${animal.name} ${reasons.join(", ")}.`;
+}
+
+function buildFallbackRanking(topResults, criteria, breedMap) {
   return topResults.map((item, index) =>
     buildResultPayload(
       item.animal,
       index + 1,
-      "Rezultatul a fost ordonat pe baza potrivirii criteriilor extrase.",
+      buildFallbackExplanation(criteria, item.animal, breedMap),
     ),
   );
 }
@@ -120,7 +212,7 @@ export const controller = {
     try {
       const { description } = req.body;
       if (!description) {
-        return res.status(400).json({ message: "Description is required." });
+        return res.status(400).json({ message: "Descrierea este obligatorie." });
       }
 
       const criteria = await extractCriteriaFromDescription(description);
@@ -178,7 +270,7 @@ export const controller = {
 
       let results;
       try {
-        const aiRanking = await rankAnimalsWithAI(criteria, aiInput);
+        const aiRanking = await rankAnimalsWithAI(criteria, aiInput, description);
         results = aiRanking.ranked_results
           .map((rankedItem, index) => {
             const rankedId = String(rankedItem?.animal?.id ?? rankedItem?.id ?? "");
@@ -194,11 +286,12 @@ export const controller = {
           })
           .filter(Boolean);
       } catch (rankingError) {
-        results = buildFallbackRanking(topResults);
+        console.error("AI ranking failed, using local fallback:", rankingError.message);
+        results = buildFallbackRanking(topResults, criteria, breedMap);
       }
 
       if (!results.length) {
-        results = buildFallbackRanking(topResults);
+        results = buildFallbackRanking(topResults, criteria, breedMap);
       }
 
       return res.status(200).json({
@@ -227,7 +320,7 @@ export const controller = {
         });
       }
 
-      return res.status(500).send(err.message || "AI search failed.");
+      return res.status(500).send(err.message || "Căutarea AI a eșuat.");
     }
   },
 };

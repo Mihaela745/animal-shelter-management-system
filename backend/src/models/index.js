@@ -131,8 +131,8 @@ Responsible_box.belongsTo(Staff, {
   foreignKey: "responsible_id",
   onDelete: "CASCADE",
 });
-Staff.belongsTo(Users, { foreignKey: "user_id" });
-Users.hasOne(Staff, { foreignKey: "user_id" });
+Staff.belongsTo(Users, { foreignKey: "user_id", onDelete: "CASCADE" });
+Users.hasOne(Staff, { foreignKey: "user_id", onDelete: "CASCADE" });
 export {
   sequelize,
   Animals,

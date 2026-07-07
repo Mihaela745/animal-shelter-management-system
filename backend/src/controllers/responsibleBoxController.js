@@ -5,23 +5,23 @@ export const controller = {
     try {
       const { box_id, responsible_id } = req.body;
       if (!box_id || !responsible_id) {
-        return res.status(400).send("Must complete all parameters!");
+        return res.status(400).send("Trebuie completați toți parametrii!");
       }
       const box = await Boxes.findByPk(box_id);
       if (!box) {
-        return res.status(404).send("Box doesn't exist!");
+        return res.status(404).send("Boxa nu există!");
       }
 
       const staff = await Staff.findByPk(responsible_id, {
         include: [{ model: Position }],
       });
       if (!staff) {
-        return res.status(404).send("Staff doesn't exist!");
+        return res.status(404).send("Angajatul nu există!");
       }
       if (staff.Position.title !== "Caretaker") {
         return res
           .status(400)
-          .send("Only Caretakers can be responsible for boxes!");
+          .send("Doar îngrijitorii pot fi responsabili pentru boxe!");
       }
       const existingRelation = await Responsible_box.findOne({
         where: { box_id, responsible_id },
@@ -30,7 +30,7 @@ export const controller = {
       if (existingRelation) {
         return res
           .status(409)
-          .send("This staff member is already responsible for this box.");
+          .send("Acest angajat este deja responsabil pentru această boxă.");
       }
 
       const resp_box = await Responsible_box.create({
@@ -40,7 +40,7 @@ export const controller = {
       return res.status(201).send(resp_box);
     } catch (err) {
       console.log("Error while creating!");
-      return res.status(500).send(`Error while creating:${err}`);
+      return res.status(500).send(`Eroare la creare:${err}`);
     }
   },
   getAllResponsibles: async (req, res) => {
@@ -60,7 +60,7 @@ export const controller = {
       return res.status(200).send(response);
     } catch (err) {
       console.log("Error while fetching!");
-      return res.status(500).send(`Error while fetching:${err}`);
+      return res.status(500).send(`Eroare la încărcare:${err}`);
     }
   },
   getResponsiblesByBoxId: async (req, res) => {
@@ -69,7 +69,7 @@ export const controller = {
 
       const box = await Boxes.findByPk(box_id);
       if (!box) {
-        return res.status(404).send("Box doesn't exist!");
+        return res.status(404).send("Boxa nu există!");
       }
 
       const response = await Responsible_box.findAll({
@@ -92,7 +92,7 @@ export const controller = {
     try {
       const res_id = req.params.id;
       const responsable = await Staff.findByPk(res_id);
-      if (!responsable) return res.status(404).send("Staff doesn't exist!");
+      if (!responsable) return res.status(404).send("Angajatul nu există!");
       const response = await Responsible_box.findAll({
         where: { responsible_id: res_id },
         include: [
@@ -116,7 +116,7 @@ export const controller = {
       return res.status(200).send(boxes);
     } catch (err) {
       console.log("Error while fetching!");
-      return res.status(500).send(`Error while fetching:${err}`);
+      return res.status(500).send(`Eroare la încărcare:${err}`);
     }
   },
   deleteBoxResponsible: async (req, res) => {
@@ -126,11 +126,11 @@ export const controller = {
           id: req.params.id,
         },
       });
-      if (deletedRows === 0) return res.status(404).send("Doesn't exist!");
-      return res.status(200).send("Box_resp has been deleted!");
+      if (deletedRows === 0) return res.status(404).send("Nu există!");
+      return res.status(200).send("Responsabilul boxei a fost șters!");
     } catch (err) {
       console.log("Error while deleting");
-      return res.status(500).send(`Error while deleting: ${err}`);
+      return res.status(500).send(`Eroare la ștergere: ${err}`);
     }
   },
 };

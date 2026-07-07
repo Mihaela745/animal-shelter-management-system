@@ -37,6 +37,7 @@ function StatCard({ title, value, subtitle, color, icon }) {
         border: "1px solid #f1f1f1",
         boxShadow: "0 6px 24px rgba(0,0,0,0.05)",
         height: "100%",
+        overflow: "visible",
       }}
     >
       <CardContent sx={{ p: 2.5 }}>
@@ -106,6 +107,7 @@ function SectionCard({ title, subtitle, action, children }) {
         border: "1px solid #f0f0f0",
         boxShadow: "0 8px 28px rgba(0,0,0,0.05)",
         height: "100%",
+        overflow: "visible",
       }}
     >
       <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
@@ -336,10 +338,6 @@ export default function DashboardPage() {
     [staffBoxes],
   );
 
-  const recentAnimals = useMemo(
-    () => animalsInMyBoxes.slice(0, 5),
-    [animalsInMyBoxes],
-  );
 
   const isLoading =
     profileLoading || boxesLoading || appointmentsLoading || animalsLoading;
@@ -461,8 +459,26 @@ export default function DashboardPage() {
                   Nu ai programări setate pentru azi.
                 </Typography>
               ) : (
-                <Stack spacing={1.2}>
-                  {todayAppointments.slice(0, 5).map((appointment) => {
+                <Stack
+                  spacing={1.2}
+                  sx={{
+                    maxHeight: 380,
+                    overflowY: "auto",
+                    pr: 0.5,
+                    "&::-webkit-scrollbar": { width: "4px" },
+                    "&::-webkit-scrollbar-track": {
+                      backgroundColor: "transparent",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: "4px",
+                    },
+                    "&::-webkit-scrollbar-thumb:hover": {
+                      backgroundColor: "#bbb",
+                    },
+                  }}
+                >
+                  {todayAppointments.map((appointment) => {
                     const statusStyle = getStatusChipStyles(appointment.status);
 
                     return (
@@ -632,16 +648,34 @@ export default function DashboardPage() {
           >
             <SectionCard
               title="Animale din boxele tale"
-              subtitle="primele animale găsite în zonele atribuite"
+              subtitle="toate animalele din zonele atribuite ție"
             >
-              {recentAnimals.length === 0 ? (
+              {animalsInMyBoxes.length === 0 ? (
                 <Typography sx={{ fontSize: "0.86rem", color: "#999" }}>
                   Nu există animale în boxele tale sau datele nu sunt
                   disponibile încă.
                 </Typography>
               ) : (
-                <Stack spacing={1.2}>
-                  {recentAnimals.map((animal) => (
+                <Stack
+                  spacing={1.2}
+                  sx={{
+                    maxHeight: 380,
+                    overflowY: "auto",
+                    pr: 0.5,
+                    "&::-webkit-scrollbar": { width: "4px" },
+                    "&::-webkit-scrollbar-track": {
+                      backgroundColor: "transparent",
+                    },
+                    "&::-webkit-scrollbar-thumb": {
+                      backgroundColor: "#e0e0e0",
+                      borderRadius: "4px",
+                    },
+                    "&::-webkit-scrollbar-thumb:hover": {
+                      backgroundColor: "#bbb",
+                    },
+                  }}
+                >
+                  {animalsInMyBoxes.map((animal) => (
                     <Box
                       key={animal.id}
                       sx={{

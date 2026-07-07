@@ -124,6 +124,7 @@ export default function DashboardPage() {
         boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
         border: warning ? "1px solid #ffcc80" : "1px solid #f5f5f5",
         backgroundColor: warning ? "#fffde7" : "#fff",
+        overflow: "visible",
         transition: "transform 0.2s",
         "&:hover": { transform: "translateY(-2px)" },
       }}

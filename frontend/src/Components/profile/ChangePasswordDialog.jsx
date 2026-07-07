@@ -13,10 +13,12 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { updatePassword } from "../../features/auth/authSlice";
+import { useNotification } from "../../context/NotificationContext";
 
 export default function ChangePasswordDialog({ open, handleClose }) {
   const dispatch = useDispatch();
   const { user, loading } = useSelector((state) => state.auth);
+  const { notifySuccess, notifyError } = useNotification();
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -47,9 +49,12 @@ export default function ChangePasswordDialog({ open, handleClose }) {
       setOldPassword("");
       setNewPassword("");
       setConfirm("");
+      notifySuccess("Parola a fost schimbată cu succes.");
       handleClose();
     } else {
-      setError(result.payload || "Eroare la actualizarea parolei.");
+      const message = result.payload || "Eroare la actualizarea parolei.";
+      setError(message);
+      notifyError(message);
     }
   };
 

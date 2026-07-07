@@ -12,7 +12,7 @@ export const controller={ getBreedsBySpecies:async(req,res)=>{
     {
         return res
           .status(400)
-          .send("Species parameter is required in URL (Dog or Cat).");
+          .send("Parametrul specie este obligatoriu în URL (Dog sau Cat).");
     }
 const normalizedSpecies = species.trim().toLowerCase();
     let apiURL;
@@ -27,13 +27,13 @@ const normalizedSpecies = species.trim().toLowerCase();
         apiURL=DOG_API_URL;
         apiKey=DOG_API_KEY;
     }else{
-        return res.status(404).send(`Breed list is not available for species:${species}`);
+        return res.status(404).send(`Lista de rase nu este disponibilă pentru specia:${species}`);
     }
 
     try{
         if(!apiURL ||!apiKey)
         {
-            return res.status(500).send(`API URL or Key for ${species} is not configured correctly.`);
+            return res.status(500).send(`URL-ul API sau cheia pentru ${species} nu sunt configurate corect.`);
         }
 
         const headers={'x-api-key':apiKey};
@@ -42,7 +42,7 @@ const normalizedSpecies = species.trim().toLowerCase();
     }catch(error)
     {
         console.error(`Error fetching ${species} breeds:`, error.message, error.response ? error.response.data : '');
-        return res.status(500).send(`Error while fetching ap: ${error}`);
+        return res.status(500).send(`Eroare la preluarea datelor de la API: ${error}`);
     }
 
 }

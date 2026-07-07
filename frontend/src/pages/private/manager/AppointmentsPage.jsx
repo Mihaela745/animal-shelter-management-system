@@ -32,6 +32,7 @@ import {
 import { fetchRooms } from "../../../features/rooms/roomsSlice";
 import { fetchStaff } from "../../../features/staff/staffSlice";
 import ScheduleCalendar from "../../../components/appointments/ScheduleCalendar";
+import { useNotification } from "../../../context/NotificationContext";
 
 const RED = "#a91111";
 const RED_DARK = "#8a0d0d";
@@ -231,6 +232,7 @@ export default function AppointmentsPage() {
   const { appointments, loading } = useSelector((s) => s.appointments);
   const { rooms } = useSelector((s) => s.rooms);
   const { staff } = useSelector((s) => s.staff);
+  const { notifySuccess, notifyError } = useNotification();
 
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -290,7 +292,20 @@ export default function AppointmentsPage() {
 
   const handleStatusChange = async (id, status) => {
     setActionLoading(true);
-    await dispatch(updateAppointmentStatus({ id, status }));
+    const result = await dispatch(updateAppointmentStatus({ id, status }));
+
+    if (updateAppointmentStatus.rejected.match(result)) {
+      notifyError(
+        typeof result.payload === "string"
+          ? result.payload
+          : "Nu am putut actualiza programarea. Încearcă din nou.",
+      );
+    } else {
+      notifySuccess(
+        `Programarea a fost marcată ca „${formatAppointmentStatus(status)}”.`,
+      );
+    }
+
     const startDate = format(calendarMonthStart, "yyyy-MM-dd");
     const endDate = format(endOfMonth(calendarMonthStart), "yyyy-MM-dd");
     await dispatch(fetchAllAppointments({ startDate, endDate }));
@@ -308,7 +323,18 @@ export default function AppointmentsPage() {
     }
 
     setActionLoading(true);
-    await dispatch(deleteAppointment(selectedAppointment.id));
+    const result = await dispatch(deleteAppointment(selectedAppointment.id));
+
+    if (deleteAppointment.rejected.match(result)) {
+      notifyError(
+        typeof result.payload === "string"
+          ? result.payload
+          : "Nu am putut șterge programarea. Încearcă din nou.",
+      );
+    } else {
+      notifySuccess("Programarea a fost ștearsă cu succes.");
+    }
+
     setActionLoading(false);
     setOpenDelete(false);
     setSelectedAppointment(null);

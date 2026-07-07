@@ -75,7 +75,23 @@ export default function AnimalDetailsPage() {
   }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: "1200px", margin: "0 auto" }}>
+    <Box
+      sx={{
+        p: { xs: 2, md: 4 },
+        maxWidth: "1200px",
+        margin: "0 auto",
+        height: "100%",
+        boxSizing: "border-box",
+        overflow: "hidden",
+      }}
+    >
+      <Box
+        sx={{
+          borderRadius: "24px",
+          boxShadow: "0 12px 40px rgba(0,0,0,0.08)",
+          height: "100%",
+        }}
+      >
       <Paper
         elevation={0}
         sx={{
@@ -83,32 +99,35 @@ export default function AnimalDetailsPage() {
           flexDirection: { xs: "column", md: "row" },
           borderRadius: "24px",
           overflow: "hidden",
-          boxShadow: "0 12px 40px rgba(0,0,0,0.08)",
           backgroundColor: "white",
-          minHeight: { md: "450px" },
-          maxHeight: { md: "600px" },
+          height: "100%",
         }}
       >
         <Box
-          sx={{ flex: 1, display: "flex", minHeight: { xs: "300px", md: 0 } }}
+          sx={{
+            flex: { xs: "0 0 40%", md: 1 },
+            display: "flex",
+          }}
         >
           <AnimalGallery animal={selectedAnimal} />
         </Box>
 
         <Box
           sx={{
-            flex: 1,
+            flex: { xs: "0 0 60%", md: 1 },
             display: "flex",
             flexDirection: "column",
-            justifyContent: "center",
+            justifyContent: "flex-start",
             p: { xs: 3, md: 5 },
             overflowY: "auto",
+            overflowX: "hidden",
           }}
         >
           <AnimalInfo animal={selectedAnimal} />
           <AnimalActions animal={selectedAnimal} />
         </Box>
       </Paper>
+      </Box>
     </Box>
   );
 }

@@ -41,7 +41,7 @@ export const controller = {
       });
       return res.status(200).send(files);
     } catch (error) {
-      return res.status(500).send(`"Failed to fetch medical files : ${error}`);
+      return res.status(500).send(`"Nu am putut încărca fișele medicale : ${error}`);
     }
   },
   getMedicalFilesbyId: async (req, res) => {
@@ -51,12 +51,12 @@ export const controller = {
         include: MEDICAL_FILE_INCLUDE,
       });
       if (!file) {
-        return res.status(404).send(`Medical file doesn't exist`);
+        return res.status(404).send(`Fișa medicală nu există`);
       }
       return res.status(200).send(file);
     } catch (error) {
       console.log("Can not find the medical_file");
-      return res.status(500).send(`Failed to fetch medical files : ${error}`);
+      return res.status(500).send(`Nu am putut încărca fișele medicale : ${error}`);
     }
   },
   updateMedicalFile: async (req, res) => {
@@ -64,7 +64,7 @@ export const controller = {
       const fileId = req.params.id;
       const file = await Medical_files.findByPk(fileId);
       if (!file) {
-        return res.status(404).send("Medical file doesn't exist");
+        return res.status(404).send("Fișa medicală nu există");
       }
       await file.update({ ...req.body, last_checkup_date: new Date() });
 
@@ -77,7 +77,7 @@ export const controller = {
     } catch (error) {
       console.log("Failed to modify medical_file!");
 
-      return res.status(500).send(`Failed to update medical files : ${error}`);
+      return res.status(500).send(`Nu am putut actualiza fișele medicale : ${error}`);
     }
   },
 };

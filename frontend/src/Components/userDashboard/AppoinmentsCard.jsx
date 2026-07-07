@@ -1,15 +1,40 @@
-import { Card, Typography, Box, Button } from "@mui/material";
+import { Alert, Card, Typography, Box, Button, CircularProgress } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { updateAppointmentStatus } from "../../features/appointments/appointmentsSlice";
+import {
+  fetchUserAppointments,
+  updateAppointmentStatus,
+} from "../../features/appointments/appointmentsSlice";
+import { useNotification } from "../../context/NotificationContext";
 
 export default function AppointmentsCard({ appointments = [] }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { notifySuccess, notifyError } = useNotification();
+  const [cancellingId, setCancellingId] = useState(null);
+  const [cancelError, setCancelError] = useState(null);
 
-  const handleCancel = (id) => {
-    dispatch(updateAppointmentStatus({ id, status: "Cancelled" }));
+  const handleCancel = async (id) => {
+    setCancellingId(id);
+    setCancelError(null);
+
+    const result = await dispatch(updateAppointmentStatus({ id, status: "Cancelled" }));
+
+    if (updateAppointmentStatus.fulfilled.match(result)) {
+      await dispatch(fetchUserAppointments());
+      notifySuccess("Programarea a fost anulată.");
+    } else {
+      const message =
+        typeof result.payload === "string"
+          ? result.payload
+          : "Nu am putut anula programarea. Încearcă din nou.";
+      setCancelError(message);
+      notifyError(message);
+    }
+
+    setCancellingId(null);
   };
 
   return (
@@ -20,6 +45,7 @@ export default function AppointmentsCard({ appointments = [] }) {
         height: "100%",
         boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
         border: "1px solid #f5f5f5",
+        overflow: "visible",
       }}
     >
       <Box
@@ -54,6 +80,16 @@ export default function AppointmentsCard({ appointments = [] }) {
         </Box>
       </Box>
 
+      {cancelError && (
+        <Alert
+          severity="error"
+          onClose={() => setCancelError(null)}
+          sx={{ borderRadius: "10px", mb: 2 }}
+        >
+          {cancelError}
+        </Alert>
+      )}
+
       {appointments.length === 0 ? (
         <Box
           sx={{
@@ -66,8 +102,24 @@ export default function AppointmentsCard({ appointments = [] }) {
           <Typography fontSize="0.875rem">Nu ai programări active</Typography>
         </Box>
       ) : (
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
-          {appointments.slice(0, 5).map((appointment) => (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 1.5,
+            maxHeight: 340,
+            overflowY: "auto",
+            pr: 0.5,
+            "&::-webkit-scrollbar": { width: "4px" },
+            "&::-webkit-scrollbar-track": { backgroundColor: "transparent" },
+            "&::-webkit-scrollbar-thumb": {
+              backgroundColor: "#e0e0e0",
+              borderRadius: "4px",
+            },
+            "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#bbb" },
+          }}
+        >
+          {appointments.map((appointment) => (
             <Box
               key={appointment.id}
               sx={{
@@ -122,6 +174,7 @@ export default function AppointmentsCard({ appointments = [] }) {
                   size="small"
                   variant="outlined"
                   onClick={() => handleCancel(appointment.id)}
+                  disabled={cancellingId === appointment.id}
                   sx={{
                     borderColor: "#ffcdd2",
                     color: "#a91111",
@@ -131,13 +184,18 @@ export default function AppointmentsCard({ appointments = [] }) {
                     fontWeight: 600,
                     py: 0.5,
                     px: 1.5,
+                    minWidth: 0,
                     "&:hover": {
                       backgroundColor: "#fff0f0",
                       borderColor: "#a91111",
                     },
                   }}
                 >
-                  Anulează
+                  {cancellingId === appointment.id ? (
+                    <CircularProgress size={14} sx={{ color: "#a91111" }} />
+                  ) : (
+                    "Anulează"
+                  )}
                 </Button>
               </Box>
             </Box>

@@ -7,14 +7,19 @@ export const controller = {
       const { name, description, dosage, frequency, start_date, end_date } =
         req.body;
       if (!name || !dosage || !frequency || !start_date) {
-        return res.status(400).send(`All fields must be completed`);
+        return res.status(400).send(`Toate câmpurile sunt obligatorii`);
+      }
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (new Date(start_date) < today) {
+        return res.status(400).send("Data de început nu poate fi în trecut!");
       }
       if (end_date && new Date(end_date) < new Date(start_date)) {
-        return res.status(400).send("End date cannot be before start date!");
+        return res.status(400).send("Data de sfârșit nu poate fi înainte de data de început!");
       }
       const medicalFileExists = await Medical_files.findByPk(medical_file_id);
       if (!medicalFileExists) {
-        return res.status(400).send(` Medical file doesn't exist!`);
+        return res.status(400).send(` Fișa medicală nu există!`);
       }
       const staffMember = await Staff.findOne({
         where: { user_id: req.user.id },
@@ -23,7 +28,7 @@ export const controller = {
       if (!staffMember) {
         return res
           .status(403)
-          .send("Only staff members can prescribe medication!");
+          .send("Doar membrii personalului pot prescrie tratamente!");
       }
 
       const newMedication = await Medications.create({
@@ -39,7 +44,7 @@ export const controller = {
       return res.status(201).send(newMedication);
     } catch (error) {
       console.log("error creating medication");
-      return res.status(500).send(`Failed while creating medication :${error}`);
+      return res.status(500).send(`Crearea tratamentului a eșuat :${error}`);
     }
   },
   getAllMedicationsByMedicalFile: async (req, res) => {
@@ -47,7 +52,7 @@ export const controller = {
       const medicalFileId = req.params.id;
       const medicalFile = await Medical_files.findByPk(medicalFileId);
       if (!medicalFile)
-        return res.status(404).send("Medical file does not exist!");
+        return res.status(404).send("Fișa medicală nu există!");
       const today = new Date();
 
       const medications = await Medications.findAll({
@@ -65,7 +70,7 @@ export const controller = {
     } catch (error) {
       return res
         .status(500)
-        .send(`Failed to fetch medicationd : ${error.message}`);
+        .send(`Nu am putut încărca tratamentele : ${error.message}`);
     }
   },
   getMedicationById: async (req, res) => {
@@ -78,11 +83,11 @@ export const controller = {
         },
       });
       if (!medication) {
-        return res.status(404).send("Medication doesnt exist");
+        return res.status(404).send("Tratamentul nu există");
       }
       return res.status(200).send(medication);
     } catch (error) {
-      return res.status(500).send(`Failed to fetch medications : ${error}`);
+      return res.status(500).send(`Nu am putut încărca tratamentul : ${error}`);
     }
   },
   deleteMedications: async (req, res) => {
@@ -97,12 +102,12 @@ export const controller = {
       });
 
       if (!deleted) {
-        return res.status(404).send("Medication does not exist!");
+        return res.status(404).send("Tratamentul nu există!");
       }
 
-      return res.status(200).send("Medication deleted successfully!");
+      return res.status(200).send("Tratamentul a fost șters cu succes!");
     } catch (err) {
-      return res.status(500).send(`Couldn't delete medication:${err}`);
+      return res.status(500).send(`Nu am putut șterge tratamentul:${err}`);
     }
   },
   updateMedication: async (req, res) => {
@@ -117,14 +122,22 @@ export const controller = {
       });
 
       if (!medication) {
-        return res.status(404).send("Medication does not exist!");
+        return res.status(404).send("Tratamentul nu există!");
+      }
+
+      if (req.body.start_date) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (new Date(req.body.start_date) < today) {
+          return res.status(400).send("Data de început nu poate fi în trecut!");
+        }
       }
 
       await medication.update(req.body);
 
       return res.status(200).json(medication);
     } catch (err) {
-      return res.status(500).send(`Couldn't update medication:${err}`);
+      return res.status(500).send(`Nu am putut actualiza tratamentul:${err}`);
     }
   },
 };

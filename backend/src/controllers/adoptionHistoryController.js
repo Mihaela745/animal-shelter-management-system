@@ -25,22 +25,22 @@ export const controller = {
       });
       return res.status(200).json(adoptions);
     } catch (err) {
-      return res.status(500).send(`Couldn't fetch adoptions: ${err}`);
+      return res.status(500).send(`Nu am putut încărca adopțiile: ${err}`);
     }
   },
   getAdoptionById: async (req, res) => {
     try {
       const adoptionId = req.params.id;
       const adoption = await Adoption_history.findByPk(adoptionId);
-      if (!adoption) return res.status(404).send(`Couldn't find the adoption`);
+      if (!adoption) return res.status(404).send(`Nu am găsit adopția`);
 
       if (req.user.role === "user" && adoption.adopter_id !== req.user.id) {
-        return res.status(403).send("Access denied!");
+        return res.status(403).send("Acces interzis!");
       }
 
       return res.status(200).send(adoption);
     } catch (err) {
-      return res.status(500).send(`Couldn't fetch adoption: ${err}`);
+      return res.status(500).send(`Nu am putut încărca adopția: ${err}`);
     }
   },
   deleteAdoption: async (req, res) => {
@@ -48,7 +48,7 @@ export const controller = {
       const adoptionId = req.params.id;
 
       const adoption = await Adoption_history.findByPk(adoptionId);
-      if (!adoption) return res.status(404).send("Adoption not found!");
+      if (!adoption) return res.status(404).send("Adopția nu a fost găsită!");
 
       await Animals.update(
         { status: "Available" },
@@ -57,9 +57,9 @@ export const controller = {
 
       await Adoption_history.destroy({ where: { id: adoptionId } });
 
-      return res.status(200).send("Adoption deleted successfully.");
+      return res.status(200).send("Adopția a fost ștearsă cu succes.");
     } catch (err) {
-      return res.status(500).send(`Error at deletion: ${err}`);
+      return res.status(500).send(`A apărut o eroare la ștergere: ${err}`);
     }
   },
   getAllAdoptions: async (req, res) => {
@@ -74,7 +74,7 @@ export const controller = {
       });
       return res.status(200).json(adoptions);
     } catch (err) {
-      return res.status(500).send(`Couldn't fetch adoptions: ${err.message}`);
+      return res.status(500).send(`Nu am putut încărca adopțiile: ${err.message}`);
     }
   },
 };

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   Box,
@@ -62,6 +62,7 @@ export default function AddMedicationPage() {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [formData, setFormData] = useState(emptyMedication);
+  const latestBoxRequestId = useRef(0);
 
   useEffect(() => {
     const loadInitialData = async () => {
@@ -110,6 +111,7 @@ export default function AddMedicationPage() {
 
   const handleBoxChange = async (event) => {
     const nextBoxId = event.target.value;
+    const requestId = ++latestBoxRequestId.current;
     setSelectedBoxId(nextBoxId);
     setSelectedAnimalIds([]);
     setSuccessMessage("");
@@ -120,16 +122,27 @@ export default function AddMedicationPage() {
       const response = await axiosInstance.get("/animals", {
         params: { box_id: nextBoxId, limit: 9999, page: 1 },
       });
+
+      if (requestId !== latestBoxRequestId.current) {
+        return;
+      }
+
       setBoxAnimals(
         Array.isArray(response.data?.animals) ? response.data.animals : [],
       );
     } catch (loadError) {
+      if (requestId !== latestBoxRequestId.current) {
+        return;
+      }
+
       setError(
         loadError.response?.data || "Nu am putut încărca animalele din boxă.",
       );
       setBoxAnimals([]);
     } finally {
-      setSelectionLoading(false);
+      if (requestId === latestBoxRequestId.current) {
+        setSelectionLoading(false);
+      }
     }
   };
 

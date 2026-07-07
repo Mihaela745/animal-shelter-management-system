@@ -242,11 +242,26 @@ const appointmentsSlice = createSlice({
         state.error = action.payload;
       })
 
+      .addCase(fetchAvailableSlots.pending, (state) => {
+        state.availableSlots = [];
+      })
       .addCase(fetchAvailableSlots.fulfilled, (state, action) => {
         state.availableSlots = action.payload;
       })
+      .addCase(fetchAvailableSlots.rejected, (state, action) => {
+        state.availableSlots = [];
+        state.error = action.payload;
+      })
+
+      .addCase(fetchCalendarAvailability.pending, (state) => {
+        state.availableDates = [];
+      })
       .addCase(fetchCalendarAvailability.fulfilled, (state, action) => {
         state.availableDates = action.payload;
+      })
+      .addCase(fetchCalendarAvailability.rejected, (state, action) => {
+        state.availableDates = [];
+        state.error = action.payload;
       });
   },
 });

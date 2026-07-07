@@ -24,6 +24,8 @@ import {
   fetchAllAdoptionRequests,
   updateAdoptionRequestStatus,
 } from "../../../features/adoptionRequests/adoptionRequestsSlice";
+import { getThumbnailUrl } from "../../../utils/cloudinary";
+import { useNotification } from "../../../context/NotificationContext";
 
 const RED = "#a91111";
 const RED_LIGHT = "#fff0f0";
@@ -91,7 +93,7 @@ function RequestCard({ request, onAction }) {
         backgroundColor: "white",
         borderRadius: "16px",
         border: "1.5px solid #f0f0f0",
-        overflow: "hidden",
+        height: "100%",
         transition: "box-shadow 0.2s, transform 0.2s",
         "&:hover": {
           boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
@@ -99,12 +101,22 @@ function RequestCard({ request, onAction }) {
         },
       }}
     >
+      <Box
+        sx={{
+          borderRadius: "16px",
+          overflow: "hidden",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
       <Box sx={{ position: "relative", height: 140 }}>
         {animal?.image_url ? (
           <Box
             component="img"
-            src={animal.image_url}
+            src={getThumbnailUrl(animal.image_url, { width: 400, height: 280 })}
             alt={animal.name}
+            loading="lazy"
             sx={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         ) : (
@@ -267,6 +279,7 @@ function RequestCard({ request, onAction }) {
           </Box>
         )}
       </Box>
+      </Box>
     </Box>
   );
 }
@@ -274,6 +287,7 @@ function RequestCard({ request, onAction }) {
 export default function AdoptionRequestsPage() {
   const dispatch = useDispatch();
   const { requests, loading } = useSelector((s) => s.adoptionRequests);
+  const { notifySuccess, notifyError } = useNotification();
 
   const [searchAnimal, setSearchAnimal] = useState("");
   const [searchUser, setSearchUser] = useState("");
@@ -305,12 +319,26 @@ export default function AdoptionRequestsPage() {
 
   const handleConfirm = async () => {
     setActionLoading(true);
-    await dispatch(
+    const result = await dispatch(
       updateAdoptionRequestStatus({
         id: confirmDialog.request.id,
         status: confirmDialog.action,
       }),
     );
+
+    if (updateAdoptionRequestStatus.rejected.match(result)) {
+      const payload = result.payload;
+      notifyError(
+        typeof payload === "string"
+          ? payload
+          : payload?.message || "Eroare la actualizarea stării cererii.",
+      );
+    } else if (confirmDialog.action === "Approved") {
+      notifySuccess("Cererea de adopție a fost aprobată.");
+    } else {
+      notifySuccess("Cererea de adopție a fost respinsă.");
+    }
+
     setActionLoading(false);
     setConfirmDialog({ open: false, request: null, action: null });
   };

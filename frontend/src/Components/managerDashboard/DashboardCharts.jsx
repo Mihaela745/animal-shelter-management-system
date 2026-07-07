@@ -20,6 +20,7 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import EventNoteIcon from "@mui/icons-material/EventNote";
 import PetsIcon from "@mui/icons-material/Pets";
+import { formatSpecies } from "../../utils/labels";
 
 const months = [
   "Ian",
@@ -89,6 +90,7 @@ const ChartCard = ({ icon, title, subtitle, color, children }) => (
       boxShadow: "0 4px 24px rgba(0,0,0,0.06)",
       border: "1px solid #f5f5f5",
       height: "100%",
+      overflow: "visible",
     }}
   >
     <Box sx={{ display: "flex", alignItems: "center", gap: 1.5, mb: 3 }}>
@@ -144,7 +146,7 @@ export default function DashboardCharts({
 
   const speciesCount = {};
   animals.forEach((a) => {
-    const name = a.Species?.name || "Alta specie";
+    const name = a.Species?.name ? formatSpecies(a.Species.name) : "Alta specie";
     speciesCount[name] = (speciesCount[name] || 0) + 1;
   });
   const speciesData = Object.entries(speciesCount).map(([name, value]) => ({

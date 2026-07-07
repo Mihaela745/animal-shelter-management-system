@@ -1,4 +1,4 @@
-import { Box, Typography, Divider, Skeleton } from "@mui/material";
+import { Alert, Box, Typography, Divider, Skeleton } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,6 +13,7 @@ import MedicalFileInfo from "../../../components/medicalFileComponents/MedicalFi
 import VetMedicalFileEditor from "../../../components/medicalFileComponents/VetMedicalFileEditor";
 import VetMedicationManager from "../../../components/medicalFileComponents/VetMedicationManager";
 import { fetchMedicationsByFile } from "../../../features/medications/medicationsSlice";
+import { useNotification } from "../../../context/NotificationContext";
 
 const RED = "#a91111";
 
@@ -20,7 +21,10 @@ export default function AnimalMedicalPage() {
   const { fileId, animalId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { selectedFile, loading } = useSelector((state) => state.medicalFiles);
+  const { notifySuccess, notifyError } = useNotification();
+  const { selectedFile, loading, error } = useSelector(
+    (state) => state.medicalFiles,
+  );
   const [saveError, setSaveError] = useState(null);
   const [savingFile, setSavingFile] = useState(false);
 
@@ -38,13 +42,29 @@ export default function AnimalMedicalPage() {
     setSavingFile(false);
 
     if (result.meta?.requestStatus !== "fulfilled") {
-      setSaveError(
+      const message =
         typeof result.payload === "string"
           ? result.payload
-          : "Nu am putut actualiza fisa medicala.",
-      );
+          : "Nu am putut actualiza fisa medicala.";
+      setSaveError(message);
+      notifyError(message);
+      return;
     }
+
+    notifySuccess("Fișa medicală a fost actualizată cu succes.");
   };
+
+  if (!loading && error && !selectedFile) {
+    return (
+      <Box sx={{ p: 4, maxWidth: 800, mx: "auto" }}>
+        <Alert severity="error" sx={{ borderRadius: "12px" }}>
+          {typeof error === "string"
+            ? error
+            : "Nu am putut încărca fișa medicală."}
+        </Alert>
+      </Box>
+    );
+  }
 
   if (loading || !selectedFile) {
     return (
